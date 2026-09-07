@@ -1,0 +1,80 @@
+Proceed with the task "Connect the real Hyderabad source files and complete validation."
+
+IMPORTANT:
+
+Use ONLY the actual Hyderabad datasets that I provide/upload.
+
+Do NOT generate sample data.
+Do NOT create placeholder GIS files.
+Do NOT download substitute datasets from the internet.
+Do NOT fabricate missing values.
+
+The source datasets are:
+
+1. GHMC Nalas
+ghmc_nalas.json
+
+2. GHMC Inundation Areas
+ghmc_inundation_areas.txt
+
+3. Hyderabad Tanks / Water Bodies
+hyderabad_tanks.txt
+
+4. Hyderabad Stream Network
+hyderabad_stream_network.txt
+
+5. Hyderabad Roads
+hyderabad_roads.gpkg
+
+6. Hyderabad DEM
+hyderabad_dem_30m.tif
+
+7. ESA WorldCover
+hyderabad_landcover_10m.tif
+
+8. IMD Rainfall
+imd_rainfall_2024.nc
+
+9. Historical Hyderabad Flood Locations
+hyderabad_flooding_locations.kml
+
+10. GHMC Boundary
+ghmc_boundary.geojson
+
+Organize them under the existing data/ directory according to the project's configuration.
+
+After connecting them:
+
+1. Run the complete dataset validation.
+2. Verify every file can actually be opened.
+3. Verify CRS.
+4. Verify geometry type for vector datasets.
+5. Count vector features.
+6. Verify raster dimensions, resolution, bounds and CRS.
+7. Inspect the NetCDF dimensions, variables, rainfall units and coordinates.
+8. Check geometry validity.
+9. Check whether vector datasets overlap the GHMC boundary.
+10. Generate outputs/data_validation_report.json.
+
+Update GET /api/data-status to report the actual validation results.
+
+IMPORTANT:
+If any source file is unavailable, STOP and report exactly which file is missing.
+Do not create a replacement.
+
+If a file format such as .txt contains JSON/KML/GIS content, inspect its actual contents and determine the correct format before processing it.
+
+Do not permanently reproject or modify the original source files.
+
+Do not begin flood modeling yet.
+
+At the end, give me a concise report containing:
+
+- files successfully connected
+- files successfully read
+- feature counts
+- CRS of each dataset
+- raster resolutions
+- rainfall NetCDF information
+- any errors
+- exact remaining missing datasets, if any
