@@ -1,0 +1,2 @@
+attached_assets/hyderabad_landcover_10m.tif_1788801774211.tif filter=lfs diff=lfs merge=lfs -text
+data/landcover/esaworldcover/hyderabad_landcover_10m.tif filter=lfs diff=lfs merge=lfs -text

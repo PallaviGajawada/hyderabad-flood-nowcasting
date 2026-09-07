@@ -1,56 +1,172 @@
 {
-  "generated_at": "2026-09-07T17:21:39.021489+00:00",
+  "generated_at": "2026-09-07T17:32:35.838719+00:00",
   "datasets": {
     "ghmc_nalas": {
       "dataset_key": "ghmc_nalas",
       "path": "/home/runner/workspace/data/drainage/ghmc_nalas/ghmc_nalas.json",
       "dataset_type": "vector",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "feature_count": 96,
+        "source_format": "ArcGIS FeatureSet JSON",
+        "source_geometry_type": "esriGeometryPolyline",
+        "geometry_types": [
+          "LineString",
+          "MultiLineString"
+        ],
+        "crs": "EPSG:4326",
+        "bounding_box": [
+          78.24100052900009,
+          17.302128344000067,
+          78.59060061426771,
+          17.543104755000087
+        ],
+        "important_fields": [
+          "FID",
+          "Nala_ID",
+          "Nala_Name",
+          "Circle",
+          "District",
+          "Total_Seg",
+          "Length_m",
+          "Govt_Encr",
+          "Pvt_Encr",
+          "Rel_Encr",
+          "Total_Encr",
+          "Court_Case",
+          "Mandal",
+          "Village",
+          "SNO",
+          "ZONE_NAME",
+          "ZONE_ID"
+        ],
+        "invalid_geometry_count": 0,
+        "empty_geometry_count": 0,
+        "missing_values": {},
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     },
     "ghmc_inundation_areas": {
       "dataset_key": "ghmc_inundation_areas",
-      "path": "/home/runner/workspace/data/flood/ghmc_inundation/ghmc_inundation_areas.txt",
+      "path": "/home/runner/workspace/data/flood/ghmc_inundation/ghmc_inundation_areas.json",
       "dataset_type": "vector",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "feature_count": 23,
+        "source_format": "ArcGIS FeatureSet JSON",
+        "source_geometry_type": "esriGeometryPoint",
+        "geometry_types": [
+          "Point"
+        ],
+        "crs": "EPSG:4326",
+        "bounding_box": [
+          78.39952347400003,
+          17.314368804000026,
+          78.51246681600009,
+          17.448776054000064
+        ],
+        "important_fields": [
+          "OID",
+          "Name",
+          "FolderPath",
+          "SymbolID",
+          "AltMode",
+          "Base",
+          "Snippet",
+          "PopupInfo",
+          "HasLabel",
+          "LabelID"
+        ],
+        "invalid_geometry_count": 0,
+        "empty_geometry_count": 0,
+        "missing_values": {},
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     },
     "hyderabad_tanks": {
       "dataset_key": "hyderabad_tanks",
-      "path": "/home/runner/workspace/data/drainage/tanks/hyderabad_tanks.txt",
+      "path": "/home/runner/workspace/data/drainage/tanks/hyderabad_tanks.json",
       "dataset_type": "vector",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "feature_count": 847,
+        "source_format": "ArcGIS FeatureSet JSON",
+        "source_geometry_type": "esriGeometryPolygon",
+        "geometry_types": [
+          "Polygon"
+        ],
+        "crs": "EPSG:4326",
+        "bounding_box": [
+          78.23978521935071,
+          17.204339124128122,
+          78.68221808674056,
+          17.606002754764592
+        ],
+        "important_fields": [
+          "FID",
+          "Descr_1",
+          "Descr_2",
+          "Descr_3",
+          "PI_CODE",
+          "LU_Code",
+          "Shape_Area"
+        ],
+        "invalid_geometry_count": 0,
+        "empty_geometry_count": 0,
+        "missing_values": {},
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     },
     "hyderabad_stream_network": {
       "dataset_key": "hyderabad_stream_network",
-      "path": "/home/runner/workspace/data/drainage/streams/hyderabad_stream_network.txt",
+      "path": "/home/runner/workspace/data/drainage/streams/hyderabad_stream_network.json",
       "dataset_type": "vector",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "feature_count": 1000,
+        "source_format": "ArcGIS FeatureSet JSON",
+        "source_geometry_type": "esriGeometryPolyline",
+        "geometry_types": [
+          "LineString"
+        ],
+        "crs": "EPSG:4326",
+        "bounding_box": [
+          78.494508998157,
+          18.537597112165194,
+          79.22547486795006,
+          19.106238552798278
+        ],
+        "important_fields": [
+          "Shape_Length",
+          "Layer",
+          "Categories",
+          "PI_CODE",
+          "DR_Code",
+          "Order_",
+          "Basin",
+          "OBJECTID_1",
+          "OBJECTID"
+        ],
+        "invalid_geometry_count": 0,
+        "empty_geometry_count": 0,
+        "missing_values": {},
+        "overlaps_ghmc_boundary": false
+      },
+      "errors": [],
       "warnings": []
     },
     "hyderabad_roads": {
@@ -70,39 +186,116 @@
       "dataset_key": "hyderabad_dem",
       "path": "/home/runner/workspace/data/terrain/dem/hyderabad_dem_30m.tif",
       "dataset_type": "raster",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "width": 1440,
+        "height": 1440,
+        "band_count": 1,
+        "crs": "EPSG:4326",
+        "pixel_size": {
+          "x": 0.0002777777777778146,
+          "y": 0.0002777777777778146
+        },
+        "bounds": [
+          78.24986111114532,
+          17.20013888888322,
+          78.64986111114537,
+          17.600138888883272
+        ],
+        "min_value": 444.0,
+        "max_value": 650.0,
+        "nodata_value": -32768.0,
+        "missing_values": {
+          "band_1": 0
+        },
+        "valid_value_count": {
+          "band_1": 2073600
+        },
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     },
     "hyderabad_landcover": {
       "dataset_key": "hyderabad_landcover",
       "path": "/home/runner/workspace/data/landcover/esaworldcover/hyderabad_landcover_10m.tif",
       "dataset_type": "raster",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "width": 36000,
+        "height": 36000,
+        "band_count": 1,
+        "crs": "EPSG:4326",
+        "pixel_size": {
+          "x": 8.333333333333333e-05,
+          "y": 8.333333333333333e-05
+        },
+        "bounds": [
+          78.0,
+          15.0,
+          81.0,
+          18.0
+        ],
+        "min_value": 10.0,
+        "max_value": 95.0,
+        "nodata_value": 0.0,
+        "missing_values": {
+          "band_1": 38363719
+        },
+        "valid_value_count": {
+          "band_1": 1257636281
+        },
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     },
     "imd_rainfall_2024": {
       "dataset_key": "imd_rainfall_2024",
       "path": "/home/runner/workspace/data/rainfall/imd_gauge/imd_rainfall_2024.nc",
       "dataset_type": "netcdf",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "dimensions": {
+          "TIME": 366,
+          "LATITUDE": 129,
+          "LONGITUDE": 135
+        },
+        "variables": [
+          "RAINFALL"
+        ],
+        "coordinate_names": [
+          "LONGITUDE",
+          "LATITUDE",
+          "TIME"
+        ],
+        "time_dimension": {
+          "name": "TIME",
+          "size": 366
+        },
+        "rainfall_variable": "RAINFALL",
+        "rainfall_variables": [
+          "RAINFALL"
+        ],
+        "units": "mm",
+        "spatial_extent": {
+          "latitude": [
+            6.5,
+            38.5
+          ],
+          "longitude": [
+            66.5,
+            100.0
+          ]
+        }
+      },
+      "errors": [],
       "warnings": []
     },
     "historical_floods": {
@@ -120,24 +313,64 @@
     },
     "ghmc_boundary": {
       "dataset_key": "ghmc_boundary",
-      "path": "/home/runner/workspace/data/boundaries/ghmc/ghmc_boundary.geojson",
+      "path": "/home/runner/workspace/data/boundaries/ghmc/ghmc_boundary.json",
       "dataset_type": "vector",
-      "exists": false,
-      "readable": false,
-      "validation_status": "missing",
-      "details": {},
-      "errors": [
-        "File does not exist."
-      ],
+      "exists": true,
+      "readable": true,
+      "validation_status": "valid",
+      "details": {
+        "feature_count": 1,
+        "source_format": "ArcGIS FeatureSet JSON",
+        "source_geometry_type": "esriGeometryPolygon",
+        "geometry_types": [
+          "MultiPolygon"
+        ],
+        "crs": "PROJCS[\"WGS_1984_UTM_Zone_44N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",81.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0]],VERTCS[\"Unknown VCS from ArcInfo Workstation\",VDATUM[\"Unknown\"],PARAMETER[\"Vertical_Shift\",0.0],PARAMETER[\"Direction\",1.0],UNIT[\"Meter\",1.0]]",
+        "bounding_box": [
+          206880.0504490318,
+          1913538.5765140723,
+          247247.86794658235,
+          1943479.1233462032
+        ],
+        "important_fields": [
+          "FID",
+          "FID_HMDA",
+          "Id",
+          "Area",
+          "FID_HYDERA",
+          "Id_1",
+          "AREA_1",
+          "FID_GHMC_Z",
+          "OBJECTID_1",
+          "OBJECTID",
+          "Shape_Leng",
+          "area_hecta",
+          "ZONE",
+          "CIR_NO",
+          "CIR_NAME",
+          "LATITUDES",
+          "LONGITUDES",
+          "Zone1",
+          "Shape_Le_1",
+          "Shape_Area",
+          "ULB_Villag",
+          "Category"
+        ],
+        "invalid_geometry_count": 0,
+        "empty_geometry_count": 0,
+        "missing_values": {},
+        "overlaps_ghmc_boundary": true
+      },
+      "errors": [],
       "warnings": []
     }
   },
   "summary": {
     "total": 10,
-    "found": 0,
-    "readable": 0,
-    "valid": 0,
-    "missing": 10,
+    "found": 8,
+    "readable": 8,
+    "valid": 8,
+    "missing": 2,
     "unreadable": 0,
     "invalid": 0
   }

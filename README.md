@@ -16,7 +16,8 @@ not fabricate rainfall, hydraulic measurements, or model outputs.
   run `backend.main` through the project workflow.
 - `backend/preprocessing/data_validator.py` — read-only vector, raster, and
   NetCDF validation.
-- `data/` — expected source-data categories; no source datasets are included.
+- `data/` — organized source-data categories; only user-provided datasets are
+  placed here.
 - `outputs/` — validation report plus future flood-map, forecast, and route
   output directories.
 - `tests/` — initial backend contract smoke tests.
@@ -48,34 +49,36 @@ The configured `HYDERABAD_FLOOD_DATA` root expects:
 
 ```text
 drainage/ghmc_nalas/ghmc_nalas.json
-flood/ghmc_inundation/ghmc_inundation_areas.txt
-drainage/tanks/hyderabad_tanks.txt
-drainage/streams/hyderabad_stream_network.txt
+flood/ghmc_inundation/ghmc_inundation_areas.json
+drainage/tanks/hyderabad_tanks.json
+drainage/streams/hyderabad_stream_network.json
 roads/osm/hyderabad_roads.gpkg
 terrain/dem/hyderabad_dem_30m.tif
 landcover/esaworldcover/hyderabad_landcover_10m.tif
 rainfall/imd_gauge/imd_rainfall_2024.nc
 flood/historical_floods/hyderabad_flooding_locations.kml
-boundaries/ghmc/ghmc_boundary.geojson
+boundaries/ghmc/ghmc_boundary.json
 ```
 
-Set `HYDERABAD_FLOOD_DATA` to point at the data root. The foundation only
-describes these paths; it does not require them to start the API.
+The supplied vector JSON files are ArcGIS FeatureSet JSON and are parsed
+in-memory without rewriting the originals. Set `HYDERABAD_FLOOD_DATA` to point
+at the data root.
 
 ## Current validation result
 
-The validation pass ran against the actual workspace on September 7, 2026:
+The validation pass ran against the supplied files on September 7, 2026:
 
 - 10 configured datasets
-- 0 found
-- 0 readable
-- 10 reported missing
+- 8 found and readable
+- 8 valid
+- 2 missing: the roads GeoPackage and historical flood KML
 - 0 replacement or sample files created
 
 The full machine-readable result is in
-`outputs/data_validation_report.json`. Once the real files are placed under
-`HYDERABAD_FLOOD_DATA`, rerun the validation endpoint or refresh the dashboard
-to inspect their actual metadata.
+`outputs/data_validation_report.json`. The uploaded IMD file contains a
+366-step `RAINFALL` variable in millimetres over
+`TIME × LATITUDE × LONGITUDE = 366 × 129 × 135`, with coordinates spanning
+6.5–38.5°N and 66.5–100°E.
 
 ## Known data limitations
 

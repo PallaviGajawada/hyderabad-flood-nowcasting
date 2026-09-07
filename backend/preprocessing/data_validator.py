@@ -17,7 +17,8 @@ import rasterio
 import xarray as xr
 from pyproj import CRS
 from rasterio.warp import transform_bounds
-from shapely.geometry import box
+from shapely.geometry import LineString, MultiLineString, MultiPoint, Point, Polygon, box
+from shapely.ops import unary_union
 
 from ..config import DATASETS
 
@@ -33,6 +34,7 @@ DATASET_SPECS: dict[str, tuple[str, Path]] = {
     "historical_floods": ("vector", DATASETS.historical_floods),
     "ghmc_boundary": ("vector", DATASETS.ghmc_boundary),
 }
+_REPORT_CACHE: tuple[tuple[Any, ...], dict[str, Any]] | None = None
 
 
 def _result(dataset_key: str, dataset_type: str, path: Path) -> dict[str, Any]:
@@ -78,7 +80,7 @@ def _boundary_gdf() -> gpd.GeoDataFrame | None:
     if not path.exists():
         return None
     try:
-        boundary = gpd.read_file(path)
+        boundary, _ = _read_vector_source(path)
         if boundary.empty or boundary.geometry.dropna().empty:
             return None
         return boundary
@@ -90,7 +92,79 @@ def _boundary_geometry(boundary: gpd.GeoDataFrame) -> Any:
     geometries = boundary.geometry.dropna()
     if hasattr(geometries, "union_all"):
         return geometries.union_all()
-    return geometries.unary_union
+    return unary_union(geometries.tolist())
+
+
+def _esri_crs(spatial_reference: dict[str, Any] | None) -> str | None:
+    if not spatial_reference:
+        return None
+    wkid = spatial_reference.get("latestWkid") or spatial_reference.get("wkid")
+    if wkid:
+        return f"EPSG:{wkid}"
+    wkt = spatial_reference.get("wkt")
+    return str(wkt) if wkt else None
+
+
+def _esri_geometry_to_shape(geometry: dict[str, Any] | None) -> Any:
+    if not geometry:
+        return None
+    if "x" in geometry and "y" in geometry:
+        return Point(float(geometry["x"]), float(geometry["y"]))
+    if "points" in geometry:
+        return MultiPoint(
+            [(float(x), float(y)) for x, y in geometry["points"]]
+        )
+    if "paths" in geometry:
+        lines = [
+            LineString([(float(x), float(y)) for x, y in path])
+            for path in geometry["paths"]
+            if len(path) >= 2
+        ]
+        if not lines:
+            return None
+        return lines[0] if len(lines) == 1 else MultiLineString(lines)
+    if "rings" in geometry:
+        polygons = [
+            Polygon([(float(x), float(y)) for x, y in ring])
+            for ring in geometry["rings"]
+            if len(ring) >= 4
+        ]
+        polygons = [polygon for polygon in polygons if not polygon.is_empty]
+        if not polygons:
+            return None
+        return polygons[0] if len(polygons) == 1 else unary_union(polygons)
+    return None
+
+
+def _read_vector_source(path: Path) -> tuple[gpd.GeoDataFrame, str]:
+    """Read GeoJSON or ArcGIS FeatureSet JSON into an in-memory GeoDataFrame."""
+
+    if path.suffix.lower() in {".json", ".txt", ".geojson"}:
+        try:
+            with path.open(encoding="utf-8") as handle:
+                payload = json.load(handle)
+            if isinstance(payload, dict) and "features" in payload:
+                rows: list[dict[str, Any]] = []
+                for feature in payload.get("features", []):
+                    attributes = dict(feature.get("attributes") or feature.get("properties") or {})
+                    attributes["geometry"] = (
+                        _esri_geometry_to_shape(feature.get("geometry"))
+                        if "geometryType" in payload or "spatialReference" in payload
+                        else feature.get("geometry")
+                    )
+                    rows.append(attributes)
+                crs = _esri_crs(payload.get("spatialReference"))
+                frame = gpd.GeoDataFrame(rows, geometry="geometry", crs=crs)
+                frame.attrs["source_geometry_type"] = payload.get("geometryType")
+                return (
+                    frame,
+                    "ArcGIS FeatureSet JSON"
+                    if payload.get("geometryType") or payload.get("spatialReference")
+                    else "GeoJSON",
+                )
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            pass
+    return gpd.read_file(path), "OGR-readable vector"
 
 
 def _vector_overlap(
@@ -146,7 +220,7 @@ def validate_vector(
     if not path.exists():
         return result
     try:
-        frame = gpd.read_file(path)
+        frame, source_format = _read_vector_source(path)
         geometry = frame.geometry
         missing_values = {
             str(column): int(count)
@@ -159,6 +233,12 @@ def validate_vector(
         result["validation_status"] = "valid" if invalid_count == 0 else "invalid"
         result["details"] = {
             "feature_count": int(len(frame)),
+            "source_format": source_format,
+            "source_geometry_type": (
+                frame.attrs.get("source_geometry_type")
+                if frame.attrs.get("source_geometry_type")
+                else None
+            ),
             "geometry_types": sorted(
                 str(value)
                 for value in geometry.dropna().geom_type.unique()
@@ -204,12 +284,28 @@ def validate_raster(
         with rasterio.open(path) as raster:
             minimum: float | None = None
             maximum: float | None = None
+            missing_values: dict[str, int] = {}
+            valid_values: dict[str, int] = {}
             for band_number in range(1, raster.count + 1):
-                values = raster.read(band_number, masked=True)
-                if values.count() == 0:
-                    continue
-                band_min = _as_float(values.min())
-                band_max = _as_float(values.max())
+                band_min: float | None = None
+                band_max: float | None = None
+                missing_count = 0
+                valid_count = 0
+                for _, window in raster.block_windows(band_number):
+                    values = raster.read(band_number, window=window, masked=True)
+                    valid = values.compressed()
+                    missing_count += int(values.size - valid.size)
+                    valid_count += int(valid.size)
+                    if valid.size == 0:
+                        continue
+                    block_min = _as_float(valid.min())
+                    block_max = _as_float(valid.max())
+                    if block_min is not None:
+                        band_min = block_min if band_min is None else min(band_min, block_min)
+                    if block_max is not None:
+                        band_max = block_max if band_max is None else max(band_max, block_max)
+                missing_values[f"band_{band_number}"] = missing_count
+                valid_values[f"band_{band_number}"] = valid_count
                 if band_min is not None:
                     minimum = band_min if minimum is None else min(minimum, band_min)
                 if band_max is not None:
@@ -231,6 +327,8 @@ def validate_raster(
                 "min_value": minimum,
                 "max_value": maximum,
                 "nodata_value": _as_float(raster.nodata),
+                "missing_values": missing_values,
+                "valid_value_count": valid_values,
                 "overlaps_ghmc_boundary": _raster_overlap(
                     bounds,
                     raster.crs,
@@ -325,11 +423,37 @@ def validate_netcdf(
     return result
 
 
+def _dataset_signature() -> tuple[Any, ...]:
+    signature: list[Any] = []
+    for dataset_key, (dataset_type, path) in DATASET_SPECS.items():
+        try:
+            stat = path.stat()
+            signature.append(
+                (
+                    dataset_key,
+                    dataset_type,
+                    str(path),
+                    True,
+                    stat.st_mtime_ns,
+                    stat.st_size,
+                )
+            )
+        except FileNotFoundError:
+            signature.append((dataset_key, dataset_type, str(path), False, None, None))
+    return tuple(signature)
+
+
 def validate_all_datasets(
     *,
     report_path: Path | None = None,
 ) -> dict[str, Any]:
     """Validate every configured dataset and optionally write a JSON report."""
+
+    global _REPORT_CACHE
+    signature = _dataset_signature()
+    cache_key = (str(report_path) if report_path is not None else "", *signature)
+    if _REPORT_CACHE is not None and _REPORT_CACHE[0] == cache_key:
+        return _REPORT_CACHE[1]
 
     boundary = _boundary_gdf()
     datasets: dict[str, dict[str, Any]] = {}
@@ -372,4 +496,5 @@ def validate_all_datasets(
             json.dumps(report, indent=2, default=_json_default) + "\n",
             encoding="utf-8",
         )
+    _REPORT_CACHE = (cache_key, report)
     return report

@@ -13,5 +13,17 @@ def test_system_status_contract() -> None:
 
 def test_expected_routes_are_registered() -> None:
     paths = set(app.openapi()["paths"])
-    assert {"/", "/health", "/forecast", "/flood-depth", "/safe-route"}.issubset(paths)
-    assert {"/api/", "/api/health", "/api/forecast"}.issubset(paths)
+    assert {
+        "/",
+        "/health",
+        "/forecast",
+        "/flood-depth",
+        "/safe-route",
+        "/data-status",
+    }.issubset(paths)
+    assert {
+        "/api/",
+        "/api/health",
+        "/api/forecast",
+        "/api/data-status",
+    }.issubset(paths)

@@ -1,8 +1,4 @@
-"""Configuration and dataset locations for the nowcasting prototype.
-
-The paths are intentionally descriptive only. The first foundation does not
-read or synthesize any of these datasets.
-"""
+"""Configuration and dataset locations for the nowcasting prototype."""
 
 from __future__ import annotations
 
@@ -28,11 +24,11 @@ class DatasetPaths:
 
     drainage_nalas: Path = DATA_ROOT / "drainage" / "ghmc_nalas" / "ghmc_nalas.json"
     inundation_areas: Path = (
-        DATA_ROOT / "flood" / "ghmc_inundation" / "ghmc_inundation_areas.txt"
+        DATA_ROOT / "flood" / "ghmc_inundation" / "ghmc_inundation_areas.json"
     )
-    tanks: Path = DATA_ROOT / "drainage" / "tanks" / "hyderabad_tanks.txt"
+    tanks: Path = DATA_ROOT / "drainage" / "tanks" / "hyderabad_tanks.json"
     stream_network: Path = (
-        DATA_ROOT / "drainage" / "streams" / "hyderabad_stream_network.txt"
+        DATA_ROOT / "drainage" / "streams" / "hyderabad_stream_network.json"
     )
     roads: Path = DATA_ROOT / "roads" / "osm" / "hyderabad_roads.gpkg"
     dem: Path = DATA_ROOT / "terrain" / "dem" / "hyderabad_dem_30m.tif"
@@ -52,7 +48,7 @@ class DatasetPaths:
         / "hyderabad_flooding_locations.kml"
     )
     ghmc_boundary: Path = (
-        DATA_ROOT / "boundaries" / "ghmc" / "ghmc_boundary.geojson"
+        DATA_ROOT / "boundaries" / "ghmc" / "ghmc_boundary.json"
     )
 
 

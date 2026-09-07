@@ -21,4 +21,4 @@ timeoutMs = 20000
 
 [nix]
 channel = "stable-25_05"
-packages = ["geos", "glibcLocales", "proj", "expat"]
+packages = ["curl", "expat", "geos", "glibcLocales", "hdf5", "libjpeg", "netcdf", "proj", "zlib"]

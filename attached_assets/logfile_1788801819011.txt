@@ -1,0 +1,21 @@
+File:
+  Name: /data/bbbike/extract/running/add64f1460bf66f87c9860ec8cfe3a6d/planet_78.13,17.192_78.778,17.612.osm.pbf
+  Format: PBF
+  Compression: none
+  Size: 41981918
+Header:
+  Bounding boxes:
+    (78.13,17.192,78.778,17.612)
+  With history: no
+  Options:
+    generator=https://download.BBBike.org
+    osmosis_replication_timestamp=2026-09-06T23:00:00Z
+    pbf_dense_nodes=true
+    pbf_optional_feature_0=Sort.Type_then_ID
+    sorting=Type_then_ID
+    timestamp=2026-09-06T23:00:00Z
+osmium2geopackage version GDAL 3.6.2, released 2023/01/02
+Warning 1: Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO
+Warning 1: Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO
+Warning 1: Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO
+Warning 1: Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO

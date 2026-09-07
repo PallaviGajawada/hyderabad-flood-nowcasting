@@ -42,10 +42,10 @@ nowcasting in Hyderabad, India.
   fabricated forecasts or depths.
 - The map is a spatial context surface only; it must not be presented as
   street-level flood prediction.
-- Dataset paths are configuration-only until source validation and preprocessing
-  are implemented.
-- Data validation reports missing source files instead of creating fallback
-  datasets.
+- Dataset validation reads user-supplied source files in memory and never
+  rewrites or reprojects them.
+- ArcGIS FeatureSet JSON is accepted alongside conventional GeoJSON because
+  several supplied vector files use that native format.
 
 ## Product
 
@@ -62,8 +62,9 @@ warning system.
 ## Gotchas
 
 - Run API codegen after every OpenAPI change.
-- Use `HYDERABAD_FLOOD_DATA` to point at external source datasets; the repo
-  intentionally contains no flood data.
+- Use `HYDERABAD_FLOOD_DATA` to point at an external source-data root when
+  needed. The current workspace contains the supplied source files; roads and
+  historical flood KML remain missing.
 
 ## Pointers
 
