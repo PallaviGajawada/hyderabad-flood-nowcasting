@@ -1,0 +1,44 @@
+{
+  "source": "ESA WorldCover class legend",
+  "source_dataset": "/home/runner/workspace/data/landcover/esaworldcover/hyderabad_landcover_10m.tif",
+  "observed_class_codes": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    80
+  ],
+  "classes": {
+    "10": {
+      "label": "Tree cover",
+      "observed_in_ghmc": true
+    },
+    "20": {
+      "label": "Shrubland",
+      "observed_in_ghmc": true
+    },
+    "30": {
+      "label": "Grassland",
+      "observed_in_ghmc": true
+    },
+    "40": {
+      "label": "Cropland",
+      "observed_in_ghmc": true
+    },
+    "50": {
+      "label": "Built-up",
+      "observed_in_ghmc": true
+    },
+    "60": {
+      "label": "Bare / sparse vegetation",
+      "observed_in_ghmc": true
+    },
+    "80": {
+      "label": "Permanent water bodies",
+      "observed_in_ghmc": true
+    }
+  },
+  "hydraulic_parameters_assigned": false
+}

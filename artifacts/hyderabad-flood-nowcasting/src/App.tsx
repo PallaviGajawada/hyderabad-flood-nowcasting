@@ -36,6 +36,7 @@ import {
   getGetForecastQueryKey,
   getGetDataStatusQueryKey,
   getGetHealthQueryKey,
+  getGetPreprocessingStatusQueryKey,
   getGetSafeRouteQueryKey,
   getGetSystemStatusQueryKey,
   getHealthCheckQueryKey,
@@ -43,11 +44,12 @@ import {
   useGetForecast,
   useGetDataStatus,
   useGetHealth,
+  useGetPreprocessingStatus,
   useGetSafeRoute,
   useGetSystemStatus,
   useHealthCheck,
 } from '@workspace/api-client-react';
-import type { DatasetStatus, DataStatusSummary } from '@workspace/api-client-react';
+import type { DatasetStatus, DataStatusSummary, PreprocessingStatusResponse } from '@workspace/api-client-react';
 import {
   Route,
   Switch,
@@ -207,6 +209,60 @@ function DatasetStatusSection({ query }: { query: DataStatusView }) {
   );
 }
 
+type PreprocessingStatusView = {
+  isLoading: boolean;
+  isError: boolean;
+  data?: PreprocessingStatusResponse;
+};
+
+function PreparationSection({ query }: { query: PreprocessingStatusView }) {
+  const stages = [
+    { key: 'dem', label: 'DEM', output: 'dem_ghmc.tif', detail: 'Clipped elevation, slope and slope percentage' },
+    { key: 'landcover', label: 'Landcover', output: 'landcover_ghmc.tif', detail: 'GHMC clip with observed WorldCover classes' },
+    { key: 'rainfall', label: 'Rainfall', output: 'imd_rainfall_ghmc.nc', detail: 'Historical IMD rainfall in standardized NetCDF' },
+    { key: 'nalas', label: 'Nalas', output: 'ghmc_nalas.geojson', detail: 'Cleaned and boundary-clipped drainage lines' },
+    { key: 'streams', label: 'Streams', output: 'streams.geojson', detail: 'Boundary-clipped stream network layer' },
+    { key: 'tanks', label: 'Tanks', output: 'hyderabad_tanks.geojson', detail: 'Cleaned and boundary-clipped water bodies' },
+  ];
+  const outputs = query.data?.available_processed_datasets ?? [];
+  const overallTone = query.isError || query.data?.status === 'failed' ? 'red' : query.data?.status === 'completed_with_warnings' ? 'amber' : 'slate';
+
+  return (
+    <section id="preprocessing" data-testid="section-preprocessing" className="scroll-mt-24">
+      <SectionHeader
+        eyebrow="03 · GIS preparation"
+        title="Data & model preparation"
+        detail="Validated source layers transformed into reproducible, model-ready inputs. No hydraulic parameters or flood predictions are assigned."
+        action={<StatusPill label={query.isError ? 'unavailable' : query.data?.status?.replaceAll('_', ' ') ?? 'checking'} tone={overallTone} testId="status-preprocessing" />}
+      />
+      {query.isLoading && <div className="panel rounded-xl p-5 text-xs text-[hsl(var(--muted-foreground))]">Loading preprocessing report…</div>}
+      {query.isError && <div className="panel rounded-xl border-[#e1b4ae] bg-[#fff3f0] p-5 text-xs text-[#98423d]">Preprocessing status is unavailable. The latest report could not be read.</div>}
+      {query.data && (
+        <div className="panel rounded-xl p-4 sm:p-5">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {stages.map((stage) => {
+              const ready = outputs.some((path) => path.endsWith(stage.output));
+              return (
+                <div key={stage.key} className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background)/.5)] p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-xs font-bold"><span className={`flex h-5 w-5 items-center justify-center rounded-full ${ready ? 'bg-[#d9efea] text-[#23756d]' : 'bg-[#fff0d1] text-[#a16f22]'}`}>{ready ? <Check className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}</span>{stage.label}</div>
+                    <StatusPill label={ready ? 'ready' : 'pending'} tone={ready ? 'teal' : 'amber'} testId={`status-preprocessing-${stage.key}`} />
+                  </div>
+                  <p className="mt-2 text-[10px] leading-relaxed text-[hsl(var(--muted-foreground))]">{stage.detail}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-[hsl(var(--border))] pt-3 text-[10px] text-[hsl(var(--muted-foreground))]">
+            <span>{outputs.length} generated outputs · {query.data.warnings.length} warnings</span>
+            <span className="font-mono">{query.data.generated_at ? new Date(query.data.generated_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'Not run'} IST</span>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 function RainChart() {
   return (
     <div data-testid="chart-rainfall" className="relative mt-2 flex h-44 items-center justify-center rounded-lg bg-[#eff7f4] p-3">
@@ -229,13 +285,14 @@ function Home() {
   const systemStatus = useGetSystemStatus({ query: { queryKey: getGetSystemStatusQueryKey() } });
   const healthCheck = useHealthCheck({ query: { queryKey: getHealthCheckQueryKey() } });
   const dataStatus = useGetDataStatus({ query: { queryKey: getGetDataStatusQueryKey() } });
+  const preprocessingStatus = useGetPreprocessingStatus({ query: { queryKey: getGetPreprocessingStatusQueryKey() } });
   const health = useGetHealth({ query: { queryKey: getGetHealthQueryKey() } });
   const forecast = useGetForecast({ query: { queryKey: getGetForecastQueryKey() } });
   const floodDepth = useGetFloodDepth({ query: { queryKey: getGetFloodDepthQueryKey() } });
   const safeRoute = useGetSafeRoute({ query: { queryKey: getGetSafeRouteQueryKey() } });
 
   const refreshAll = async () => {
-    await Promise.all([systemStatus.refetch(), healthCheck.refetch(), dataStatus.refetch(), health.refetch(), forecast.refetch(), floodDepth.refetch(), safeRoute.refetch()]);
+    await Promise.all([systemStatus.refetch(), healthCheck.refetch(), dataStatus.refetch(), preprocessingStatus.refetch(), health.refetch(), forecast.refetch(), floodDepth.refetch(), safeRoute.refetch()]);
     setLastRefresh(new Intl.DateTimeFormat('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' }).format(new Date()) + ' IST');
   };
 
@@ -251,6 +308,7 @@ function Home() {
     { id: 'overview', label: 'Current status', icon: Activity },
     { id: 'rainfall', label: 'Rainfall context', icon: CloudRain },
     { id: 'data-status', label: 'Data status', icon: Database },
+    { id: 'preprocessing', label: 'Preparation', icon: Layers3 },
     { id: 'forecast', label: 'Flood forecast', icon: BarChart3 },
     { id: 'depth', label: 'Flood depth', icon: Waves },
     { id: 'drainage', label: 'Drainage network', icon: GitBranch },
@@ -294,7 +352,7 @@ function Home() {
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="hidden text-right sm:block"><div className="mono-font text-[10px] text-[hsl(var(--muted-foreground))]">LAST SYNC</div><div data-testid="text-last-refresh" className="mono-font mt-0.5 text-xs text-[hsl(var(--foreground))]">{lastRefresh}</div></div>
-              <button data-testid="button-refresh-data" onClick={refreshAll} className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-xs font-bold text-[hsl(var(--primary))] shadow-sm transition-transform hover:-translate-y-0.5 active:translate-y-0"><RefreshCw className={`h-3.5 w-3.5 ${[systemStatus, healthCheck, dataStatus, health, forecast, floodDepth, safeRoute].some((query) => query.isFetching) ? 'animate-spin' : ''}`} /><span className="hidden sm:inline">Refresh</span></button>
+              <button data-testid="button-refresh-data" onClick={refreshAll} className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-xs font-bold text-[hsl(var(--primary))] shadow-sm transition-transform hover:-translate-y-0.5 active:translate-y-0"><RefreshCw className={`h-3.5 w-3.5 ${[systemStatus, healthCheck, dataStatus, preprocessingStatus, health, forecast, floodDepth, safeRoute].some((query) => query.isFetching) ? 'animate-spin' : ''}`} /><span className="hidden sm:inline">Refresh</span></button>
               <div className="relative">
                 <button data-testid="button-notifications" onClick={() => setNoticeOpen((open) => !open)} className="relative rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2 text-[hsl(var(--primary))] shadow-sm"><Bell className="h-4 w-4" /><span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c4534d]" /></button>
                 {noticeOpen && <div data-testid="panel-notifications" className="absolute right-0 top-11 z-30 w-64 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 shadow-lg"><div className="flex items-center justify-between"><span className="text-xs font-bold">Operational notices</span><button data-testid="button-close-notifications" onClick={() => setNoticeOpen(false)} className="rounded p-1 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"><X className="h-3.5 w-3.5" /></button></div><p className="mt-2 text-[11px] leading-relaxed text-[hsl(var(--muted-foreground))]">No new notices. Continue monitoring the rainfall context and field reports.</p></div>}
@@ -328,6 +386,8 @@ function Home() {
           </section>
 
           <DatasetStatusSection query={dataStatus} />
+
+          <PreparationSection query={preprocessingStatus} />
 
           <section className="grid gap-4 xl:grid-cols-[1.3fr_.7fr]">
             <div id="forecast" data-testid="section-flood-forecast" className="panel scroll-mt-24 rounded-xl p-5 sm:p-6">

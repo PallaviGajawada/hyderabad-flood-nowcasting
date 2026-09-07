@@ -16,10 +16,12 @@ not fabricate rainfall, hydraulic measurements, or model outputs.
   run `backend.main` through the project workflow.
 - `backend/preprocessing/data_validator.py` — read-only vector, raster, and
   NetCDF validation.
+- `backend/preprocessing/preprocessing_pipeline.py` — reproducible GIS
+  preprocessing orchestration.
 - `data/` — organized source-data categories; only user-provided datasets are
   placed here.
-- `outputs/` — validation report plus future flood-map, forecast, and route
-  output directories.
+- `outputs/preprocessed/` — clipped/model-ready rasters, GeoJSON layers,
+  standardized rainfall, class lookup, and preprocessing report.
 - `tests/` — initial backend contract smoke tests.
 
 The rainfall boundary is implemented through `RainfallSource`. The
@@ -39,6 +41,10 @@ without coupling the model to IMD-specific files.
   layer.
 - `GET /api/data-status` checks every configured dataset and writes the
   read-only result to `outputs/data_validation_report.json`.
+- `GET /api/preprocessing-status` returns the latest GIS preprocessing report.
+- GIS preprocessing uses EPSG:4326 for web/interchange GeoJSON and EPSG:32644
+  for metre-based terrain and length calculations. Reprojection is documented
+  in the preprocessing report.
 - No GIS preprocessing, rainfall-to-runoff estimation, drainage graph,
   hydraulic calculation, 2D simulation, forecast model, risk score, or safe
   routing has been implemented.
@@ -105,6 +111,34 @@ The full machine-readable result is in
 6. Produce 0–3 hour prototype forecasts and calibrated risk estimates.
 7. Add flood-depth, road-risk, and flood-safe route visualizations with clear
    confidence and limitation metadata.
+
+## Step 3 preprocessing outputs
+
+The reproducible preprocessing run creates:
+
+```text
+outputs/preprocessed/
+├── dem/
+│   ├── dem_ghmc.tif
+│   ├── slope_ghmc.tif
+│   └── slope_percent_ghmc.tif
+├── landcover/
+│   ├── landcover_ghmc.tif
+│   └── worldcover_classes.json
+├── rainfall/
+│   └── imd_rainfall_ghmc.nc
+├── drainage/
+│   ├── ghmc_nalas.geojson
+│   └── streams.geojson
+├── waterbodies/
+│   └── hyderabad_tanks.geojson
+└── preprocessing_report.json
+```
+
+The stream output is intentionally empty after clipping because the supplied
+stream extent does not intersect the supplied GHMC boundary. Roads and
+historical flood locations remain explicit future inputs. No hydraulic
+parameters, flood predictions, or safe-route outputs are generated.
 
 ## Run
 

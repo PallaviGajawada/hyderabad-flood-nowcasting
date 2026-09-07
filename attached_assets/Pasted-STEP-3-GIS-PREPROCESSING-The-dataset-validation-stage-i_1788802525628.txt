@@ -1,0 +1,380 @@
+STEP 3 — GIS PREPROCESSING
+
+The dataset validation stage is complete.
+
+Now implement the GIS preprocessing pipeline using ONLY the real datasets that were successfully validated.
+
+IMPORTANT:
+
+Do NOT wait for or create the missing road network.
+Do NOT wait for the historical flood KML.
+Do NOT create fake datasets.
+Do NOT fabricate hydraulic parameters.
+Do NOT start the hydraulic model yet.
+Do NOT start safe-route modeling yet.
+
+The missing datasets are:
+- Hyderabad roads
+- Historical flood locations
+
+They will be handled later.
+
+The currently available datasets are sufficient for this preprocessing stage.
+
+GOAL
+
+Convert the raw Hyderabad GIS datasets into clean, model-ready layers.
+
+Create:
+
+backend/preprocessing/
+    dem_processor.py
+    landcover_processor.py
+    rainfall_processor.py
+    drainage_processor.py
+    waterbody_processor.py
+    preprocessing_pipeline.py
+
+Create an output structure:
+
+outputs/preprocessed/
+    dem/
+    landcover/
+    rainfall/
+    drainage/
+    waterbodies/
+
+--------------------------------------------------
+1. GHMC BOUNDARY
+--------------------------------------------------
+
+Use the GHMC boundary as the analysis extent.
+
+All subsequent spatial preprocessing should be clipped/masked to the GHMC boundary where appropriate.
+
+Do not modify the original source boundary.
+
+--------------------------------------------------
+2. DEM PROCESSING
+--------------------------------------------------
+
+Input:
+
+hyderabad_dem_30m.tif
+
+Create a processed DEM clipped to the GHMC boundary.
+
+Calculate:
+
+- elevation
+- slope in degrees
+- slope percentage if useful
+
+Save processed rasters under:
+
+outputs/preprocessed/dem/
+
+For example:
+
+dem_ghmc.tif
+slope_ghmc.tif
+
+Preserve georeferencing and CRS.
+
+IMPORTANT:
+
+Do not silently change the original source DEM.
+
+Use an appropriate projected CRS for distance/area calculations where required.
+
+Document every reprojection.
+
+--------------------------------------------------
+3. LAND COVER PROCESSING
+--------------------------------------------------
+
+Input:
+
+hyderabad_landcover_10m.tif
+
+Clip it to the GHMC boundary.
+
+Create:
+
+landcover_ghmc.tif
+
+Create a lookup/configuration describing the WorldCover classes present in the data.
+
+Do NOT invent new land-cover classes.
+
+Prepare the data so that a later runoff model can assign infiltration/runoff parameters.
+
+Do not assign hydraulic parameters yet.
+
+--------------------------------------------------
+4. RAINFALL PROCESSING
+--------------------------------------------------
+
+Input:
+
+imd_rainfall_2024.nc
+
+Inspect the NetCDF structure first.
+
+Identify:
+
+- rainfall variable
+- latitude
+- longitude
+- time
+- units
+
+Extract the spatial region covering Hyderabad/GHMC.
+
+Create a reusable rainfall processing module.
+
+The module must output rainfall in a standardized representation suitable for the future flood model.
+
+Prefer a format such as:
+
+CSV/Parquet/NetCDF
+
+with:
+
+time
+latitude
+longitude
+rainfall_mm
+
+IMPORTANT:
+
+Do not pretend this is radar nowcast data.
+
+The IMD dataset is approximately 0.25 degree resolution and is historical rainfall data.
+
+The architecture must retain a replaceable rainfall interface so a future Doppler radar nowcast can use the same model input interface.
+
+Create:
+
+backend/models/rainfall_interface.py
+
+with a clean abstraction such as:
+
+RainfallProvider
+
+and an implementation:
+
+IMDRainfallProvider
+
+Later we should be able to add:
+
+RadarNowcastProvider
+
+without changing the flood model.
+
+--------------------------------------------------
+5. GHMC NALA PROCESSING
+--------------------------------------------------
+
+Input:
+
+ghmc_nalas.json
+
+Clean and validate the nala geometries.
+
+Perform:
+
+- geometry validity checking
+- removal of empty geometries
+- duplicate detection
+- length calculation where appropriate
+- clipping/intersection with GHMC boundary
+
+Preserve important source attributes including:
+
+Nala_ID
+Nala_Name
+Circle
+District
+Total_Seg
+Length_m
+ZONE_NAME
+ZONE_ID
+
+Create a clean output:
+
+outputs/preprocessed/drainage/ghmc_nalas.geojson
+
+Do not invent missing hydraulic fields.
+
+In particular, DO NOT create fake values for:
+
+pipe diameter
+pipe depth
+invert elevation
+Manning roughness
+hydraulic capacity
+manhole locations
+flow rate
+
+These will be handled later as explicitly documented prototype assumptions.
+
+--------------------------------------------------
+6. STREAM NETWORK PROCESSING
+--------------------------------------------------
+
+Input:
+
+hyderabad_stream_network.txt
+
+Process the actual geometry.
+
+Clean invalid/empty geometries.
+
+Preserve important fields such as:
+
+Layer
+Categories
+PI_CODE
+DR_Code
+Order_
+Basin
+
+Clip to the GHMC boundary where appropriate.
+
+Output:
+
+outputs/preprocessed/drainage/streams.geojson
+
+--------------------------------------------------
+7. WATER BODIES / TANKS
+--------------------------------------------------
+
+Input:
+
+hyderabad_tanks.txt
+
+Clean polygon geometry.
+
+Remove invalid/empty features where necessary.
+
+Clip to GHMC boundary.
+
+Preserve source attributes.
+
+Output:
+
+outputs/preprocessed/waterbodies/hyderabad_tanks.geojson
+
+Do not create storage capacities or water levels.
+
+Those values are not available in the source dataset.
+
+--------------------------------------------------
+8. COMMON SPATIAL REFERENCE
+--------------------------------------------------
+
+Create a documented spatial reference strategy.
+
+Use:
+
+- WGS84/EPSG:4326 for web visualization and interchange where appropriate.
+- A suitable projected CRS for Hyderabad for distance, area, slope and model calculations.
+
+Do NOT blindly reproject everything.
+
+Document why each CRS is used.
+
+--------------------------------------------------
+9. PREPROCESSING REPORT
+--------------------------------------------------
+
+Create:
+
+outputs/preprocessed/preprocessing_report.json
+
+Include:
+
+- input dataset
+- output dataset
+- feature count before processing
+- feature count after processing
+- CRS before
+- CRS after
+- geometry types
+- bounding box
+- invalid geometry count
+- empty geometry count
+- clipping performed
+- warnings/errors
+
+--------------------------------------------------
+10. TESTS
+--------------------------------------------------
+
+Create tests for:
+
+- DEM processing
+- land-cover processing
+- rainfall reading
+- nala processing
+- stream processing
+- tank processing
+
+Run all tests.
+
+The processing pipeline must be reproducible.
+
+--------------------------------------------------
+11. API
+--------------------------------------------------
+
+Create:
+
+GET /api/preprocessing-status
+
+Return:
+
+- preprocessing status
+- available processed datasets
+- feature counts
+- raster information
+- rainfall information
+- any warnings
+
+--------------------------------------------------
+12. DASHBOARD
+--------------------------------------------------
+
+Add a simple "Data & Model Preparation" section showing:
+
+DEM       → Ready
+Landcover → Ready
+Rainfall  → Ready
+Nalas     → Ready
+Streams   → Ready
+Tanks     → Ready
+
+Do not display fake flood predictions.
+
+Do not show fake water depths.
+
+--------------------------------------------------
+FINAL REQUIREMENT
+--------------------------------------------------
+
+After implementation:
+
+1. Run the preprocessing pipeline.
+2. Run all tests.
+3. Report actual results.
+4. List every generated output.
+5. Report any CRS or geometry issues.
+6. Report any rainfall NetCDF issues.
+7. Do not proceed to flood simulation.
+
+The next stage after this will be:
+
+RAIN FALL → RUNOFF MODEL
+
+and we will implement that only after reviewing the preprocessing results.

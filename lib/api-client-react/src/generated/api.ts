@@ -19,6 +19,7 @@ import type {
   DataStatusResponse,
   HealthStatus,
   ModelPlaceholder,
+  PreprocessingStatusResponse,
   SystemStatus
 } from './api.schemas';
 
@@ -579,6 +580,84 @@ export function useGetDataStatus<TData = Awaited<ReturnType<typeof getDataStatus
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetDataStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetPreprocessingStatusUrl = () => {
+
+
+
+
+  return `/api/preprocessing-status`
+}
+
+/**
+ * Returns the latest reproducible preprocessing report for the available validated datasets.
+ * @summary Get GIS preprocessing status
+ */
+export const getPreprocessingStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<PreprocessingStatusResponse> => {
+
+  return customFetch<PreprocessingStatusResponse>(getGetPreprocessingStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPreprocessingStatusQueryKey = () => {
+    return [
+    `/api/preprocessing-status`
+    ] as const;
+    }
+
+
+export const getGetPreprocessingStatusQueryOptions = <TData = Awaited<ReturnType<typeof getPreprocessingStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPreprocessingStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPreprocessingStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPreprocessingStatus>>> = ({ signal }) => getPreprocessingStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPreprocessingStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetPreprocessingStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getPreprocessingStatus>>>
+export type GetPreprocessingStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get GIS preprocessing status
+ */
+
+export function useGetPreprocessingStatus<TData = Awaited<ReturnType<typeof getPreprocessingStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPreprocessingStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetPreprocessingStatusQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

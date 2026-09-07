@@ -71,3 +71,32 @@ export interface DataStatusResponse {
   summary: DataStatusSummary;
 }
 
+export type PreprocessingStatusResponseStatus = typeof PreprocessingStatusResponseStatus[keyof typeof PreprocessingStatusResponseStatus];
+
+
+export const PreprocessingStatusResponseStatus = {
+  not_run: 'not_run',
+  completed_with_warnings: 'completed_with_warnings',
+  failed: 'failed',
+} as const;
+
+export type PreprocessingStatusResponseDatasetsItem = { [key: string]: unknown };
+
+export type PreprocessingStatusResponseFeatureCounts = { [key: string]: unknown };
+
+export type PreprocessingStatusResponseRasterInformation = { [key: string]: unknown };
+
+export type PreprocessingStatusResponseRainfallInformation = { [key: string]: unknown };
+
+export interface PreprocessingStatusResponse {
+  status: PreprocessingStatusResponseStatus;
+  generated_at?: string | null;
+  datasets: PreprocessingStatusResponseDatasetsItem[];
+  available_processed_datasets: string[];
+  feature_counts: PreprocessingStatusResponseFeatureCounts;
+  raster_information: PreprocessingStatusResponseRasterInformation;
+  rainfall_information: PreprocessingStatusResponseRainfallInformation;
+  warnings: string[];
+  errors: string[];
+}
+

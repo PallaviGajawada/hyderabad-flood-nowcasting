@@ -100,6 +100,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DataStatusResponse"
+  /preprocessing-status:
+    get:
+      operationId: getPreprocessingStatus
+      tags: [health]
+      summary: Get GIS preprocessing status
+      description: Returns the latest reproducible preprocessing report for the available validated datasets.
+      responses:
+        "200":
+          description: GIS preprocessing status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreprocessingStatusResponse"
 components:
   schemas:
     SystemStatus:
@@ -211,4 +224,49 @@ components:
         - generated_at
         - datasets
         - summary
+    PreprocessingStatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_run, completed_with_warnings, failed]
+        generated_at:
+          type: string
+          format: date-time
+          nullable: true
+        datasets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        available_processed_datasets:
+          type: array
+          items:
+            type: string
+        feature_counts:
+          type: object
+          additionalProperties: true
+        raster_information:
+          type: object
+          additionalProperties: true
+        rainfall_information:
+          type: object
+          additionalProperties: true
+        warnings:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+      required:
+        - status
+        - datasets
+        - available_processed_datasets
+        - feature_counts
+        - raster_information
+        - rainfall_information
+        - warnings
+        - errors
 

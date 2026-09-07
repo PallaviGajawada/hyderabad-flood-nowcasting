@@ -16,6 +16,10 @@ DATA_ROOT = Path(
 ).expanduser()
 OUTPUTS_ROOT = PROJECT_ROOT / "outputs"
 DATA_VALIDATION_REPORT = OUTPUTS_ROOT / "data_validation_report.json"
+PREPROCESSED_ROOT = OUTPUTS_ROOT / "preprocessed"
+PREPROCESSING_REPORT = PREPROCESSED_ROOT / "preprocessing_report.json"
+WEB_CRS = "EPSG:4326"
+MODEL_CRS = "EPSG:32644"
 
 
 @dataclass(frozen=True)

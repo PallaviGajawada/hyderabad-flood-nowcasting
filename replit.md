@@ -30,6 +30,13 @@ nowcasting in Hyderabad, India.
 - `backend/rainfall/imd_adapter.py` — IMD adapter placeholder
 - `backend/main.py` — minimal FastAPI app and placeholder routes
 - `backend/preprocessing/data_validator.py` — read-only source-file inspection
+- `backend/preprocessing/preprocessing_pipeline.py` — reproducible GIS
+  preprocessing orchestration and report
+- `backend/preprocessing/dem_processor.py`, `landcover_processor.py`,
+  `rainfall_processor.py`, `drainage_processor.py`,
+  `waterbody_processor.py` — stage processors
+- `backend/models/rainfall_interface.py` — replaceable IMD/radar rainfall
+  provider contract
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
 - `README.md` — scope, limitations, datasets, and future stages
@@ -46,6 +53,8 @@ nowcasting in Hyderabad, India.
   rewrites or reprojects them.
 - ArcGIS FeatureSet JSON is accepted alongside conventional GeoJSON because
   several supplied vector files use that native format.
+- GIS preprocessing keeps EPSG:4326 for web/interchange outputs and uses
+  EPSG:32644 for metre-based terrain and length calculations.
 
 ## Product
 
@@ -62,6 +71,8 @@ warning system.
 ## Gotchas
 
 - Run API codegen after every OpenAPI change.
+- Data validation and preprocessing report missing source files instead of
+  creating fallback datasets.
 - Use `HYDERABAD_FLOOD_DATA` to point at an external source-data root when
   needed. The current workspace contains the supplied source files; roads and
   historical flood KML remain missing.

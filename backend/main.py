@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import os
+import json
 
 import uvicorn
 from fastapi import APIRouter, FastAPI
 
-from .config import DATA_VALIDATION_REPORT
+from .config import DATA_VALIDATION_REPORT, PREPROCESSING_REPORT
 from .preprocessing.data_validator import validate_all_datasets
 
 SYSTEM_NAME = "Hyderabad Urban Flood Nowcasting System"
@@ -39,6 +40,22 @@ def model_placeholder() -> dict[str, str]:
     return {"status": "not_implemented", "message": MODEL_NOT_IMPLEMENTED}
 
 
+def preprocessing_status() -> dict[str, object]:
+    if not PREPROCESSING_REPORT.exists():
+        return {
+            "status": "not_run",
+            "generated_at": None,
+            "datasets": [],
+            "available_processed_datasets": [],
+            "feature_counts": {},
+            "raster_information": {},
+            "rainfall_information": {},
+            "warnings": ["Run the GIS preprocessing pipeline to create the report."],
+            "errors": [],
+        }
+    return json.loads(PREPROCESSING_REPORT.read_text(encoding="utf-8"))
+
+
 def register_routes(router: APIRouter) -> None:
     @router.get("/")
     def get_system_status() -> dict[str, object]:
@@ -67,6 +84,10 @@ def register_routes(router: APIRouter) -> None:
     @router.get("/data-status")
     def get_data_status() -> dict[str, object]:
         return validate_all_datasets(report_path=DATA_VALIDATION_REPORT)
+
+    @router.get("/preprocessing-status")
+    def get_preprocessing_status() -> dict[str, object]:
+        return preprocessing_status()
 
 
 # The unprefixed routes make the Python app easy to run directly. The /api

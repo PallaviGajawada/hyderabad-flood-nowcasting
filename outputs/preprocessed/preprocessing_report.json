@@ -1,0 +1,382 @@
+{
+  "status": "completed_with_warnings",
+  "generated_at": "2026-09-07T17:40:00.279570+00:00",
+  "spatial_reference_strategy": {
+    "web_interchange_crs": "EPSG:4326",
+    "projected_model_crs": "EPSG:32644",
+    "reason": "EPSG:4326 is retained for web/interchange GeoJSON; EPSG:32644 is used for metres-based terrain and length calculations."
+  },
+  "datasets": [
+    {
+      "dataset_key": "hyderabad_dem",
+      "input_dataset": "/home/runner/workspace/data/terrain/dem/hyderabad_dem_30m.tif",
+      "output_dataset": [
+        "/home/runner/workspace/outputs/preprocessed/dem/dem_ghmc.tif",
+        "/home/runner/workspace/outputs/preprocessed/dem/slope_ghmc.tif",
+        "/home/runner/workspace/outputs/preprocessed/dem/slope_percent_ghmc.tif"
+      ],
+      "feature_count_before": null,
+      "feature_count_after": null,
+      "crs_before": "EPSG:4326",
+      "crs_after": "EPSG:32644",
+      "geometry_types": [],
+      "bounding_box": [
+        206880.05044903146,
+        1913538.576514072,
+        247247.86794658256,
+        1943479.1233462035
+      ],
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "clipping_performed": true,
+      "raster_information": {
+        "width": 1333,
+        "height": 1018,
+        "pixel_size": {
+          "x": 29.9589649007848,
+          "y": 29.9589649007848
+        },
+        "valid_elevation_pixels": 682707,
+        "elevation_min": 457.14239501953125,
+        "elevation_max": 636.92626953125,
+        "slope_units": "degrees",
+        "slope_percent_output": "/home/runner/workspace/outputs/preprocessed/dem/slope_percent_ghmc.tif"
+      },
+      "reprojection": {
+        "from": "EPSG:4326",
+        "to": "EPSG:32644",
+        "reason": "Projected metres are required for slope and future distance/area calculations."
+      },
+      "warnings": [
+        "Slope is a terrain derivative only; no hydraulic parameters were assigned."
+      ],
+      "errors": []
+    },
+    {
+      "dataset_key": "hyderabad_landcover",
+      "input_dataset": "/home/runner/workspace/data/landcover/esaworldcover/hyderabad_landcover_10m.tif",
+      "output_dataset": [
+        "/home/runner/workspace/outputs/preprocessed/landcover/landcover_ghmc.tif",
+        "/home/runner/workspace/outputs/preprocessed/landcover/worldcover_classes.json"
+      ],
+      "feature_count_before": null,
+      "feature_count_after": null,
+      "crs_before": "EPSG:4326",
+      "crs_after": "EPSG:4326",
+      "geometry_types": [],
+      "bounding_box": [
+        78.2390736021936,
+        17.290716391999904,
+        78.62171490100059,
+        17.5610012980001
+      ],
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "clipping_performed": true,
+      "raster_information": {
+        "source_dimensions": {
+          "width": 36000,
+          "height": 36000
+        },
+        "output_dimensions": {
+          "width": 4593,
+          "height": 3245
+        },
+        "pixel_size": {
+          "x": 8.333333333333333e-05,
+          "y": 8.333333333333333e-05
+        },
+        "observed_class_codes": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          80
+        ]
+      },
+      "warnings": [
+        "No unrecognized WorldCover class codes observed."
+      ],
+      "errors": []
+    },
+    {
+      "dataset_key": "imd_rainfall_2024",
+      "input_dataset": "/home/runner/workspace/data/rainfall/imd_gauge/imd_rainfall_2024.nc",
+      "output_dataset": "/home/runner/workspace/outputs/preprocessed/rainfall/imd_rainfall_ghmc.nc",
+      "feature_count_before": null,
+      "feature_count_after": null,
+      "crs_before": null,
+      "crs_after": null,
+      "geometry_types": [],
+      "bounding_box": [
+        78.2390736021936,
+        17.290716391999904,
+        78.62171490100059,
+        17.5610012980001
+      ],
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "clipping_performed": true,
+      "rainfall_information": {
+        "variable": "rainfall_mm",
+        "source_variable": "RAINFALL",
+        "units": "mm",
+        "dimensions": {
+          "TIME": 366,
+          "LATITUDE": 1,
+          "LONGITUDE": 2
+        },
+        "coordinates": [
+          "LONGITUDE",
+          "LATITUDE",
+          "TIME"
+        ],
+        "time_dimension": "TIME",
+        "spatial_extent": {
+          "latitude": [
+            17.5,
+            17.5
+          ],
+          "longitude": [
+            78.25,
+            78.5
+          ]
+        },
+        "source_type": "historical IMD rainfall, not radar nowcast"
+      },
+      "warnings": [
+        "The extracted IMD series is historical rainfall and must not be treated as radar nowcast data."
+      ],
+      "errors": []
+    },
+    {
+      "dataset_key": "ghmc_nalas",
+      "input_dataset": "/home/runner/workspace/data/drainage/ghmc_nalas/ghmc_nalas.json",
+      "output_dataset": "/home/runner/workspace/outputs/preprocessed/drainage/ghmc_nalas.geojson",
+      "source_format": "ArcGIS FeatureSet JSON",
+      "feature_count_before": 96,
+      "feature_count_after": 94,
+      "crs_before": "EPSG:4326",
+      "crs_after": "EPSG:4326",
+      "geometry_types": [
+        "LineString",
+        "MultiLineString"
+      ],
+      "bounding_box": [
+        78.24223341890142,
+        17.302842097889496,
+        78.58845144106233,
+        17.543104755000087
+      ],
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "duplicate_geometry_count": 0,
+      "clipping_performed": true,
+      "important_fields_preserved": [
+        "FID",
+        "Nala_ID",
+        "Nala_Name",
+        "Circle",
+        "District",
+        "Total_Seg",
+        "Length_m",
+        "Govt_Encr",
+        "Pvt_Encr",
+        "Rel_Encr",
+        "Total_Encr",
+        "Court_Case",
+        "Mandal",
+        "Village",
+        "SNO",
+        "ZONE_NAME",
+        "ZONE_ID",
+        "length_m_calc"
+      ],
+      "length_field": "length_m_calc",
+      "warnings": [
+        "2 features were outside the GHMC boundary or had no intersection."
+      ],
+      "errors": []
+    },
+    {
+      "dataset_key": "hyderabad_stream_network",
+      "input_dataset": "/home/runner/workspace/data/drainage/streams/hyderabad_stream_network.json",
+      "output_dataset": "/home/runner/workspace/outputs/preprocessed/drainage/streams.geojson",
+      "source_format": "ArcGIS FeatureSet JSON",
+      "feature_count_before": 1000,
+      "feature_count_after": 0,
+      "crs_before": "EPSG:4326",
+      "crs_after": "EPSG:4326",
+      "geometry_types": [],
+      "bounding_box": null,
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "duplicate_geometry_count": 0,
+      "clipping_performed": true,
+      "important_fields_preserved": [
+        "Shape_Length",
+        "Layer",
+        "Categories",
+        "PI_CODE",
+        "DR_Code",
+        "Order_",
+        "Basin",
+        "OBJECTID_1",
+        "OBJECTID",
+        "length_m_calc"
+      ],
+      "length_field": "length_m_calc",
+      "warnings": [
+        "1000 features were outside the GHMC boundary or had no intersection."
+      ],
+      "errors": []
+    },
+    {
+      "dataset_key": "hyderabad_tanks",
+      "input_dataset": "/home/runner/workspace/data/drainage/tanks/hyderabad_tanks.json",
+      "output_dataset": "/home/runner/workspace/outputs/preprocessed/waterbodies/hyderabad_tanks.geojson",
+      "source_format": "ArcGIS FeatureSet JSON",
+      "feature_count_before": 847,
+      "feature_count_after": 394,
+      "crs_before": "EPSG:4326",
+      "crs_after": "EPSG:4326",
+      "geometry_types": [
+        "MultiPolygon",
+        "Polygon"
+      ],
+      "bounding_box": [
+        78.24013393677828,
+        17.296715616400512,
+        78.61627667319414,
+        17.555110882242534
+      ],
+      "invalid_geometry_count": 0,
+      "empty_geometry_count": 0,
+      "duplicate_geometry_count": 0,
+      "clipping_performed": true,
+      "important_fields_preserved": [
+        "FID",
+        "Descr_1",
+        "Descr_2",
+        "Descr_3",
+        "PI_CODE",
+        "LU_Code",
+        "Shape_Area"
+      ],
+      "warnings": [
+        "453 water-body features were outside the GHMC boundary or had no intersection.",
+        "Storage capacity, water level, and hydraulic parameters were not assigned."
+      ],
+      "errors": []
+    }
+  ],
+  "available_processed_datasets": [
+    "/home/runner/workspace/outputs/preprocessed/dem/dem_ghmc.tif",
+    "/home/runner/workspace/outputs/preprocessed/dem/slope_ghmc.tif",
+    "/home/runner/workspace/outputs/preprocessed/dem/slope_percent_ghmc.tif",
+    "/home/runner/workspace/outputs/preprocessed/drainage/ghmc_nalas.geojson",
+    "/home/runner/workspace/outputs/preprocessed/drainage/streams.geojson",
+    "/home/runner/workspace/outputs/preprocessed/landcover/landcover_ghmc.tif",
+    "/home/runner/workspace/outputs/preprocessed/landcover/worldcover_classes.json",
+    "/home/runner/workspace/outputs/preprocessed/rainfall/imd_rainfall_ghmc.nc",
+    "/home/runner/workspace/outputs/preprocessed/waterbodies/hyderabad_tanks.geojson"
+  ],
+  "feature_counts": {
+    "ghmc_nalas": {
+      "before": 96,
+      "after": 94
+    },
+    "hyderabad_stream_network": {
+      "before": 1000,
+      "after": 0
+    },
+    "hyderabad_tanks": {
+      "before": 847,
+      "after": 394
+    }
+  },
+  "raster_information": {
+    "hyderabad_dem": {
+      "width": 1333,
+      "height": 1018,
+      "pixel_size": {
+        "x": 29.9589649007848,
+        "y": 29.9589649007848
+      },
+      "valid_elevation_pixels": 682707,
+      "elevation_min": 457.14239501953125,
+      "elevation_max": 636.92626953125,
+      "slope_units": "degrees",
+      "slope_percent_output": "/home/runner/workspace/outputs/preprocessed/dem/slope_percent_ghmc.tif"
+    },
+    "hyderabad_landcover": {
+      "source_dimensions": {
+        "width": 36000,
+        "height": 36000
+      },
+      "output_dimensions": {
+        "width": 4593,
+        "height": 3245
+      },
+      "pixel_size": {
+        "x": 8.333333333333333e-05,
+        "y": 8.333333333333333e-05
+      },
+      "observed_class_codes": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        80
+      ]
+    }
+  },
+  "rainfall_information": {
+    "variable": "rainfall_mm",
+    "source_variable": "RAINFALL",
+    "units": "mm",
+    "dimensions": {
+      "TIME": 366,
+      "LATITUDE": 1,
+      "LONGITUDE": 2
+    },
+    "coordinates": [
+      "LONGITUDE",
+      "LATITUDE",
+      "TIME"
+    ],
+    "time_dimension": "TIME",
+    "spatial_extent": {
+      "latitude": [
+        17.5,
+        17.5
+      ],
+      "longitude": [
+        78.25,
+        78.5
+      ]
+    },
+    "source_type": "historical IMD rainfall, not radar nowcast"
+  },
+  "warnings": [
+    "Road processing was not run because the Hyderabad roads GeoPackage is missing.",
+    "Historical flood processing was not run because the flood-location KML is missing.",
+    "No hydraulic parameters, flood simulation, or safe-route model were created.",
+    "Slope is a terrain derivative only; no hydraulic parameters were assigned.",
+    "No unrecognized WorldCover class codes observed.",
+    "The extracted IMD series is historical rainfall and must not be treated as radar nowcast data.",
+    "2 features were outside the GHMC boundary or had no intersection.",
+    "1000 features were outside the GHMC boundary or had no intersection.",
+    "453 water-body features were outside the GHMC boundary or had no intersection.",
+    "Storage capacity, water level, and hydraulic parameters were not assigned."
+  ],
+  "errors": [],
+  "inputs_not_processed": {
+    "roads": "/home/runner/workspace/data/roads/osm/hyderabad_roads.gpkg",
+    "historical_floods": "/home/runner/workspace/data/flood/historical_floods/hyderabad_flooding_locations.kml"
+  }
+}

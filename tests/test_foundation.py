@@ -26,4 +26,5 @@ def test_expected_routes_are_registered() -> None:
         "/api/health",
         "/api/forecast",
         "/api/data-status",
+        "/api/preprocessing-status",
     }.issubset(paths)

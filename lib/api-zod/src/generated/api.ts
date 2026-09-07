@@ -92,3 +92,20 @@ export const GetDataStatusResponse = zod.object({
 })
 
 
+/**
+ * Returns the latest reproducible preprocessing report for the available validated datasets.
+ * @summary Get GIS preprocessing status
+ */
+export const GetPreprocessingStatusResponse = zod.object({
+  "status": zod.enum(['not_run', 'completed_with_warnings', 'failed']),
+  "generated_at": zod.coerce.date().nullish(),
+  "datasets": zod.array(zod.record(zod.string(), zod.unknown())),
+  "available_processed_datasets": zod.array(zod.string()),
+  "feature_counts": zod.record(zod.string(), zod.unknown()),
+  "raster_information": zod.record(zod.string(), zod.unknown()),
+  "rainfall_information": zod.record(zod.string(), zod.unknown()),
+  "warnings": zod.array(zod.string()),
+  "errors": zod.array(zod.string())
+})
+
+
