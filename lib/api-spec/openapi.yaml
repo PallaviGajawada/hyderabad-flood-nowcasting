@@ -3,14 +3,29 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Hyderabad Urban Flood Nowcasting System foundation API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: nowcasting
+    description: Prototype nowcasting endpoints
 paths:
+  /:
+    get:
+      operationId: getSystemStatus
+      tags: [health]
+      summary: Get system status
+      description: Returns the current prototype status and supported forecast horizon.
+      responses:
+        "200":
+          description: System status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemStatus"
   /healthz:
     get:
       operationId: healthCheck
@@ -24,13 +39,84 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /health:
+    get:
+      operationId: getHealth
+      tags: [health]
+      summary: Get application health
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /forecast:
+    get:
+      operationId: getForecast
+      tags: [nowcasting]
+      summary: Get flood forecast placeholder
+      responses:
+        "200":
+          description: Forecast model placeholder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelPlaceholder"
+  /flood-depth:
+    get:
+      operationId: getFloodDepth
+      tags: [nowcasting]
+      summary: Get flood depth placeholder
+      responses:
+        "200":
+          description: Flood depth model placeholder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelPlaceholder"
+  /safe-route:
+    get:
+      operationId: getSafeRoute
+      tags: [nowcasting]
+      summary: Get safe route placeholder
+      responses:
+        "200":
+          description: Safe route model placeholder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelPlaceholder"
 components:
   schemas:
+    SystemStatus:
+      type: object
+      properties:
+        system:
+          type: string
+        status:
+          type: string
+        forecast_horizon_hours:
+          type: integer
+      required:
+        - system
+        - status
+        - forecast_horizon_hours
     HealthStatus:
       type: object
       properties:
         status:
           type: string
       required:
+        - status
+    ModelPlaceholder:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: string
+      required:
+        - message
         - status
 

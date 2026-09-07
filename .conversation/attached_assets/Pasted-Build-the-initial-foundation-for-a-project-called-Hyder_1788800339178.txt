@@ -1,0 +1,203 @@
+Build the initial foundation for a project called:
+
+"Hyderabad Urban Flood Nowcasting System"
+
+This is a prototype for predicting urban flood risk and approximate flood depth over a 0–3 hour horizon for Hyderabad, India.
+
+IMPORTANT:
+Do NOT build the complete flood simulation yet.
+Do NOT fabricate datasets or hydraulic measurements.
+
+For this first step, create only the project foundation.
+
+TECH STACK
+
+Backend:
+- Python 3.11+
+- FastAPI
+- GeoPandas
+- Shapely
+- Rasterio
+- NumPy
+- Pandas
+- Xarray
+- NetworkX
+- PyProj
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- Leaflet or React-Leaflet
+
+The backend will eventually perform:
+1. GIS preprocessing
+2. Rainfall-to-runoff estimation
+3. Drainage graph construction
+4. Hydraulic capacity estimation
+5. 2D surface flood simulation
+6. 0–3 hour flood forecasting
+7. Flood-risk calculation
+8. Flood-safe routing
+
+The frontend will eventually provide:
+1. Interactive Hyderabad map
+2. Flood-depth visualization
+3. Rainfall information
+4. 0–3 hour forecast timeline
+5. Drainage visualization
+6. Road-risk visualization
+7. Flood-safe route selection
+
+CREATE THIS INITIAL STRUCTURE:
+
+backend/
+    main.py
+    config.py
+    requirements.txt
+    api/
+    models/
+    preprocessing/
+    routing/
+    utils/
+
+frontend/
+    src/
+        components/
+        maps/
+        pages/
+        services/
+        types/
+
+data/
+    rainfall/
+    terrain/
+    landcover/
+    drainage/
+    roads/
+    flood/
+    boundaries/
+
+outputs/
+    flood_maps/
+    forecasts/
+    routes/
+
+tests/
+
+README.md
+
+Create a configuration system in backend/config.py for these dataset paths:
+
+HYDERABAD_FLOOD_DATA/drainage/ghmc_nalas/ghmc_nalas.json
+
+HYDERABAD_FLOOD_DATA/flood/ghmc_inundation/ghmc_inundation_areas.txt
+
+HYDERABAD_FLOOD_DATA/drainage/tanks/hyderabad_tanks.txt
+
+HYDERABAD_FLOOD_DATA/drainage/streams/hyderabad_stream_network.txt
+
+HYDERABAD_FLOOD_DATA/roads/osm/hyderabad_roads.gpkg
+
+HYDERABAD_FLOOD_DATA/terrain/dem/hyderabad_dem_30m.tif
+
+HYDERABAD_FLOOD_DATA/landcover/esaworldcover/hyderabad_landcover_10m.tif
+
+HYDERABAD_FLOOD_DATA/rainfall/imd_gauge/imd_rainfall_2024.nc
+
+HYDERABAD_FLOOD_DATA/flood/historical_floods/hyderabad_flooding_locations.kml
+
+HYDERABAD_FLOOD_DATA/boundaries/ghmc/ghmc_boundary.geojson
+
+IMPORTANT ARCHITECTURE REQUIREMENT:
+
+Create a rainfall input abstraction/interface.
+
+The system must eventually support:
+
+Historical/scenario rainfall:
+IMD rainfall NetCDF
+
+AND future/live rainfall:
+Doppler Weather Radar rainfall nowcast
+
+Do not hard-code the model specifically to IMD rainfall.
+
+For now, create the interface and an IMD rainfall adapter placeholder.
+
+DATA LIMITATIONS:
+
+The IMD rainfall dataset is approximately 0.25 degree resolution.
+The DEM is approximately 30 m resolution.
+
+Therefore:
+- Do not claim true street-level prediction accuracy.
+- Do not claim engineering-grade hydraulic prediction.
+- Later model outputs must be described as prototype/model estimates.
+- Missing hydraulic parameters such as pipe diameter, invert elevation, pipe depth, Manning roughness, manhole locations and hydraulic capacity must NOT be invented at this stage.
+
+BACKEND REQUIREMENTS:
+
+Create a minimal FastAPI application with:
+
+GET /
+
+returning:
+
+{
+  "system": "Hyderabad Urban Flood Nowcasting System",
+  "status": "initial prototype",
+  "forecast_horizon_hours": 3
+}
+
+Create:
+
+GET /health
+
+returning a simple health response.
+
+Create placeholder API routes for future:
+
+GET /forecast
+GET /flood-depth
+GET /safe-route
+
+These should currently return a clear message such as:
+"Model not implemented yet."
+
+FRONTEND REQUIREMENTS:
+
+Create a basic dashboard shell titled:
+
+"Hyderabad Urban Flood Nowcasting"
+
+Include placeholder sections for:
+
+- Current Status
+- Rainfall
+- Flood Forecast
+- Flood Depth
+- Drainage Network
+- Safe Route
+
+Include a basic map area using Leaflet.
+
+Do not implement the actual flood model yet.
+
+README.md must explain:
+- project purpose
+- architecture
+- current implementation status
+- datasets expected
+- known data limitations
+- future development stages
+
+After completing this task, report:
+1. Files created
+2. Dependencies installed
+3. Whether backend starts successfully
+4. Whether frontend starts successfully
+5. Any errors
+6. Commands used to run the application
+
+Do not proceed to flood modeling.

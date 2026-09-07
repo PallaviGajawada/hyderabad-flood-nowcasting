@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Hyderabad Flood Nowcasting"
+description = "A prototype dashboard foundation for viewing Hyderabad urban flood nowcasting inputs, model-estimate placeholders, and future-safe routing capabilities without claiming engineering-grade precision."
+version = "1.0.0"
+id = "artifacts/hyderabad-flood-nowcasting"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24465
+
+[services.development]
+run = "pnpm --filter @workspace/hyderabad-flood-nowcasting run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hyderabad-flood-nowcasting", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/hyderabad-flood-nowcasting/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24465"
+BASE_PATH = "/"

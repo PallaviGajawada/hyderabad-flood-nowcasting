@@ -1,44 +1,66 @@
-# [Project name]
+# Hyderabad Urban Flood Nowcasting System
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An initial dashboard and API foundation for prototype 0–3 hour urban flood
+nowcasting in Hyderabad, India.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the FastAPI service
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/hyderabad-flood-nowcasting run dev` — run the
+  dashboard
+- `PYTHONPATH=. python -m backend.main` — run the FastAPI app directly
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
+- API: FastAPI + Uvicorn
+- Geospatial foundation: GeoPandas, Shapely, Rasterio, PyProj
+- Scientific foundation: NumPy, Pandas, Xarray, NetworkX
+- Frontend: React + TypeScript + Vite + Leaflet
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: Vite
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `backend/config.py` — dataset-root configuration and expected source paths
+- `backend/rainfall/base.py` — provider-neutral rainfall input contract
+- `backend/rainfall/imd_adapter.py` — IMD adapter placeholder
+- `backend/main.py` — minimal FastAPI app and placeholder routes
+- `lib/api-spec/openapi.yaml` — API contract source of truth
+- `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
+- `README.md` — scope, limitations, datasets, and future stages
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Rainfall is represented through a provider-neutral interface so live Doppler
+  Weather Radar input can be added alongside IMD historical/scenario data.
+- Model endpoints return an explicit not-implemented response rather than
+  fabricated forecasts or depths.
+- The map is a spatial context surface only; it must not be presented as
+  street-level flood prediction.
+- Dataset paths are configuration-only until source validation and preprocessing
+  are implemented.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Users can inspect the prototype system status, rainfall context, forecast
+placeholder, flood-depth placeholder, drainage placeholder, and safe-route
+placeholder from a Hyderabad dashboard. It is a foundation, not an operational
+warning system.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Do not proceed to flood modeling or fabricate datasets and hydraulic
+  measurements until the required source data and parameters are available.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run API codegen after every OpenAPI change.
+- Use `HYDERABAD_FLOOD_DATA` to point at external source datasets; the repo
+  intentionally contains no flood data.
 
 ## Pointers
 

@@ -1,0 +1,18 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.141.1",
+    "geopandas>=1.1.4",
+    "networkx>=3.6.1",
+    "numpy>=2.4.6",
+    "pandas>=3.0.5",
+    "pyproj>=3.7.2",
+    "pytest>=9.1.1",
+    "rasterio>=1.4.4",
+    "shapely>=2.1.2",
+    "uvicorn[standard]>=0.52.4",
+    "xarray>=2026.7.0",
+]
