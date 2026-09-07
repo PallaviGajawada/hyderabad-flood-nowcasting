@@ -16,6 +16,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DataStatusResponse,
   HealthStatus,
   ModelPlaceholder,
   SystemStatus
@@ -500,6 +501,84 @@ export function useGetSafeRoute<TData = Awaited<ReturnType<typeof getSafeRoute>>
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetSafeRouteQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetDataStatusUrl = () => {
+
+
+
+
+  return `/api/data-status`
+}
+
+/**
+ * Reads configured source datasets in memory and returns their actual validation status without modifying them.
+ * @summary Validate configured source datasets
+ */
+export const getDataStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<DataStatusResponse> => {
+
+  return customFetch<DataStatusResponse>(getGetDataStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetDataStatusQueryKey = () => {
+    return [
+    `/api/data-status`
+    ] as const;
+    }
+
+
+export const getGetDataStatusQueryOptions = <TData = Awaited<ReturnType<typeof getDataStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDataStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDataStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDataStatus>>> = ({ signal }) => getDataStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDataStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetDataStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getDataStatus>>>
+export type GetDataStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Validate configured source datasets
+ */
+
+export function useGetDataStatus<TData = Awaited<ReturnType<typeof getDataStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDataStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetDataStatusQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

@@ -1,0 +1,1 @@
+- [Raster validation runtime](raster-validation-runtime.md) — Rasterio needs the Nix expat library available before source inspection can run.

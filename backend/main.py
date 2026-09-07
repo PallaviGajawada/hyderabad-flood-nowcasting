@@ -7,7 +7,8 @@ import os
 import uvicorn
 from fastapi import APIRouter, FastAPI
 
-from .config import DATASETS
+from .config import DATA_VALIDATION_REPORT
+from .preprocessing.data_validator import validate_all_datasets
 
 SYSTEM_NAME = "Hyderabad Urban Flood Nowcasting System"
 MODEL_NOT_IMPLEMENTED = "Model not implemented yet."
@@ -62,6 +63,10 @@ def register_routes(router: APIRouter) -> None:
     @router.get("/safe-route")
     def get_safe_route() -> dict[str, str]:
         return model_placeholder()
+
+    @router.get("/data-status")
+    def get_data_status() -> dict[str, object]:
+        return validate_all_datasets(report_path=DATA_VALIDATION_REPORT)
 
 
 # The unprefixed routes make the Python app easy to run directly. The /api

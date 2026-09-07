@@ -63,3 +63,32 @@ export const GetSafeRouteResponse = zod.object({
 })
 
 
+/**
+ * Reads configured source datasets in memory and returns their actual validation status without modifying them.
+ * @summary Validate configured source datasets
+ */
+export const GetDataStatusResponse = zod.object({
+  "generated_at": zod.coerce.date(),
+  "datasets": zod.record(zod.string(), zod.object({
+  "dataset_key": zod.string(),
+  "path": zod.string(),
+  "dataset_type": zod.enum(['vector', 'raster', 'netcdf']),
+  "exists": zod.boolean(),
+  "readable": zod.boolean(),
+  "validation_status": zod.enum(['valid', 'invalid', 'missing', 'unreadable']),
+  "details": zod.record(zod.string(), zod.unknown()),
+  "errors": zod.array(zod.string()),
+  "warnings": zod.array(zod.string())
+})),
+  "summary": zod.object({
+  "total": zod.number().int(),
+  "found": zod.number().int(),
+  "readable": zod.number().int(),
+  "valid": zod.number().int(),
+  "missing": zod.number().int(),
+  "unreadable": zod.number().int(),
+  "invalid": zod.number().int()
+})
+})
+
+

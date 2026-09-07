@@ -18,6 +18,8 @@ DATA_ROOT = Path(
         str(PROJECT_ROOT / "data"),
     )
 ).expanduser()
+OUTPUTS_ROOT = PROJECT_ROOT / "outputs"
+DATA_VALIDATION_REPORT = OUTPUTS_ROOT / "data_validation_report.json"
 
 
 @dataclass(frozen=True)

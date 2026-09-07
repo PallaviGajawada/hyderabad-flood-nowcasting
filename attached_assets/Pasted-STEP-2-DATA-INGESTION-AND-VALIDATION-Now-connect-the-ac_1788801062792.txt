@@ -1,0 +1,103 @@
+STEP 2 — DATA INGESTION AND VALIDATION
+
+Now connect the actual Hyderabad datasets to the backend.
+
+Do NOT create fake/sample datasets.
+
+First inspect every file under the configured data directories.
+
+For each dataset:
+
+1. Verify that the file exists.
+2. Verify that it can actually be opened.
+3. Identify its CRS.
+4. Identify geometry type for vector data.
+5. Identify raster dimensions, resolution and bounds for raster data.
+6. Count features where applicable.
+7. Identify important attributes.
+8. Check for invalid or empty geometries.
+9. Check for missing values.
+10. Check whether the spatial extents overlap the GHMC boundary.
+
+Implement a Python data-validation module:
+
+backend/preprocessing/data_validator.py
+
+Create appropriate functions for:
+
+- validate_vector()
+- validate_raster()
+- validate_netcdf()
+- validate_all_datasets()
+
+Create an API:
+
+GET /data-status
+
+It should return a JSON response describing the status of every dataset.
+
+Example:
+
+{
+  "ghmc_nalas": {
+    "exists": true,
+    "readable": true,
+    "geometry": "LineString",
+    "feature_count": 96,
+    "crs": "EPSG:4326"
+  }
+}
+
+Do not assume these values; calculate them from the actual files.
+
+For rasters report:
+
+- width
+- height
+- CRS
+- pixel size
+- bounds
+- min value
+- max value
+- nodata value
+
+For NetCDF report:
+
+- dimensions
+- variables
+- coordinate names
+- time dimension if present
+- rainfall variable name
+- units
+- spatial extent
+
+For vector layers report:
+
+- feature count
+- geometry types
+- CRS
+- bounding box
+- important fields
+
+IMPORTANT:
+
+Do not reproject or permanently modify the source datasets yet.
+
+Do not fabricate missing hydraulic information.
+
+Do not build the flood simulation yet.
+
+Create a validation report at:
+
+outputs/data_validation_report.json
+
+Also add a simple "Data Status" section to the dashboard showing:
+
+- datasets found
+- datasets readable
+- dataset type
+- validation status
+
+If a dataset is missing, report it clearly rather than creating a replacement.
+
+After implementation, run the validation and report the actual results.

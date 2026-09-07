@@ -6,6 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './datasetStatus';
+export * from './datasetStatusDatasetType';
+export * from './datasetStatusDetails';
+export * from './datasetStatusValidationStatus';
+export * from './dataStatusResponse';
+export * from './dataStatusResponseDatasets';
+export * from './dataStatusSummary';
 export * from './healthStatus';
 export * from './modelPlaceholder';
 export * from './systemStatus';

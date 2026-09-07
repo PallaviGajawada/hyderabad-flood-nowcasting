@@ -87,6 +87,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ModelPlaceholder"
+  /data-status:
+    get:
+      operationId: getDataStatus
+      tags: [health]
+      summary: Validate configured source datasets
+      description: Reads configured source datasets in memory and returns their actual validation status without modifying them.
+      responses:
+        "200":
+          description: Dataset validation report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataStatusResponse"
 components:
   schemas:
     SystemStatus:
@@ -119,4 +132,83 @@ components:
       required:
         - message
         - status
+    DatasetStatus:
+      type: object
+      properties:
+        dataset_key:
+          type: string
+        path:
+          type: string
+        dataset_type:
+          type: string
+          enum: [vector, raster, netcdf]
+        exists:
+          type: boolean
+        readable:
+          type: boolean
+        validation_status:
+          type: string
+          enum: [valid, invalid, missing, unreadable]
+        details:
+          type: object
+          additionalProperties: true
+        errors:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+        - dataset_key
+        - path
+        - dataset_type
+        - exists
+        - readable
+        - validation_status
+        - details
+        - errors
+        - warnings
+    DataStatusSummary:
+      type: object
+      properties:
+        total:
+          type: integer
+        found:
+          type: integer
+        readable:
+          type: integer
+        valid:
+          type: integer
+        missing:
+          type: integer
+        unreadable:
+          type: integer
+        invalid:
+          type: integer
+      required:
+        - total
+        - found
+        - readable
+        - valid
+        - missing
+        - unreadable
+        - invalid
+    DataStatusResponse:
+      type: object
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+        datasets:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/DatasetStatus"
+        summary:
+          $ref: "#/components/schemas/DataStatusSummary"
+      required:
+        - generated_at
+        - datasets
+        - summary
 

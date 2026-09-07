@@ -20,3 +20,54 @@ export interface ModelPlaceholder {
   status: string;
 }
 
+export type DatasetStatusDatasetType = typeof DatasetStatusDatasetType[keyof typeof DatasetStatusDatasetType];
+
+
+export const DatasetStatusDatasetType = {
+  vector: 'vector',
+  raster: 'raster',
+  netcdf: 'netcdf',
+} as const;
+
+export type DatasetStatusValidationStatus = typeof DatasetStatusValidationStatus[keyof typeof DatasetStatusValidationStatus];
+
+
+export const DatasetStatusValidationStatus = {
+  valid: 'valid',
+  invalid: 'invalid',
+  missing: 'missing',
+  unreadable: 'unreadable',
+} as const;
+
+export type DatasetStatusDetails = { [key: string]: unknown };
+
+export interface DatasetStatus {
+  dataset_key: string;
+  path: string;
+  dataset_type: DatasetStatusDatasetType;
+  exists: boolean;
+  readable: boolean;
+  validation_status: DatasetStatusValidationStatus;
+  details: DatasetStatusDetails;
+  errors: string[];
+  warnings: string[];
+}
+
+export interface DataStatusSummary {
+  total: number;
+  found: number;
+  readable: number;
+  valid: number;
+  missing: number;
+  unreadable: number;
+  invalid: number;
+}
+
+export type DataStatusResponseDatasets = {[key: string]: DatasetStatus};
+
+export interface DataStatusResponse {
+  generated_at: string;
+  datasets: DataStatusResponseDatasets;
+  summary: DataStatusSummary;
+}
+

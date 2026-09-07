@@ -14,8 +14,11 @@ not fabricate rainfall, hydraulic measurements, or model outputs.
 - `lib/api-spec/openapi.yaml` — source of truth for the API contract.
 - `artifacts/api-server/` — the managed API service entrypoint, configured to
   run `backend.main` through the project workflow.
+- `backend/preprocessing/data_validator.py` — read-only vector, raster, and
+  NetCDF validation.
 - `data/` — expected source-data categories; no source datasets are included.
-- `outputs/` — future flood-map, forecast, and route output directories.
+- `outputs/` — validation report plus future flood-map, forecast, and route
+  output directories.
 - `tests/` — initial backend contract smoke tests.
 
 The rainfall boundary is implemented through `RainfallSource`. The
@@ -29,10 +32,12 @@ without coupling the model to IMD-specific files.
 - `/health` and `/api/health` return a simple health response.
 - `/forecast`, `/flood-depth`, and `/safe-route` return
   `Model not implemented yet.`
-- Dashboard sections exist for Current Status, Rainfall, Flood Forecast, Flood
-  Depth, Drainage Network, and Safe Route.
+- Dashboard sections exist for Current Status, Rainfall, Data Status, Flood
+  Forecast, Flood Depth, Drainage Network, and Safe Route.
 - Hyderabad map foundation is present; it is a context map, not a flood-depth
   layer.
+- `GET /api/data-status` checks every configured dataset and writes the
+  read-only result to `outputs/data_validation_report.json`.
 - No GIS preprocessing, rainfall-to-runoff estimation, drainage graph,
   hydraulic calculation, 2D simulation, forecast model, risk score, or safe
   routing has been implemented.
@@ -56,6 +61,21 @@ boundaries/ghmc/ghmc_boundary.geojson
 
 Set `HYDERABAD_FLOOD_DATA` to point at the data root. The foundation only
 describes these paths; it does not require them to start the API.
+
+## Current validation result
+
+The validation pass ran against the actual workspace on September 7, 2026:
+
+- 10 configured datasets
+- 0 found
+- 0 readable
+- 10 reported missing
+- 0 replacement or sample files created
+
+The full machine-readable result is in
+`outputs/data_validation_report.json`. Once the real files are placed under
+`HYDERABAD_FLOOD_DATA`, rerun the validation endpoint or refresh the dashboard
+to inspect their actual metadata.
 
 ## Known data limitations
 

@@ -29,6 +29,7 @@ nowcasting in Hyderabad, India.
 - `backend/rainfall/base.py` — provider-neutral rainfall input contract
 - `backend/rainfall/imd_adapter.py` — IMD adapter placeholder
 - `backend/main.py` — minimal FastAPI app and placeholder routes
+- `backend/preprocessing/data_validator.py` — read-only source-file inspection
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
 - `README.md` — scope, limitations, datasets, and future stages
@@ -43,6 +44,8 @@ nowcasting in Hyderabad, India.
   street-level flood prediction.
 - Dataset paths are configuration-only until source validation and preprocessing
   are implemented.
+- Data validation reports missing source files instead of creating fallback
+  datasets.
 
 ## Product
 

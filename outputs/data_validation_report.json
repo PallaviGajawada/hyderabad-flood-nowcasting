@@ -1,0 +1,144 @@
+{
+  "generated_at": "2026-09-07T17:17:45.887653+00:00",
+  "datasets": {
+    "ghmc_nalas": {
+      "dataset_key": "ghmc_nalas",
+      "path": "/home/runner/workspace/data/drainage/ghmc_nalas/ghmc_nalas.json",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "ghmc_inundation_areas": {
+      "dataset_key": "ghmc_inundation_areas",
+      "path": "/home/runner/workspace/data/flood/ghmc_inundation/ghmc_inundation_areas.txt",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "hyderabad_tanks": {
+      "dataset_key": "hyderabad_tanks",
+      "path": "/home/runner/workspace/data/drainage/tanks/hyderabad_tanks.txt",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "hyderabad_stream_network": {
+      "dataset_key": "hyderabad_stream_network",
+      "path": "/home/runner/workspace/data/drainage/streams/hyderabad_stream_network.txt",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "hyderabad_roads": {
+      "dataset_key": "hyderabad_roads",
+      "path": "/home/runner/workspace/data/roads/osm/hyderabad_roads.gpkg",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "hyderabad_dem": {
+      "dataset_key": "hyderabad_dem",
+      "path": "/home/runner/workspace/data/terrain/dem/hyderabad_dem_30m.tif",
+      "dataset_type": "raster",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "hyderabad_landcover": {
+      "dataset_key": "hyderabad_landcover",
+      "path": "/home/runner/workspace/data/landcover/esaworldcover/hyderabad_landcover_10m.tif",
+      "dataset_type": "raster",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "imd_rainfall_2024": {
+      "dataset_key": "imd_rainfall_2024",
+      "path": "/home/runner/workspace/data/rainfall/imd_gauge/imd_rainfall_2024.nc",
+      "dataset_type": "netcdf",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "historical_floods": {
+      "dataset_key": "historical_floods",
+      "path": "/home/runner/workspace/data/flood/historical_floods/hyderabad_flooding_locations.kml",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    },
+    "ghmc_boundary": {
+      "dataset_key": "ghmc_boundary",
+      "path": "/home/runner/workspace/data/boundaries/ghmc/ghmc_boundary.geojson",
+      "dataset_type": "vector",
+      "exists": false,
+      "readable": false,
+      "validation_status": "missing",
+      "details": {},
+      "errors": [
+        "File does not exist."
+      ],
+      "warnings": []
+    }
+  },
+  "summary": {
+    "total": 10,
+    "found": 0,
+    "readable": 0,
+    "valid": 0,
+    "missing": 10,
+    "unreadable": 0,
+    "invalid": 0
+  }
+}
