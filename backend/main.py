@@ -41,6 +41,8 @@ from .config import (
     SURFACE_WATER_ASSUMPTIONS_PATH,
 )
 from .preprocessing.data_validator import validate_all_datasets
+from .models.forecast_model import forecast_status, forecast_summary
+from .routing.safe_route import calculate_safe_route
 
 SYSTEM_NAME = "Hyderabad Urban Flood Nowcasting System"
 MODEL_NOT_IMPLEMENTED = "Model not implemented yet."
@@ -436,17 +438,43 @@ def register_routes(router: APIRouter) -> None:
     def get_healthz() -> dict[str, str]:
         return health_status()
 
+    @router.get("/forecast-status")
+    def get_forecast_status() -> dict[str, object]:
+        return forecast_status()
+
+    @router.get("/forecast-summary")
+    def get_forecast_summary() -> dict[str, object]:
+        try:
+            return forecast_summary()
+        except FileNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+
     @router.get("/forecast")
-    def get_forecast() -> dict[str, str]:
-        return model_placeholder()
+    def get_forecast() -> dict[str, object]:
+        return forecast_summary()
 
     @router.get("/flood-depth")
     def get_flood_depth() -> dict[str, str]:
         return model_placeholder()
 
     @router.get("/safe-route")
-    def get_safe_route() -> dict[str, str]:
-        return model_placeholder()
+    def get_safe_route(
+        source_lat: float,
+        source_lon: float,
+        destination_lat: float,
+        destination_lon: float,
+        forecast_minutes: int = 0,
+    ) -> dict[str, object]:
+        try:
+            return calculate_safe_route(
+                source_lat=source_lat,
+                source_lon=source_lon,
+                destination_lat=destination_lat,
+                destination_lon=destination_lon,
+                forecast_minutes=forecast_minutes,
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from error
 
     @router.get("/data-status")
     def get_data_status() -> dict[str, object]:

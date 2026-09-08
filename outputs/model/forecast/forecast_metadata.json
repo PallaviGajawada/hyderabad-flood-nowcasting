@@ -1,0 +1,204 @@
+{
+  "status": "ready",
+  "source": "deterministic_step6_persistence_decay",
+  "generated_at": "2026-09-08T13:39:23.471304+00:00",
+  "baseline": "/home/runner/workspace/outputs/model/flood_depth/display_depth_cm.tif",
+  "grid": {
+    "crs": "EPSG:32644",
+    "height": 1018,
+    "width": 1333,
+    "transform": [
+      29.9589649007848,
+      0.0,
+      207628.29110188718,
+      0.0,
+      -29.9589649007848,
+      1943760.2120413086
+    ],
+    "nodata": -9999.0
+  },
+  "rainfall": {
+    "provider": "historical_imd_2024_daily_gridded",
+    "description": "Historical 2024 IMD daily gridded rainfall; not real-time radar.",
+    "scenario": "Persistence/decay projection of the Step 6 baseline."
+  },
+  "assumptions": {
+    "status": "prototype_assumption",
+    "source": "deterministic_step6_persistence_decay",
+    "description": "Transparent deterministic scenario factors applied to the Step 6 display-depth baseline. This is not a radar nowcast.",
+    "forecast_horizons_minutes": [
+      0,
+      30,
+      60,
+      90,
+      120,
+      150,
+      180
+    ],
+    "rainfall_provider": "historical_imd_2024_daily_gridded",
+    "rainfall_persistence_factor_per_30_min": 0.99,
+    "surface_water_persistence_factor_per_30_min": 0.98,
+    "drainage_recession_factor_per_30_min": 0.99,
+    "notes": [
+      "T+0 is the existing Step 6 display-depth raster.",
+      "Future horizons apply a reproducible persistence/decay scenario to the baseline.",
+      "A Doppler Weather Radar provider can replace this scenario without changing downstream contracts.",
+      "Factors are research assumptions and are not calibrated hydraulic or meteorological parameters."
+    ]
+  },
+  "horizons": [
+    {
+      "status": "ready",
+      "horizon_minutes": 0,
+      "horizon_label": "T+0",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 1.0,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_000/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_000/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 30.0,
+        "mean_depth_cm": 0.9459571242332458,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 18803,
+          "2": 7505,
+          "3": 2138,
+          "4": 11584
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 30,
+      "horizon_label": "T+30",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.960498,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_030/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_030/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 28.814939498901367,
+        "mean_depth_cm": 0.9085898995399475,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 18824,
+          "2": 7561,
+          "3": 13645
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 60,
+      "horizon_label": "T+60",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.9225564080039999,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_060/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_060/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 27.676692962646484,
+        "mean_depth_cm": 0.8726987838745117,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 23341,
+          "2": 3508,
+          "3": 13181
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 90,
+      "horizon_label": "T+90",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.8861135847750259,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_090/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_090/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 26.58340835571289,
+        "mean_depth_cm": 0.8382254838943481,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 23421,
+          "2": 3470,
+          "3": 13139
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 120,
+      "horizon_label": "T+120",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.8511103259492427,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_120/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_120/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 25.533309936523438,
+        "mean_depth_cm": 0.8051139116287231,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 23512,
+          "2": 3511,
+          "3": 13007
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 150,
+      "horizon_label": "T+150",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.8174897658535957,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_150/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_150/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 24.52469253540039,
+        "mean_depth_cm": 0.7733103036880493,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 23567,
+          "2": 3505,
+          "3": 12958
+        }
+      }
+    },
+    {
+      "status": "ready",
+      "horizon_minutes": 180,
+      "horizon_label": "T+180",
+      "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+      "persistence_decay_factor": 0.7851972851228471,
+      "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_180/flood_depth_cm.tif",
+      "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_180/flood_risk_class.tif",
+      "statistics": {
+        "valid_cell_count": 505634,
+        "maximum_depth_cm": 23.555917739868164,
+        "mean_depth_cm": 0.7427629232406616,
+        "affected_cell_count": 40030,
+        "risk_class_counts": {
+          "0": 465604,
+          "1": 23880,
+          "2": 3303,
+          "3": 12847
+        }
+      }
+    }
+  ],
+  "warnings": [
+    "Forecasts are deterministic scenario projections, not real-time radar nowcasts.",
+    "Depths are prototype accumulated surface-water equivalents, not observed street depths.",
+    "Hydraulic measurements and validated drainage-network parameters are not available."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "status": "ready",
+  "horizon_minutes": 30,
+  "horizon_label": "T+30",
+  "rainfall_scenario": "Persistence/decay projection of the Step 6 baseline.",
+  "persistence_decay_factor": 0.960498,
+  "flood_depth_raster": "/home/runner/workspace/outputs/model/forecast/tplus_030/flood_depth_cm.tif",
+  "flood_risk_raster": "/home/runner/workspace/outputs/model/forecast/tplus_030/flood_risk_class.tif",
+  "statistics": {
+    "valid_cell_count": 505634,
+    "maximum_depth_cm": 28.814939498901367,
+    "mean_depth_cm": 0.9085898995399475,
+    "affected_cell_count": 40030,
+    "risk_class_counts": {
+      "0": 465604,
+      "1": 18824,
+      "2": 7561,
+      "3": 13645
+    }
+  }
+}

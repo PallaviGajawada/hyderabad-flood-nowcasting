@@ -1,0 +1,16 @@
+{
+  "status": "prototype_assumption",
+  "source": "deterministic_step6_persistence_decay",
+  "description": "Transparent deterministic scenario factors applied to the Step 6 display-depth baseline. This is not a radar nowcast.",
+  "forecast_horizons_minutes": [0, 30, 60, 90, 120, 150, 180],
+  "rainfall_provider": "historical_imd_2024_daily_gridded",
+  "rainfall_persistence_factor_per_30_min": 0.99,
+  "surface_water_persistence_factor_per_30_min": 0.98,
+  "drainage_recession_factor_per_30_min": 0.99,
+  "notes": [
+    "T+0 is the existing Step 6 display-depth raster.",
+    "Future horizons apply a reproducible persistence/decay scenario to the baseline.",
+    "A Doppler Weather Radar provider can replace this scenario without changing downstream contracts.",
+    "Factors are research assumptions and are not calibrated hydraulic or meteorological parameters."
+  ]
+}

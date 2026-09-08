@@ -1,0 +1,22 @@
+{
+  "status": "prototype_assumption",
+  "source": "prototype_routing_penalties",
+  "description": "Configurable flood-aware routing thresholds and penalties for research screening only.",
+  "safe_depth_cm": 5.0,
+  "caution_depth_cm": 15.0,
+  "maximum_allowed_depth_cm": 30.0,
+  "caution_penalty_per_cm": 0.08,
+  "risk_class_penalties": {
+    "0": 1.0,
+    "1": 1.05,
+    "2": 1.3,
+    "3": 2.5,
+    "4": 6.0
+  },
+  "default_speed_kmh": 30.0,
+  "notes": [
+    "Road flood depths are sampled from the existing Step 6 prototype raster.",
+    "Edges deeper than maximum_allowed_depth_cm are excluded from the flood-aware graph.",
+    "SAFE, CAUTION, and DANGEROUS are screening classifications, not emergency guidance."
+  ]
+}
