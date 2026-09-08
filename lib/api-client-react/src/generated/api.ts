@@ -23,6 +23,8 @@ import type {
   RoadsStatusResponse,
   RunoffStatusResponse,
   RunoffSummaryResponse,
+  SurfaceWaterStatusResponse,
+  SurfaceWaterSummaryResponse,
   SystemStatus
 } from './api.schemas';
 
@@ -895,6 +897,162 @@ export function useGetRunoffSummary<TData = Awaited<ReturnType<typeof getRunoffS
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetRunoffSummaryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetSurfaceWaterStatusUrl = () => {
+
+
+
+
+  return `/api/surface-water-status`
+}
+
+/**
+ * Returns readiness and limitations for deterministic terrain-based surface-water accumulation.
+ * @summary Get prototype surface-water routing status
+ */
+export const getSurfaceWaterStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<SurfaceWaterStatusResponse> => {
+
+  return customFetch<SurfaceWaterStatusResponse>(getGetSurfaceWaterStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSurfaceWaterStatusQueryKey = () => {
+    return [
+    `/api/surface-water-status`
+    ] as const;
+    }
+
+
+export const getGetSurfaceWaterStatusQueryOptions = <TData = Awaited<ReturnType<typeof getSurfaceWaterStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSurfaceWaterStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSurfaceWaterStatus>>> = ({ signal }) => getSurfaceWaterStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetSurfaceWaterStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getSurfaceWaterStatus>>>
+export type GetSurfaceWaterStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get prototype surface-water routing status
+ */
+
+export function useGetSurfaceWaterStatus<TData = Awaited<ReturnType<typeof getSurfaceWaterStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetSurfaceWaterStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetSurfaceWaterSummaryUrl = () => {
+
+
+
+
+  return `/api/surface-water-summary`
+}
+
+/**
+ * Returns real statistics from the generated terrain-based surface-water rasters.
+ * @summary Get prototype surface-water summary statistics
+ */
+export const getSurfaceWaterSummary = async ( options?: Parameters<typeof customFetch>[1]): Promise<SurfaceWaterSummaryResponse> => {
+
+  return customFetch<SurfaceWaterSummaryResponse>(getGetSurfaceWaterSummaryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSurfaceWaterSummaryQueryKey = () => {
+    return [
+    `/api/surface-water-summary`
+    ] as const;
+    }
+
+
+export const getGetSurfaceWaterSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getSurfaceWaterSummary>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSurfaceWaterSummaryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSurfaceWaterSummary>>> = ({ signal }) => getSurfaceWaterSummary({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterSummary>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetSurfaceWaterSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getSurfaceWaterSummary>>>
+export type GetSurfaceWaterSummaryQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get prototype surface-water summary statistics
+ */
+
+export function useGetSurfaceWaterSummary<TData = Awaited<ReturnType<typeof getSurfaceWaterSummary>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSurfaceWaterSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetSurfaceWaterSummaryQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

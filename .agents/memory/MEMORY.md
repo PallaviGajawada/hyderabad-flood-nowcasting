@@ -1,1 +1,2 @@
 - [Raster validation runtime](raster-validation-runtime.md) — Rasterio needs the Nix expat library available before source inspection can run.
+- [Processed GeoJSON geometry](processed-geojson-geometry.md) — Generated GeoJSON may need OGR/Shapely normalization before rasterization.

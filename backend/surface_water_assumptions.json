@@ -1,0 +1,14 @@
+{
+  "status": "prototype_assumption",
+  "description": "Transparent terrain-routing and drainage interaction assumptions for research demonstration only. These are not measured GHMC or HMWSSB hydraulic parameters.",
+  "routing_fraction": 1.0,
+  "drainage_capture_fraction": 0.15,
+  "drainage_effectiveness": 0.5,
+  "maximum_prototype_drainage_removal_m3_per_cell": 250.0,
+  "water_body_treatment": "Water-body cells are retained as terrain-routing sinks. Incoming prototype surface water is retained in the cell; no tank storage, spillway capacity, operating rule, or measured water level is assigned.",
+  "notes": [
+    "routing_fraction is a deterministic prototype routing fraction, not a calibrated hydraulic transfer parameter.",
+    "drainage_capture_fraction and drainage_effectiveness are screening assumptions applied only where processed nala geometries intersect the modeling grid.",
+    "maximum_prototype_drainage_removal_m3_per_cell is an explicit numerical cap for this demonstration, not a measured drainage capacity."
+  ]
+}

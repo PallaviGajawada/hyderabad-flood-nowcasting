@@ -20,8 +20,12 @@ not fabricate rainfall, hydraulic measurements, or model outputs.
   preprocessing orchestration.
 - `backend/models/runoff_model.py` — transparent rainfall-to-runoff prototype
   model and raster outputs.
+- `backend/models/surface_water_model.py` — deterministic D8-style
+  surface-water routing, accumulation, and interaction outputs.
 - `backend/runoff_coefficients.json` — configurable, explicitly assumed
   WorldCover runoff coefficients.
+- `backend/surface_water_assumptions.json` — configurable prototype routing
+  and drainage-interaction assumptions.
 - `data/` — organized source-data categories; only user-provided datasets are
   placed here.
 - `outputs/preprocessed/` — clipped/model-ready rasters, GeoJSON layers,
@@ -52,6 +56,10 @@ without coupling the model to IMD-specific files.
   coefficient configuration, and output readiness.
 - `GET /api/runoff-summary` returns real runoff statistics only after a
   successful model run.
+- `GET /api/surface-water-status` returns terrain-routing readiness, output
+  availability, grid information, and limitations.
+- `GET /api/surface-water-summary` returns real accumulated surface-water
+  statistics only after a successful routing run.
 - GIS preprocessing uses EPSG:4326 for web/interchange GeoJSON and EPSG:32644
   for metre-based terrain and length calculations. Reprojection is documented
   in the preprocessing report.
@@ -204,6 +212,60 @@ separately and receive zero direct runoff in this screening calculation.
 
 This stage does not simulate drainage capacity, pipe flow, backflow, hydraulic
 routing, or street-level flood depth.
+
+## Prototype Surface-Water Routing Model
+
+The surface-water stage is a deterministic terrain-based screening model:
+
+```text
+runoff
+  → DEM terrain routing
+  → D8 flow direction
+  → flow accumulation
+  → retained surface-water volume
+  → equivalent water depth
+```
+
+The model uses the existing DEM as its modeling grid and validates CRS,
+dimensions, transform, resolution, extent, and nodata alignment against the
+runoff rasters. It routes water only through valid DEM/runoff cells using the
+steepest strictly lower D8 neighbor. Flats and pits become sinks; routing
+never deliberately leaves the valid GHMC/model grid.
+
+Processed nala geometries are rasterized onto the DEM grid. Nala cells use
+the configurable values in `backend/surface_water_assumptions.json` for
+prototype capture/removal only. These are explicitly labeled assumptions and
+are not measured GHMC/HMWSSB drainage capacities. The model reports the
+removed volume and checks conservation:
+
+```text
+input runoff volume
+  ≈ retained surface-water volume
+  + prototype drainage-removed volume
+```
+
+Processed tank/water-body polygons are rasterized as retention sinks. No tank
+levels, spillway capacities, storage curves, or operating rules are invented.
+
+Outputs are written to:
+
+```text
+outputs/model/surface_water/
+├── surface_water_depth_mm.tif
+├── surface_water_depth_cm.tif
+├── surface_water_volume_m3.tif
+├── flow_direction.tif
+├── flow_accumulation.tif
+├── nala_interaction.tif
+└── surface_water_metadata.json
+```
+
+The depth layers represent **prototype terrain-based surface-water
+accumulation**, not measured flood depth. This is not a full 2D
+shallow-water hydrodynamic solver and does not implement safe routing,
+hydraulic pipe flow, backflow, or the final 0–3 hour forecast. Current
+rainfall remains the historical/scenario IMD input rather than radar
+nowcasting.
 
 ## Run
 

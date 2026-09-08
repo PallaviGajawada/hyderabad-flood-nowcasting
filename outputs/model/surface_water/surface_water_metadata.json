@@ -1,0 +1,95 @@
+{
+  "status": "ready",
+  "model_description": "prototype terrain-based surface-water accumulation",
+  "rainfall_scenario": "maximum spatial-mean rainfall in the processed IMD period",
+  "rainfall_timestamp": "2024-08-20",
+  "runoff_source": "/home/runner/workspace/outputs/model/runoff/runoff_volume_m3.tif",
+  "dem_source": "/home/runner/workspace/outputs/preprocessed/dem/dem_ghmc.tif",
+  "nala_source": "outputs/preprocessed/drainage/ghmc_nalas.geojson",
+  "water_body_source": "outputs/preprocessed/waterbodies/hyderabad_tanks.geojson",
+  "terrain_routing_method": "deterministic D8-style steepest strictly-lower-neighbor routing",
+  "d8_direction_codes": {
+    "1": "north",
+    "2": "northeast",
+    "4": "east",
+    "8": "southeast",
+    "16": "south",
+    "32": "southwest",
+    "64": "west",
+    "128": "northwest",
+    "0": "sink/no lower neighbor"
+  },
+  "drainage_assumptions": {
+    "status": "prototype_assumption",
+    "description": "Transparent terrain-routing and drainage interaction assumptions for research demonstration only. These are not measured GHMC or HMWSSB hydraulic parameters.",
+    "routing_fraction": 1.0,
+    "drainage_capture_fraction": 0.15,
+    "drainage_effectiveness": 0.5,
+    "maximum_prototype_drainage_removal_m3_per_cell": 250.0,
+    "water_body_treatment": "Water-body cells are retained as terrain-routing sinks. Incoming prototype surface water is retained in the cell; no tank storage, spillway capacity, operating rule, or measured water level is assigned.",
+    "notes": [
+      "routing_fraction is a deterministic prototype routing fraction, not a calibrated hydraulic transfer parameter.",
+      "drainage_capture_fraction and drainage_effectiveness are screening assumptions applied only where processed nala geometries intersect the modeling grid.",
+      "maximum_prototype_drainage_removal_m3_per_cell is an explicit numerical cap for this demonstration, not a measured drainage capacity."
+    ]
+  },
+  "water_body_treatment": "Water-body cells are retained as terrain-routing sinks. Incoming prototype surface water is retained in the cell; no tank storage, spillway capacity, operating rule, or measured water level is assigned.",
+  "crs": "EPSG:32644",
+  "raster_dimensions": {
+    "height": 1018,
+    "width": 1333
+  },
+  "raster_resolution_m": [
+    29.9589649007848,
+    29.9589649007848
+  ],
+  "cell_area_m2": 897.5395779264555,
+  "nodata_handling": {
+    "output_nodata": -9999.0,
+    "flow_direction_nodata": -9999,
+    "nala_interaction_nodata": -9999,
+    "description": "DEM/runoff nodata cells remain nodata and are excluded from routing."
+  },
+  "processing_timestamp": "2026-09-08T05:22:33.406004+00:00",
+  "statistics": {
+    "valid_cell_count": 505634,
+    "maximum_surface_water_depth_mm": 18858.3828125,
+    "maximum_surface_water_depth_cm": 1885.8382568359375,
+    "mean_surface_water_depth_mm": 37.087276458740234,
+    "total_surface_water_volume_m3": 16831190.0,
+    "threshold_cell_counts": {
+      "above_1_cm": 34068,
+      "above_5_cm": 21227,
+      "above_10_cm": 15330,
+      "above_20_cm": 12776,
+      "above_50_cm": 9725
+    },
+    "nala_interaction_cell_count": 7773,
+    "water_body_cell_count": 33953,
+    "input_runoff_volume_m3": 16936796.71471405,
+    "prototype_drainage_removed_volume_m3": 105607.62074837317,
+    "volume_conservation_error_m3": -2.2846506908535957e-09,
+    "volume_conservation_check": true
+  },
+  "output_availability": {
+    "surface_water_depth_mm": "/home/runner/workspace/outputs/model/surface_water/surface_water_depth_mm.tif",
+    "surface_water_depth_cm": "/home/runner/workspace/outputs/model/surface_water/surface_water_depth_cm.tif",
+    "surface_water_volume_m3": "/home/runner/workspace/outputs/model/surface_water/surface_water_volume_m3.tif",
+    "flow_direction": "/home/runner/workspace/outputs/model/surface_water/flow_direction.tif",
+    "flow_accumulation": "/home/runner/workspace/outputs/model/surface_water/flow_accumulation.tif",
+    "nala_interaction": "/home/runner/workspace/outputs/model/surface_water/nala_interaction.tif",
+    "metadata": "/home/runner/workspace/outputs/model/surface_water/surface_water_metadata.json"
+  },
+  "warnings": [
+    "This is a terrain-based screening/prototype model, not a full 2D shallow-water hydrodynamic solver.",
+    "Depth is equivalent accumulated surface-water depth, not observed or measured flood depth.",
+    "Drainage removal uses configurable prototype assumptions and is not a measured GHMC/HMWSSB capacity.",
+    "No safe routing, hydraulic pipe flow, backflow, tank operating rule, or final 0-3 hour forecast is implemented.",
+    "Current rainfall remains the IMD historical/scenario input, not radar nowcasting."
+  ],
+  "limitations": [
+    "D8 routing uses only the steepest strictly lower neighbor; flats and pits become sinks.",
+    "The model does not represent momentum, storage-area relationships, infiltration dynamics, or time stepping.",
+    "Tanks are represented as retention sinks without measured levels, spillways, or capacities."
+  ]
+}

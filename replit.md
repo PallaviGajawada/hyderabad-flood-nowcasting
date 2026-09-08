@@ -40,8 +40,12 @@ nowcasting in Hyderabad, India.
 - `backend/models/rainfall_interface.py` — replaceable IMD/radar rainfall
   provider contract
 - `backend/models/runoff_model.py` — rainfall-to-runoff prototype raster model
+- `backend/models/surface_water_model.py` — deterministic terrain-based
+  surface-water routing and accumulation
 - `backend/runoff_coefficients.json` — explicitly labeled prototype
   coefficient assumptions
+- `backend/surface_water_assumptions.json` — explicitly labeled prototype
+  routing/drainage assumptions
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
 - `README.md` — scope, limitations, datasets, and future stages
@@ -81,6 +85,9 @@ warning system.
 - The runoff prototype must keep rainfall/land-cover/DEM alignment explicit,
   preserve nodata, and never present prototype coefficients as measured
   hydraulic data.
+- Surface-water outputs must report volume conservation, keep tank/nala
+  assumptions configurable, and label equivalent depth as prototype
+  accumulated surface water rather than observed flood depth.
 - The large source roads GeoPackage is intentionally not required; the
   road-only processor obtains the real drive network from OSMnx/Overpass using
   the supplied GHMC boundary.

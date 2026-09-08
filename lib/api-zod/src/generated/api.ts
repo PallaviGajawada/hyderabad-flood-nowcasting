@@ -168,3 +168,44 @@ export const GetRunoffSummaryResponse = zod.object({
 })
 
 
+/**
+ * Returns readiness and limitations for deterministic terrain-based surface-water accumulation.
+ * @summary Get prototype surface-water routing status
+ */
+export const GetSurfaceWaterStatusResponse = zod.object({
+  "status": zod.enum(['not_run', 'not_ready', 'ready', 'error']),
+  "model_status": zod.string(),
+  "ready": zod.boolean(),
+  "output_availability": zod.record(zod.string(), zod.string()),
+  "dem_information": zod.record(zod.string(), zod.unknown()),
+  "runoff_scenario": zod.record(zod.string(), zod.unknown()).nullish(),
+  "terrain_routing_method": zod.string().nullish(),
+  "drainage_assumption_status": zod.string(),
+  "warnings": zod.array(zod.string()),
+  "limitations": zod.array(zod.string())
+})
+
+
+/**
+ * Returns real statistics from the generated terrain-based surface-water rasters.
+ * @summary Get prototype surface-water summary statistics
+ */
+export const GetSurfaceWaterSummaryResponse = zod.object({
+  "status": zod.string(),
+  "rainfall_timestamp": zod.string().optional(),
+  "rainfall_scenario": zod.string().optional(),
+  "valid_cell_count": zod.number().int(),
+  "maximum_surface_water_depth_mm": zod.number().nullable(),
+  "maximum_surface_water_depth_cm": zod.number().nullable(),
+  "mean_surface_water_depth_mm": zod.number().nullable(),
+  "total_surface_water_volume_m3": zod.number(),
+  "threshold_cell_counts": zod.record(zod.string(), zod.number().int()),
+  "nala_interaction_cell_count": zod.number().int(),
+  "water_body_cell_count": zod.number().int(),
+  "input_runoff_volume_m3": zod.number(),
+  "prototype_drainage_removed_volume_m3": zod.number(),
+  "volume_conservation_error_m3": zod.number(),
+  "volume_conservation_check": zod.boolean()
+})
+
+

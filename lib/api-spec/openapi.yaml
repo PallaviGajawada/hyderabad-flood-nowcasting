@@ -154,6 +154,34 @@ paths:
                 $ref: "#/components/schemas/RunoffSummaryResponse"
         "404":
           description: Runoff model has not successfully run
+  /surface-water-status:
+    get:
+      operationId: getSurfaceWaterStatus
+      tags: [nowcasting]
+      summary: Get prototype surface-water routing status
+      description: Returns readiness and limitations for deterministic terrain-based surface-water accumulation.
+      responses:
+        "200":
+          description: Surface-water model status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SurfaceWaterStatusResponse"
+  /surface-water-summary:
+    get:
+      operationId: getSurfaceWaterSummary
+      tags: [nowcasting]
+      summary: Get prototype surface-water summary statistics
+      description: Returns real statistics from the generated terrain-based surface-water rasters.
+      responses:
+        "200":
+          description: Surface-water summary statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SurfaceWaterSummaryResponse"
+        "404":
+          description: Surface-water model has not successfully run
 components:
   schemas:
     SystemStatus:
@@ -447,4 +475,99 @@ components:
         - rainfall_timestamp
         - rainfall_scenario
         - crs
+    SurfaceWaterStatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_run, not_ready, ready, error]
+        model_status:
+          type: string
+        ready:
+          type: boolean
+        output_availability:
+          type: object
+          additionalProperties:
+            type: string
+        dem_information:
+          type: object
+          additionalProperties: true
+        runoff_scenario:
+          type: object
+          nullable: true
+          additionalProperties: true
+        terrain_routing_method:
+          type: string
+          nullable: true
+        drainage_assumption_status:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string
+      required:
+        - status
+        - model_status
+        - ready
+        - output_availability
+        - dem_information
+        - drainage_assumption_status
+        - warnings
+        - limitations
+    SurfaceWaterSummaryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        rainfall_timestamp:
+          type: string
+        rainfall_scenario:
+          type: string
+        valid_cell_count:
+          type: integer
+        maximum_surface_water_depth_mm:
+          type: number
+          nullable: true
+        maximum_surface_water_depth_cm:
+          type: number
+          nullable: true
+        mean_surface_water_depth_mm:
+          type: number
+          nullable: true
+        total_surface_water_volume_m3:
+          type: number
+        threshold_cell_counts:
+          type: object
+          additionalProperties:
+            type: integer
+        nala_interaction_cell_count:
+          type: integer
+        water_body_cell_count:
+          type: integer
+        input_runoff_volume_m3:
+          type: number
+        prototype_drainage_removed_volume_m3:
+          type: number
+        volume_conservation_error_m3:
+          type: number
+        volume_conservation_check:
+          type: boolean
+      required:
+        - status
+        - valid_cell_count
+        - maximum_surface_water_depth_mm
+        - maximum_surface_water_depth_cm
+        - mean_surface_water_depth_mm
+        - total_surface_water_volume_m3
+        - threshold_cell_counts
+        - nala_interaction_cell_count
+        - water_body_cell_count
+        - input_runoff_volume_m3
+        - prototype_drainage_removed_volume_m3
+        - volume_conservation_error_m3
+        - volume_conservation_check
 

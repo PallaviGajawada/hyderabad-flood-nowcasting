@@ -169,3 +169,52 @@ export interface RunoffSummaryResponse {
   crs: string;
 }
 
+export type SurfaceWaterStatusResponseStatus = typeof SurfaceWaterStatusResponseStatus[keyof typeof SurfaceWaterStatusResponseStatus];
+
+
+export const SurfaceWaterStatusResponseStatus = {
+  not_run: 'not_run',
+  not_ready: 'not_ready',
+  ready: 'ready',
+  error: 'error',
+} as const;
+
+export type SurfaceWaterStatusResponseOutputAvailability = {[key: string]: string};
+
+export type SurfaceWaterStatusResponseDemInformation = { [key: string]: unknown };
+
+export type SurfaceWaterStatusResponseRunoffScenario = { [key: string]: unknown } | null;
+
+export interface SurfaceWaterStatusResponse {
+  status: SurfaceWaterStatusResponseStatus;
+  model_status: string;
+  ready: boolean;
+  output_availability: SurfaceWaterStatusResponseOutputAvailability;
+  dem_information: SurfaceWaterStatusResponseDemInformation;
+  runoff_scenario?: SurfaceWaterStatusResponseRunoffScenario;
+  terrain_routing_method?: string | null;
+  drainage_assumption_status: string;
+  warnings: string[];
+  limitations: string[];
+}
+
+export type SurfaceWaterSummaryResponseThresholdCellCounts = {[key: string]: number};
+
+export interface SurfaceWaterSummaryResponse {
+  status: string;
+  rainfall_timestamp?: string;
+  rainfall_scenario?: string;
+  valid_cell_count: number;
+  maximum_surface_water_depth_mm: number | null;
+  maximum_surface_water_depth_cm: number | null;
+  mean_surface_water_depth_mm: number | null;
+  total_surface_water_volume_m3: number;
+  threshold_cell_counts: SurfaceWaterSummaryResponseThresholdCellCounts;
+  nala_interaction_cell_count: number;
+  water_body_cell_count: number;
+  input_runoff_volume_m3: number;
+  prototype_drainage_removed_volume_m3: number;
+  volume_conservation_error_m3: number;
+  volume_conservation_check: boolean;
+}
+

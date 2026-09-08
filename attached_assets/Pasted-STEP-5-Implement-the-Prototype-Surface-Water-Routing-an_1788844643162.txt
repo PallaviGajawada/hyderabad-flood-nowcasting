@@ -1,0 +1,314 @@
+STEP 5 — Implement the Prototype Surface-Water Routing and Accumulation Model
+
+Now build the next modeling layer using the successfully generated runoff outputs.
+
+IMPORTANT:
+This is still a transparent research/prototype model, NOT an engineering-grade hydrodynamic or hydraulic model.
+
+Do not fabricate pipe capacities, pipe diameters, invert elevations, Manning coefficients, measured water levels, blockage percentages, or other GHMC/HMWSSB hydraulic measurements.
+
+The objective of this step is:
+
+RUNOFF → TERRAIN-BASED SURFACE WATER MOVEMENT → WATER ACCUMULATION
+
+Do NOT implement safe routing yet.
+
+Do NOT claim the resulting values are measured flood depths.
+
+==================================================
+1. INPUT DATA
+==================================================
+
+Use the existing validated/preprocessed datasets and outputs:
+
+- outputs/model/runoff/runoff_depth_mm.tif
+- outputs/model/runoff/runoff_volume_m3.tif
+- processed DEM
+- processed GHMC Nalas
+- processed tanks/water bodies
+- GHMC boundary
+
+Do not modify the original source datasets.
+
+==================================================
+2. GRID ALIGNMENT
+==================================================
+
+Use the existing DEM grid as the modeling grid.
+
+Validate and explicitly handle:
+
+- CRS
+- width/height
+- transform
+- pixel size
+- extent
+- nodata
+
+Ensure runoff and DEM are aligned.
+
+Do not silently resample without documenting the method.
+
+==================================================
+3. TERRAIN DERIVATION
+==================================================
+
+From the DEM derive:
+
+- elevation
+- slope
+- flow direction
+- basic drainage/flow accumulation information
+
+Use a transparent terrain-routing method suitable for a prototype.
+
+A D8-style flow-direction approach is acceptable.
+
+For each valid cell, determine the neighboring lower/equal-elevation cell toward which surface water can preferentially move.
+
+Avoid creating flow paths outside the GHMC boundary.
+
+Document limitations of the terrain-routing approach.
+
+==================================================
+4. SURFACE WATER ACCUMULATION
+==================================================
+
+Use the runoff volume as the incoming water source.
+
+Implement a reproducible terrain-based accumulation model.
+
+At minimum:
+
+1. Start with runoff volume generated in each valid cell.
+2. Route a configurable fraction of the water toward downstream terrain cells.
+3. Accumulate incoming water from upstream cells.
+4. Convert accumulated volume into an equivalent surface-water depth using cell area.
+
+The model must be deterministic and reproducible.
+
+Do not generate random flood depths.
+
+==================================================
+5. DRAINAGE / NALA INTERACTION
+==================================================
+
+Use the actual GHMC nala geometries already processed.
+
+Snap/intersect nala geometry with the modeling grid where appropriate.
+
+Identify cells that intersect or are sufficiently close to a nala.
+
+However:
+
+DO NOT assign real hydraulic capacities because those measurements are unavailable.
+
+Instead implement a clearly labeled configurable prototype drainage-assumption layer.
+
+For example, allow parameters such as:
+
+- drainage_capture_fraction
+- drainage_effectiveness
+- maximum prototype drainage removal
+
+These must be explicitly labeled:
+
+"prototype_assumption"
+
+and stored in configuration rather than hard-coded.
+
+Do not present these values as measured GHMC drainage capacities.
+
+==================================================
+6. WATER BODIES
+==================================================
+
+Use the processed tank/water-body polygons.
+
+Identify grid cells intersecting water bodies.
+
+Do not treat water-body cells as ordinary urban surface cells.
+
+Document how water bodies are handled in the prototype.
+
+Do not invent actual tank storage levels, spillway capacities, or operating rules.
+
+==================================================
+7. OUTPUTS
+==================================================
+
+Create:
+
+outputs/model/surface_water/
+
+    surface_water_depth_mm.tif
+    surface_water_depth_cm.tif
+    surface_water_volume_m3.tif
+    flow_direction.tif
+    flow_accumulation.tif
+    nala_interaction.tif
+    surface_water_metadata.json
+
+The depth layers represent:
+
+"prototype terrain-based surface-water accumulation"
+
+NOT measured flood depth.
+
+The metadata must explicitly say this.
+
+Include:
+
+- rainfall scenario
+- runoff source
+- DEM source
+- nala source
+- water-body source
+- terrain-routing method
+- drainage assumptions
+- water-body treatment
+- CRS
+- resolution
+- nodata handling
+- processing timestamp
+- limitations
+
+==================================================
+8. SUMMARY STATISTICS
+==================================================
+
+Calculate real statistics from the generated rasters:
+
+- valid cells
+- maximum accumulated water depth
+- mean accumulated water depth
+- total surface water volume
+- number of cells above:
+    1 cm
+    5 cm
+    10 cm
+    20 cm
+    50 cm
+
+Do not return fabricated values.
+
+==================================================
+9. API
+==================================================
+
+Add:
+
+GET /api/surface-water-status
+
+Return:
+
+- model status
+- readiness
+- output availability
+- DEM information
+- runoff scenario
+- terrain routing method
+- drainage-assumption status
+- warnings/limitations
+
+Add:
+
+GET /api/surface-water-summary
+
+Return the real calculated statistics.
+
+==================================================
+10. MAP SERVICE SUPPORT
+==================================================
+
+Prepare the output so the frontend can eventually visualize:
+
+- surface-water depth
+- flow accumulation
+- nala interaction
+- high accumulation areas
+
+If a raster tile/GeoJSON conversion is needed for the current frontend, implement only lightweight visualization support.
+
+Do not redesign the entire dashboard yet.
+
+==================================================
+11. TESTING
+==================================================
+
+Add tests for:
+
+- DEM alignment
+- flow direction
+- flow accumulation
+- runoff-volume conservation
+- cell-area calculation
+- water-body handling
+- nala intersection
+- nodata handling
+- drainage prototype assumptions
+- API status
+- API summary
+
+The runoff-volume conservation test is important:
+
+Verify that routing does not accidentally create water.
+
+Document any water intentionally removed by the prototype drainage-assumption mechanism.
+
+Run the complete existing test suite.
+
+==================================================
+12. DOCUMENTATION
+==================================================
+
+Update README/model documentation with:
+
+"Prototype Surface-Water Routing Model"
+
+Explain:
+
+Runoff
+→ DEM terrain routing
+→ flow direction
+→ flow accumulation
+→ surface-water volume
+→ equivalent water depth
+
+Clearly state:
+
+1. This is a terrain-based screening/prototype model.
+2. It is NOT a full 2D shallow-water hydrodynamic solver.
+3. Drainage capacities are unavailable and therefore are not claimed as measured.
+4. Any drainage capture/removal parameters are prototype assumptions.
+5. The resulting depth is an equivalent accumulated surface-water depth, not observed flood depth.
+6. Future versions can incorporate measured HMWSSB/GHMC hydraulic parameters.
+7. Current rainfall is still the IMD historical/scenario input, not radar nowcasting.
+
+==================================================
+13. IMPORTANT RESTRICTIONS
+==================================================
+
+DO NOT:
+
+- fabricate hydraulic measurements
+- fabricate flood observations
+- create random water depths
+- claim engineering-grade accuracy
+- implement safe routing
+- implement the final 0–3 hour forecast
+- modify original source datasets
+- silently fill missing hydraulic information
+
+At the end provide:
+
+- output files created
+- terrain routing method
+- number of valid cells
+- maximum surface-water depth
+- total surface-water volume
+- threshold cell counts
+- nala interaction result
+- water-body result
+- tests passed
+- warnings/limitations

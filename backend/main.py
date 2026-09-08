@@ -18,6 +18,14 @@ from .config import (
     RUNOFF_DEPTH_RASTER,
     RUNOFF_METADATA,
     RUNOFF_VOLUME_RASTER,
+    FLOW_ACCUMULATION_RASTER,
+    FLOW_DIRECTION_RASTER,
+    NALA_INTERACTION_RASTER,
+    SURFACE_WATER_DEPTH_CM,
+    SURFACE_WATER_DEPTH_MM,
+    SURFACE_WATER_METADATA,
+    SURFACE_WATER_VOLUME,
+    SURFACE_WATER_ASSUMPTIONS_PATH,
 )
 from .preprocessing.data_validator import validate_all_datasets
 
@@ -166,6 +174,90 @@ def runoff_summary() -> dict[str, object]:
     }
 
 
+def surface_water_status() -> dict[str, object]:
+    output_paths = {
+        "surface_water_depth_mm": str(SURFACE_WATER_DEPTH_MM),
+        "surface_water_depth_cm": str(SURFACE_WATER_DEPTH_CM),
+        "surface_water_volume_m3": str(SURFACE_WATER_VOLUME),
+        "flow_direction": str(FLOW_DIRECTION_RASTER),
+        "flow_accumulation": str(FLOW_ACCUMULATION_RASTER),
+        "nala_interaction": str(NALA_INTERACTION_RASTER),
+        "metadata": str(SURFACE_WATER_METADATA),
+    }
+    if not SURFACE_WATER_METADATA.exists():
+        return {
+            "status": "not_run",
+            "model_status": "not_ready",
+            "ready": False,
+            "output_availability": output_paths,
+            "dem_information": {},
+            "runoff_scenario": None,
+            "terrain_routing_method": None,
+            "drainage_assumption_status": (
+                "available" if SURFACE_WATER_ASSUMPTIONS_PATH.exists() else "missing"
+            ),
+            "warnings": ["Run the surface-water model before requesting its summary."],
+            "limitations": [],
+        }
+    report = json.loads(SURFACE_WATER_METADATA.read_text(encoding="utf-8"))
+    files_ready = all(
+        path.exists()
+        for path in (
+            SURFACE_WATER_DEPTH_MM,
+            SURFACE_WATER_DEPTH_CM,
+            SURFACE_WATER_VOLUME,
+            FLOW_DIRECTION_RASTER,
+            FLOW_ACCUMULATION_RASTER,
+            NALA_INTERACTION_RASTER,
+            SURFACE_WATER_METADATA,
+        )
+    )
+    ready = report.get("status") == "ready" and files_ready
+    return {
+        "status": "ready" if ready else report.get("status", "not_ready"),
+        "model_status": "ready" if ready else "not_ready",
+        "ready": ready,
+        "output_availability": report.get("output_availability", output_paths),
+        "dem_information": {
+            "source": report.get("dem_source"),
+            "crs": report.get("crs"),
+            "raster_dimensions": report.get("raster_dimensions"),
+            "raster_resolution_m": report.get("raster_resolution_m"),
+            "nodata_handling": report.get("nodata_handling"),
+        },
+        "runoff_scenario": {
+            "timestamp": report.get("rainfall_timestamp"),
+            "description": report.get("rainfall_scenario"),
+            "source": report.get("runoff_source"),
+        },
+        "terrain_routing_method": report.get("terrain_routing_method"),
+        "drainage_assumption_status": (
+            "prototype_assumption"
+            if report.get("drainage_assumptions", {}).get("status")
+            == "prototype_assumption"
+            else "unknown"
+        ),
+        "warnings": report.get("warnings", []),
+        "limitations": report.get("limitations", []),
+    }
+
+
+def surface_water_summary() -> dict[str, object]:
+    status = surface_water_status()
+    if status.get("model_status") != "ready":
+        raise HTTPException(
+            status_code=404,
+            detail="Surface-water model has not successfully run; summary statistics are unavailable.",
+        )
+    report = json.loads(SURFACE_WATER_METADATA.read_text(encoding="utf-8"))
+    return {
+        "status": "ready",
+        "rainfall_timestamp": report.get("rainfall_timestamp"),
+        "rainfall_scenario": report.get("rainfall_scenario"),
+        **report["statistics"],
+    }
+
+
 def register_routes(router: APIRouter) -> None:
     @router.get("/")
     def get_system_status() -> dict[str, object]:
@@ -210,6 +302,14 @@ def register_routes(router: APIRouter) -> None:
     @router.get("/runoff-summary")
     def get_runoff_summary() -> dict[str, object]:
         return runoff_summary()
+
+    @router.get("/surface-water-status")
+    def get_surface_water_status() -> dict[str, object]:
+        return surface_water_status()
+
+    @router.get("/surface-water-summary")
+    def get_surface_water_summary() -> dict[str, object]:
+        return surface_water_summary()
 
 
 # The unprefixed routes make the Python app easy to run directly. The /api

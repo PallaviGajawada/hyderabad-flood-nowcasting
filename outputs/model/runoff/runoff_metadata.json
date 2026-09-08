@@ -72,7 +72,7 @@
     "runoff_volume_m3": "/home/runner/workspace/outputs/model/runoff/runoff_volume_m3.tif",
     "metadata": "/home/runner/workspace/outputs/model/runoff/runoff_metadata.json"
   },
-  "processing_timestamp": "2026-09-08T05:15:25.881131+00:00",
+  "processing_timestamp": "2026-09-08T05:22:31.822475+00:00",
   "warnings": [
     "This is a transparent rainfall-to-runoff screening prototype, not an engineering-grade hydraulic model.",
     "The IMD input is historical/scenario rainfall, not a Doppler Weather Radar nowcast.",
