@@ -126,6 +126,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RoadsStatusResponse"
+  /runoff-status:
+    get:
+      operationId: getRunoffStatus
+      tags: [nowcasting]
+      summary: Get rainfall-to-runoff prototype status
+      description: Returns the readiness and alignment metadata of the transparent rainfall-to-runoff prototype.
+      responses:
+        "200":
+          description: Runoff model status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunoffStatusResponse"
+  /runoff-summary:
+    get:
+      operationId: getRunoffSummary
+      tags: [nowcasting]
+      summary: Get rainfall-to-runoff summary statistics
+      description: Returns statistics only after a successful runoff model run.
+      responses:
+        "200":
+          description: Runoff summary statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunoffSummaryResponse"
+        "404":
+          description: Runoff model has not successfully run
 components:
   schemas:
     SystemStatus:
@@ -324,4 +352,99 @@ components:
         - number_edges
         - output_paths
         - overpass_errors
+    RunoffStatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_run, not_ready, ready, error]
+        model_status:
+          type: string
+        rainfall_provider:
+          type: string
+          nullable: true
+        rainfall_timestamp:
+          type: string
+          nullable: true
+        rainfall_available_start:
+          type: string
+          nullable: true
+        rainfall_available_end:
+          type: string
+          nullable: true
+        rainfall_scenario:
+          type: string
+          nullable: true
+        output_availability:
+          type: object
+          additionalProperties:
+            type: string
+        coefficient_configuration_status:
+          type: string
+        crs:
+          type: string
+          nullable: true
+        raster_dimensions:
+          type: object
+          nullable: true
+          additionalProperties:
+            type: integer
+        raster_resolution_m:
+          type: array
+          nullable: true
+          items:
+            type: number
+        warnings:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string
+      required:
+        - status
+        - model_status
+        - output_availability
+        - coefficient_configuration_status
+        - warnings
+        - limitations
+    RunoffSummaryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        minimum_runoff_depth_mm:
+          type: number
+          nullable: true
+        maximum_runoff_depth_mm:
+          type: number
+          nullable: true
+        mean_runoff_depth_mm:
+          type: number
+          nullable: true
+        total_runoff_volume_m3:
+          type: number
+          nullable: true
+        valid_cell_count:
+          type: integer
+        rainfall_provider:
+          type: string
+        rainfall_timestamp:
+          type: string
+        rainfall_scenario:
+          type: string
+        crs:
+          type: string
+      required:
+        - status
+        - minimum_runoff_depth_mm
+        - maximum_runoff_depth_mm
+        - mean_runoff_depth_mm
+        - total_runoff_volume_m3
+        - valid_cell_count
+        - rainfall_provider
+        - rainfall_timestamp
+        - rainfall_scenario
+        - crs
 

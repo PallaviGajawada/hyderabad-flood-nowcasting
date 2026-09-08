@@ -39,6 +39,9 @@ nowcasting in Hyderabad, India.
   `waterbody_processor.py` — stage processors
 - `backend/models/rainfall_interface.py` — replaceable IMD/radar rainfall
   provider contract
+- `backend/models/runoff_model.py` — rainfall-to-runoff prototype raster model
+- `backend/runoff_coefficients.json` — explicitly labeled prototype
+  coefficient assumptions
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
 - `README.md` — scope, limitations, datasets, and future stages
@@ -75,6 +78,9 @@ warning system.
 - Run API codegen after every OpenAPI change.
 - Data validation and preprocessing report missing source files instead of
   creating fallback datasets.
+- The runoff prototype must keep rainfall/land-cover/DEM alignment explicit,
+  preserve nodata, and never present prototype coefficients as measured
+  hydraulic data.
 - The large source roads GeoPackage is intentionally not required; the
   road-only processor obtains the real drive network from OSMnx/Overpass using
   the supplied GHMC boundary.

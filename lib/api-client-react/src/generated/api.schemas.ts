@@ -125,3 +125,47 @@ export interface RoadsStatusResponse {
   overpass_errors: string[];
 }
 
+export type RunoffStatusResponseStatus = typeof RunoffStatusResponseStatus[keyof typeof RunoffStatusResponseStatus];
+
+
+export const RunoffStatusResponseStatus = {
+  not_run: 'not_run',
+  not_ready: 'not_ready',
+  ready: 'ready',
+  error: 'error',
+} as const;
+
+export type RunoffStatusResponseOutputAvailability = {[key: string]: string};
+
+export type RunoffStatusResponseRasterDimensions = {[key: string]: number} | null;
+
+export interface RunoffStatusResponse {
+  status: RunoffStatusResponseStatus;
+  model_status: string;
+  rainfall_provider?: string | null;
+  rainfall_timestamp?: string | null;
+  rainfall_available_start?: string | null;
+  rainfall_available_end?: string | null;
+  rainfall_scenario?: string | null;
+  output_availability: RunoffStatusResponseOutputAvailability;
+  coefficient_configuration_status: string;
+  crs?: string | null;
+  raster_dimensions?: RunoffStatusResponseRasterDimensions;
+  raster_resolution_m?: number[] | null;
+  warnings: string[];
+  limitations: string[];
+}
+
+export interface RunoffSummaryResponse {
+  status: string;
+  minimum_runoff_depth_mm: number | null;
+  maximum_runoff_depth_mm: number | null;
+  mean_runoff_depth_mm: number | null;
+  total_runoff_volume_m3: number | null;
+  valid_cell_count: number;
+  rainfall_provider: string;
+  rainfall_timestamp: string;
+  rainfall_scenario: string;
+  crs: string;
+}
+

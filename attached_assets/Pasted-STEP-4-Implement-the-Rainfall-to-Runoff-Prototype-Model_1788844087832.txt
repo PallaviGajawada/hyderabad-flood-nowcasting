@@ -1,0 +1,203 @@
+STEP 4 — Implement the Rainfall-to-Runoff Prototype Model
+
+Now begin the next modeling stage: convert the validated rainfall and land-cover datasets into a spatial runoff estimate.
+
+IMPORTANT:
+This is a prototype/research demonstration, NOT an engineering-grade hydraulic flood model.
+
+Do not fabricate measured Hyderabad/GHMC hydraulic data.
+Any runoff coefficients or modeling parameters that are not present in the supplied datasets must be explicitly documented as PROTOTYPE ASSUMPTIONS.
+
+Do NOT implement the full flood simulation, hydraulic drainage model, flood routing, or safe-route algorithm yet.
+
+### 1. Rainfall input
+
+Use the existing validated IMD rainfall NetCDF preprocessing output.
+
+Create a clean rainfall model interface/adapter so that the rainfall source is replaceable later.
+
+Implement:
+
+RainfallProvider
+IMDRainfallProvider
+
+The provider should:
+- read the existing processed IMD rainfall data
+- expose rainfall for a requested timestamp/time window
+- return rainfall depth in millimeters
+- preserve the original rainfall units and metadata
+- never modify the original NetCDF file
+
+Also document clearly that the current IMD dataset has approximately 0.25° spatial resolution and is being used as a historical/scenario rainfall input.
+
+Design the interface so that a future:
+RadarNowcastProvider
+can replace the IMD provider without changing the rest of the model.
+
+### 2. Land-cover runoff coefficients
+
+Use the already-preprocessed ESA WorldCover land-cover data.
+
+Create a configurable mapping from WorldCover classes to runoff coefficients.
+
+IMPORTANT:
+These coefficients are prototype assumptions unless they already exist in the supplied project data.
+
+Store them in a clearly documented configuration file such as:
+
+backend/config/runoff_coefficients.json
+
+For every class include:
+- WorldCover class/value
+- land-cover description
+- prototype runoff coefficient
+- explanation/source note
+- whether it is treated as impervious/pervious/water
+
+Do not silently invent values.
+Label all assumed coefficients as "prototype_assumption".
+
+Make the coefficients configurable without changing Python code.
+
+### 3. Runoff calculation
+
+Implement the simple runoff method:
+
+runoff_depth_mm = rainfall_depth_mm × runoff_coefficient
+
+Handle water-body classes separately so that they are not incorrectly treated as normal urban land.
+
+Also calculate runoff volume where cell area is known:
+
+runoff_volume_m3 =
+    runoff_depth_mm / 1000 × cell_area_m2
+
+Make sure nodata cells remain nodata.
+
+### 4. Spatial processing
+
+Use the existing processed DEM/land-cover spatial grid appropriately.
+
+Do not silently mix incompatible CRS, resolution, transforms, or extents.
+
+Validate:
+- CRS
+- raster dimensions
+- transform
+- extent
+- nodata
+- resolution
+
+If the rainfall grid is coarser than the land-cover grid, explicitly document the resampling/interpolation method used.
+
+Do not claim that this creates genuine street-level rainfall resolution.
+
+### 5. Outputs
+
+Create:
+
+outputs/model/
+    runoff/
+        runoff_depth_mm.tif
+        runoff_volume_m3.tif
+        runoff_metadata.json
+
+The metadata must include:
+- rainfall source
+- rainfall timestamp/scenario
+- land-cover source
+- runoff equation
+- coefficient configuration used
+- prototype assumptions
+- CRS
+- raster resolution
+- nodata handling
+- processing timestamp
+- warnings/limitations
+
+### 6. API
+
+Add:
+
+GET /api/runoff-status
+
+It should report:
+- model status
+- rainfall provider
+- latest/available rainfall timestamp if known
+- runoff output availability
+- raster CRS
+- raster dimensions
+- resolution
+- coefficient configuration status
+- warnings/limitations
+
+Add an API endpoint for retrieving runoff summary/statistics, for example:
+
+GET /api/runoff-summary
+
+Return:
+- minimum runoff depth
+- maximum runoff depth
+- mean runoff depth
+- total runoff volume
+- valid cell count
+- rainfall scenario/time
+
+Do not return fake values if the model has not successfully run.
+
+### 7. Validation and tests
+
+Add tests for:
+- rainfall provider
+- coefficient lookup
+- runoff equation
+- nodata handling
+- water-body handling
+- raster alignment
+- runoff volume calculation
+- API responses
+
+Run the full existing test suite as well.
+
+### 8. Documentation
+
+Update the project README/model documentation with a section:
+
+"Rainfall-to-Runoff Prototype Model"
+
+Clearly explain:
+
+Rainfall
+→ runoff coefficient
+→ runoff depth
+→ runoff volume
+
+Clearly state:
+
+1. Current rainfall input is IMD historical/scenario rainfall.
+2. It is not a Doppler Weather Radar nowcast.
+3. Runoff coefficients are configurable prototype assumptions unless directly supported by supplied data.
+4. This stage does not yet simulate drainage capacity, pipe flow, backflow, or street-level flood depth.
+5. The model is intended as a transparent prototype and can later accept real radar nowcasts and measured hydraulic parameters.
+
+### 9. Important restrictions
+
+Do NOT:
+- create fake rainfall data
+- create fake hydraulic measurements
+- invent GHMC pipe capacities
+- claim engineering-grade accuracy
+- implement safe routing
+- implement the final 0–3 hour flood map yet
+- replace the existing validated source datasets
+- modify the original datasets
+
+At the end, report:
+- files created
+- rainfall provider status
+- coefficient classes configured
+- runoff raster dimensions/resolution
+- total runoff volume if successfully computed
+- tests passed
+- any warnings or data-alignment issues

@@ -21,6 +21,8 @@ import type {
   ModelPlaceholder,
   PreprocessingStatusResponse,
   RoadsStatusResponse,
+  RunoffStatusResponse,
+  RunoffSummaryResponse,
   SystemStatus
 } from './api.schemas';
 
@@ -737,6 +739,162 @@ export function useGetRoadsStatus<TData = Awaited<ReturnType<typeof getRoadsStat
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetRoadsStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetRunoffStatusUrl = () => {
+
+
+
+
+  return `/api/runoff-status`
+}
+
+/**
+ * Returns the readiness and alignment metadata of the transparent rainfall-to-runoff prototype.
+ * @summary Get rainfall-to-runoff prototype status
+ */
+export const getRunoffStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<RunoffStatusResponse> => {
+
+  return customFetch<RunoffStatusResponse>(getGetRunoffStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRunoffStatusQueryKey = () => {
+    return [
+    `/api/runoff-status`
+    ] as const;
+    }
+
+
+export const getGetRunoffStatusQueryOptions = <TData = Awaited<ReturnType<typeof getRunoffStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRunoffStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRunoffStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRunoffStatus>>> = ({ signal }) => getRunoffStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRunoffStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetRunoffStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getRunoffStatus>>>
+export type GetRunoffStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get rainfall-to-runoff prototype status
+ */
+
+export function useGetRunoffStatus<TData = Awaited<ReturnType<typeof getRunoffStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRunoffStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetRunoffStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetRunoffSummaryUrl = () => {
+
+
+
+
+  return `/api/runoff-summary`
+}
+
+/**
+ * Returns statistics only after a successful runoff model run.
+ * @summary Get rainfall-to-runoff summary statistics
+ */
+export const getRunoffSummary = async ( options?: Parameters<typeof customFetch>[1]): Promise<RunoffSummaryResponse> => {
+
+  return customFetch<RunoffSummaryResponse>(getGetRunoffSummaryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRunoffSummaryQueryKey = () => {
+    return [
+    `/api/runoff-summary`
+    ] as const;
+    }
+
+
+export const getGetRunoffSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getRunoffSummary>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRunoffSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRunoffSummaryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRunoffSummary>>> = ({ signal }) => getRunoffSummary({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRunoffSummary>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetRunoffSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getRunoffSummary>>>
+export type GetRunoffSummaryQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get rainfall-to-runoff summary statistics
+ */
+
+export function useGetRunoffSummary<TData = Awaited<ReturnType<typeof getRunoffSummary>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRunoffSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetRunoffSummaryQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

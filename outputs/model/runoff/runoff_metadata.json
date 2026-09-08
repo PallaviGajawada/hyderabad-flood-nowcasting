@@ -1,0 +1,82 @@
+{
+  "status": "ready",
+  "rainfall_source": "IMD historical rainfall",
+  "rainfall_provider": "IMDRainfallProvider",
+  "rainfall_timestamp": "2024-08-20",
+  "rainfall_scenario": "maximum spatial-mean rainfall in the processed IMD period",
+  "rainfall_available_start": "2024-01-01T00:00:00.000000000",
+  "rainfall_available_end": "2024-12-31T00:00:00.000000000",
+  "rainfall_units": "mm",
+  "rainfall_source_resolution_degrees": [
+    0.25,
+    0.25
+  ],
+  "landcover_source": "/home/runner/workspace/outputs/preprocessed/landcover/landcover_ghmc.tif",
+  "dem_reference": "/home/runner/workspace/outputs/preprocessed/dem/dem_ghmc.tif",
+  "coefficient_configuration": "/home/runner/workspace/backend/runoff_coefficients.json",
+  "coefficient_configuration_status": "prototype_assumption",
+  "coefficient_classes_observed": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    80
+  ],
+  "runoff_equation": "runoff_depth_mm = rainfall_depth_mm \u00d7 runoff_coefficient",
+  "volume_equation": "runoff_volume_m3 = runoff_depth_mm / 1000 \u00d7 cell_area_m2",
+  "prototype_assumptions": [
+    "All configured runoff coefficients are transparent prototype assumptions, not supplied GHMC measurements.",
+    "Nearest-neighbor resampling was used from the 0.25-degree IMD grid to the processed DEM grid.",
+    "Nearest-neighbor resampling was used from the processed ESA WorldCover grid to the processed DEM grid.",
+    "The output grid follows the processed DEM in EPSG:32644 at approximately 30 m resolution.",
+    "WorldCover water classes are handled separately with zero direct runoff in this screening calculation."
+  ],
+  "crs": "EPSG:32644",
+  "raster_dimensions": {
+    "height": 1018,
+    "width": 1333
+  },
+  "raster_resolution_m": [
+    29.9589649007848,
+    29.9589649007848
+  ],
+  "raster_transform": [
+    29.9589649007848,
+    0.0,
+    207628.29110188718,
+    0.0,
+    -29.9589649007848,
+    1943760.2120413086,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "nodata": {
+    "output": -9999.0,
+    "landcover_source": 0,
+    "rainfall_outside_source_coverage": "NaN",
+    "handling": "Cells without rainfall coverage, nodata land cover, or an unconfigured class remain nodata."
+  },
+  "cell_area_m2": 897.5395779264555,
+  "statistics": {
+    "minimum_runoff_depth_mm": 0.0,
+    "maximum_runoff_depth_mm": 54.04458999633789,
+    "mean_runoff_depth_mm": 37.31998062133789,
+    "total_runoff_volume_m3": 16936796.0,
+    "valid_cell_count": 505634
+  },
+  "output_availability": {
+    "runoff_depth_mm": "/home/runner/workspace/outputs/model/runoff/runoff_depth_mm.tif",
+    "runoff_volume_m3": "/home/runner/workspace/outputs/model/runoff/runoff_volume_m3.tif",
+    "metadata": "/home/runner/workspace/outputs/model/runoff/runoff_metadata.json"
+  },
+  "processing_timestamp": "2026-09-08T05:15:25.881131+00:00",
+  "warnings": [
+    "This is a transparent rainfall-to-runoff screening prototype, not an engineering-grade hydraulic model.",
+    "The IMD input is historical/scenario rainfall, not a Doppler Weather Radar nowcast.",
+    "The processed rainfall grid does not cover the full southern extent of the GHMC DEM; those cells remain nodata.",
+    "This stage does not simulate drainage capacity, pipe flow, backflow, flood routing, or street-level flood depth."
+  ]
+}

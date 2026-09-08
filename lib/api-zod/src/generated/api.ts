@@ -128,3 +128,43 @@ export const GetRoadsStatusResponse = zod.object({
 })
 
 
+/**
+ * Returns the readiness and alignment metadata of the transparent rainfall-to-runoff prototype.
+ * @summary Get rainfall-to-runoff prototype status
+ */
+export const GetRunoffStatusResponse = zod.object({
+  "status": zod.enum(['not_run', 'not_ready', 'ready', 'error']),
+  "model_status": zod.string(),
+  "rainfall_provider": zod.string().nullish(),
+  "rainfall_timestamp": zod.string().nullish(),
+  "rainfall_available_start": zod.string().nullish(),
+  "rainfall_available_end": zod.string().nullish(),
+  "rainfall_scenario": zod.string().nullish(),
+  "output_availability": zod.record(zod.string(), zod.string()),
+  "coefficient_configuration_status": zod.string(),
+  "crs": zod.string().nullish(),
+  "raster_dimensions": zod.record(zod.string(), zod.number().int()).nullish(),
+  "raster_resolution_m": zod.array(zod.number()).nullish(),
+  "warnings": zod.array(zod.string()),
+  "limitations": zod.array(zod.string())
+})
+
+
+/**
+ * Returns statistics only after a successful runoff model run.
+ * @summary Get rainfall-to-runoff summary statistics
+ */
+export const GetRunoffSummaryResponse = zod.object({
+  "status": zod.string(),
+  "minimum_runoff_depth_mm": zod.number().nullable(),
+  "maximum_runoff_depth_mm": zod.number().nullable(),
+  "mean_runoff_depth_mm": zod.number().nullable(),
+  "total_runoff_volume_m3": zod.number().nullable(),
+  "valid_cell_count": zod.number().int(),
+  "rainfall_provider": zod.string(),
+  "rainfall_timestamp": zod.string(),
+  "rainfall_scenario": zod.string(),
+  "crs": zod.string()
+})
+
+

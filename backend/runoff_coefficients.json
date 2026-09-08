@@ -1,0 +1,73 @@
+{
+  "source": "Project prototype configuration",
+  "status": "prototype_assumption",
+  "description": "Initial transparent screening coefficients for the rainfall-to-runoff demonstration. These values are not supplied GHMC measurements and are not calibrated hydraulic parameters.",
+  "classes": {
+    "10": {
+      "description": "Tree cover",
+      "runoff_coefficient": 0.15,
+      "land_cover_behavior": "pervious",
+      "source_note": "Prototype assumption; replace with locally calibrated infiltration/runoff evidence."
+    },
+    "20": {
+      "description": "Shrubland",
+      "runoff_coefficient": 0.25,
+      "land_cover_behavior": "pervious",
+      "source_note": "Prototype assumption; replace with locally calibrated infiltration/runoff evidence."
+    },
+    "30": {
+      "description": "Grassland",
+      "runoff_coefficient": 0.2,
+      "land_cover_behavior": "pervious",
+      "source_note": "Prototype assumption; replace with locally calibrated infiltration/runoff evidence."
+    },
+    "40": {
+      "description": "Cropland",
+      "runoff_coefficient": 0.35,
+      "land_cover_behavior": "pervious",
+      "source_note": "Prototype assumption; replace with locally calibrated infiltration/runoff evidence."
+    },
+    "50": {
+      "description": "Built-up",
+      "runoff_coefficient": 0.85,
+      "land_cover_behavior": "impervious",
+      "source_note": "Prototype assumption; replace with locally calibrated imperviousness/runoff evidence."
+    },
+    "60": {
+      "description": "Bare / sparse vegetation",
+      "runoff_coefficient": 0.55,
+      "land_cover_behavior": "mixed",
+      "source_note": "Prototype assumption; replace with locally calibrated infiltration/runoff evidence."
+    },
+    "70": {
+      "description": "Snow and ice",
+      "runoff_coefficient": 0.0,
+      "land_cover_behavior": "water",
+      "source_note": "Prototype assumption; not observed in the supplied GHMC land-cover raster."
+    },
+    "80": {
+      "description": "Permanent water bodies",
+      "runoff_coefficient": 0.0,
+      "land_cover_behavior": "water",
+      "source_note": "Prototype assumption; water cells are handled separately and do not receive normal land runoff."
+    },
+    "90": {
+      "description": "Herbaceous wetland",
+      "runoff_coefficient": 0.2,
+      "land_cover_behavior": "water",
+      "source_note": "Prototype assumption; not observed in the supplied GHMC land-cover raster."
+    },
+    "95": {
+      "description": "Mangroves",
+      "runoff_coefficient": 0.15,
+      "land_cover_behavior": "water",
+      "source_note": "Prototype assumption; not observed in the supplied GHMC land-cover raster."
+    },
+    "100": {
+      "description": "Moss and lichen",
+      "runoff_coefficient": 0.2,
+      "land_cover_behavior": "pervious",
+      "source_note": "Prototype assumption; not observed in the supplied GHMC land-cover raster."
+    }
+  }
+}
