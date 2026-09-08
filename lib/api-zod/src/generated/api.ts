@@ -109,3 +109,22 @@ export const GetPreprocessingStatusResponse = zod.object({
 })
 
 
+/**
+ * Returns the readiness and metadata of the OSMnx/Overpass GHMC drive network.
+ * @summary Get road network preprocessing status
+ */
+export const GetRoadsStatusResponse = zod.object({
+  "status": zod.enum(['not_ready', 'ready', 'error']),
+  "ready": zod.boolean(),
+  "number_nodes": zod.number().int(),
+  "number_edges": zod.number().int(),
+  "crs": zod.string().optional(),
+  "bounding_box": zod.array(zod.number()).optional(),
+  "network_type": zod.string().optional(),
+  "retrieval_timestamp": zod.coerce.date().optional(),
+  "output_paths": zod.record(zod.string(), zod.string()),
+  "important_osm_tags_preserved": zod.array(zod.string()).optional(),
+  "overpass_errors": zod.array(zod.string())
+})
+
+

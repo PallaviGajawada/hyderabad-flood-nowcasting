@@ -21,4 +21,7 @@ export * from './preprocessingStatusResponseFeatureCounts';
 export * from './preprocessingStatusResponseRainfallInformation';
 export * from './preprocessingStatusResponseRasterInformation';
 export * from './preprocessingStatusResponseStatus';
+export * from './roadsStatusResponse';
+export * from './roadsStatusResponseOutputPaths';
+export * from './roadsStatusResponseStatus';
 export * from './systemStatus';

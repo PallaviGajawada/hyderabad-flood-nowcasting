@@ -113,6 +113,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PreprocessingStatusResponse"
+  /roads-status:
+    get:
+      operationId: getRoadsStatus
+      tags: [health]
+      summary: Get road network preprocessing status
+      description: Returns the readiness and metadata of the OSMnx/Overpass GHMC drive network.
+      responses:
+        "200":
+          description: Road network preprocessing status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoadsStatusResponse"
 components:
   schemas:
     SystemStatus:
@@ -269,4 +282,46 @@ components:
         - rainfall_information
         - warnings
         - errors
+    RoadsStatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_ready, ready, error]
+        ready:
+          type: boolean
+        number_nodes:
+          type: integer
+        number_edges:
+          type: integer
+        crs:
+          type: string
+        bounding_box:
+          type: array
+          items:
+            type: number
+        network_type:
+          type: string
+        retrieval_timestamp:
+          type: string
+          format: date-time
+        output_paths:
+          type: object
+          additionalProperties:
+            type: string
+        important_osm_tags_preserved:
+          type: array
+          items:
+            type: string
+        overpass_errors:
+          type: array
+          items:
+            type: string
+      required:
+        - status
+        - ready
+        - number_nodes
+        - number_edges
+        - output_paths
+        - overpass_errors
 

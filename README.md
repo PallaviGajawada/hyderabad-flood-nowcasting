@@ -42,6 +42,8 @@ without coupling the model to IMD-specific files.
 - `GET /api/data-status` checks every configured dataset and writes the
   read-only result to `outputs/data_validation_report.json`.
 - `GET /api/preprocessing-status` returns the latest GIS preprocessing report.
+- `GET /api/roads-status` returns the readiness and metadata for the real
+  OSMnx/Overpass GHMC drive network.
 - GIS preprocessing uses EPSG:4326 for web/interchange GeoJSON and EPSG:32644
   for metre-based terrain and length calculations. Reprojection is documented
   in the preprocessing report.
@@ -139,6 +141,27 @@ The stream output is intentionally empty after clipping because the supplied
 stream extent does not intersect the supplied GHMC boundary. Roads and
 historical flood locations remain explicit future inputs. No hydraulic
 parameters, flood predictions, or safe-route outputs are generated.
+
+## Road-network preprocessing
+
+The original large OSM GeoPackage is not required. The road-only processor
+queries OpenStreetMap through OSMnx and Overpass using the supplied GHMC
+boundary in EPSG:4326 and `network_type="drive"`. OSMnx handles Overpass
+subdivision when a query geometry exceeds its configured maximum area.
+
+Road outputs are written to:
+
+```text
+outputs/preprocessed/roads/
+├── hyderabad_roads.geojson
+├── hyderabad_drive.graphml
+└── road_network_metadata.json
+```
+
+The metadata records the retrieval method and timestamp, CRS, boundary
+bounding box, node and edge counts, network type, preserved OSM tags, and any
+Overpass errors. Missing OSM attributes remain absent/null; no road
+attributes are fabricated.
 
 ## Run
 

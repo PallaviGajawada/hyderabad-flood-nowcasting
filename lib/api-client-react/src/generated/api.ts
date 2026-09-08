@@ -20,6 +20,7 @@ import type {
   HealthStatus,
   ModelPlaceholder,
   PreprocessingStatusResponse,
+  RoadsStatusResponse,
   SystemStatus
 } from './api.schemas';
 
@@ -658,6 +659,84 @@ export function useGetPreprocessingStatus<TData = Awaited<ReturnType<typeof getP
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetPreprocessingStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetRoadsStatusUrl = () => {
+
+
+
+
+  return `/api/roads-status`
+}
+
+/**
+ * Returns the readiness and metadata of the OSMnx/Overpass GHMC drive network.
+ * @summary Get road network preprocessing status
+ */
+export const getRoadsStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<RoadsStatusResponse> => {
+
+  return customFetch<RoadsStatusResponse>(getGetRoadsStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRoadsStatusQueryKey = () => {
+    return [
+    `/api/roads-status`
+    ] as const;
+    }
+
+
+export const getGetRoadsStatusQueryOptions = <TData = Awaited<ReturnType<typeof getRoadsStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoadsStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRoadsStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoadsStatus>>> = ({ signal }) => getRoadsStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRoadsStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetRoadsStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getRoadsStatus>>>
+export type GetRoadsStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get road network preprocessing status
+ */
+
+export function useGetRoadsStatus<TData = Awaited<ReturnType<typeof getRoadsStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoadsStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetRoadsStatusQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

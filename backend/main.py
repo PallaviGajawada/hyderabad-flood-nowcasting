@@ -8,7 +8,13 @@ import json
 import uvicorn
 from fastapi import APIRouter, FastAPI
 
-from .config import DATA_VALIDATION_REPORT, PREPROCESSING_REPORT
+from .config import (
+    DATA_VALIDATION_REPORT,
+    PREPROCESSING_REPORT,
+    ROADS_GEOJSON,
+    ROADS_GRAPHML,
+    ROADS_METADATA,
+)
 from .preprocessing.data_validator import validate_all_datasets
 
 SYSTEM_NAME = "Hyderabad Urban Flood Nowcasting System"
@@ -56,6 +62,34 @@ def preprocessing_status() -> dict[str, object]:
     return json.loads(PREPROCESSING_REPORT.read_text(encoding="utf-8"))
 
 
+def roads_status() -> dict[str, object]:
+    output_paths = {
+        "geojson": str(ROADS_GEOJSON),
+        "graphml": str(ROADS_GRAPHML),
+        "metadata": str(ROADS_METADATA),
+    }
+    if not ROADS_METADATA.exists():
+        return {
+            "status": "not_ready",
+            "ready": False,
+            "number_nodes": 0,
+            "number_edges": 0,
+            "output_paths": output_paths,
+            "overpass_errors": [],
+        }
+    report = json.loads(ROADS_METADATA.read_text(encoding="utf-8"))
+    files_ready = all(
+        path.exists() for path in (ROADS_GEOJSON, ROADS_GRAPHML, ROADS_METADATA)
+    )
+    ready = report.get("status") == "ready" and files_ready
+    return {
+        **report,
+        "status": "ready" if ready else report.get("status", "not_ready"),
+        "ready": ready,
+        "output_paths": output_paths,
+    }
+
+
 def register_routes(router: APIRouter) -> None:
     @router.get("/")
     def get_system_status() -> dict[str, object]:
@@ -88,6 +122,10 @@ def register_routes(router: APIRouter) -> None:
     @router.get("/preprocessing-status")
     def get_preprocessing_status() -> dict[str, object]:
         return preprocessing_status()
+
+    @router.get("/roads-status")
+    def get_roads_status() -> dict[str, object]:
+        return roads_status()
 
 
 # The unprefixed routes make the Python app easy to run directly. The /api

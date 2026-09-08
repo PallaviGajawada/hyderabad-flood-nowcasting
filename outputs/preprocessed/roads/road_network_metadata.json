@@ -1,0 +1,38 @@
+{
+  "source": "OpenStreetMap",
+  "retrieval_method": "OSMnx/Overpass",
+  "retrieval_timestamp": "2026-09-08T05:02:34.256702+00:00",
+  "crs": "EPSG:4326",
+  "bounding_box": [
+    78.2390736021936,
+    17.290716391999904,
+    78.62171490100059,
+    17.5610012980001
+  ],
+  "network_type": "drive",
+  "important_osm_tags_preserved": [
+    "name",
+    "highway",
+    "oneway",
+    "maxspeed",
+    "lanes",
+    "access",
+    "bridge",
+    "tunnel"
+  ],
+  "query_boundary": "supplied GHMC boundary",
+  "simplified": true,
+  "overpass_errors": [],
+  "status": "ready",
+  "output_paths": {
+    "geojson": "/home/runner/workspace/outputs/preprocessed/roads/hyderabad_roads.geojson",
+    "graphml": "/home/runner/workspace/outputs/preprocessed/roads/hyderabad_drive.graphml",
+    "metadata": "/home/runner/workspace/outputs/preprocessed/roads/road_network_metadata.json"
+  },
+  "number_nodes": 138851,
+  "number_edges": 360839,
+  "geometry_types": [
+    "LineString"
+  ],
+  "output_feature_count": 360839
+}

@@ -100,3 +100,28 @@ export interface PreprocessingStatusResponse {
   errors: string[];
 }
 
+export type RoadsStatusResponseStatus = typeof RoadsStatusResponseStatus[keyof typeof RoadsStatusResponseStatus];
+
+
+export const RoadsStatusResponseStatus = {
+  not_ready: 'not_ready',
+  ready: 'ready',
+  error: 'error',
+} as const;
+
+export type RoadsStatusResponseOutputPaths = {[key: string]: string};
+
+export interface RoadsStatusResponse {
+  status: RoadsStatusResponseStatus;
+  ready: boolean;
+  number_nodes: number;
+  number_edges: number;
+  crs?: string;
+  bounding_box?: number[];
+  network_type?: string;
+  retrieval_timestamp?: string;
+  output_paths: RoadsStatusResponseOutputPaths;
+  important_osm_tags_preserved?: string[];
+  overpass_errors: string[];
+}
+

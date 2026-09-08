@@ -1,0 +1,66 @@
+Now proceed with the ROAD NETWORK preprocessing only.
+
+IMPORTANT:
+The original Hyderabad OSM GeoPackage is too large to upload (>200 MB), so DO NOT expect or require:
+data/roads/osm/hyderabad_roads.gpkg
+
+Instead, obtain the required Hyderabad/GHMC drivable road network programmatically from OpenStreetMap using OSMnx and the Overpass API.
+
+Requirements:
+
+1. Read the actual GHMC boundary already present in the project.
+2. Use the real GHMC boundary polygon as the query area.
+3. Convert the boundary to EPSG:4326 before querying OpenStreetMap.
+4. Use OSMnx with network_type="drive".
+5. Do NOT create synthetic, random, or manually invented roads.
+6. Do NOT download the entire Hyderabad road dataset unnecessarily.
+7. If the GHMC polygon is too large for one Overpass request, subdivide the polygon automatically and combine the resulting road networks.
+8. Simplify and clean the resulting road graph.
+9. Preserve useful OSM attributes where available, including:
+   - name
+   - highway
+   - oneway
+   - maxspeed
+   - lanes
+   - access
+   - bridge
+   - tunnel
+10. Save the processed outputs to:
+
+outputs/preprocessed/roads/hyderabad_roads.geojson
+outputs/preprocessed/roads/hyderabad_drive.graphml
+outputs/preprocessed/roads/road_network_metadata.json
+
+11. The metadata JSON must record:
+   - source = OpenStreetMap
+   - retrieval method = OSMnx/Overpass
+   - retrieval timestamp
+   - CRS
+   - bounding box
+   - number of nodes
+   - number of edges
+   - network type
+   - important OSM tags preserved
+
+12. Add or update:
+GET /api/roads-status
+
+The API should report whether the road network is ready and include node/edge counts and output paths.
+
+13. Add tests for the road preprocessing and API.
+
+14. Do NOT implement flood-aware routing yet.
+15. Do NOT implement flood simulation yet.
+16. Do NOT modify the original source datasets.
+17. Do NOT fabricate missing road attributes. If an OSM attribute is unavailable, keep it null/missing.
+
+If OSMnx or required dependencies are missing, install/add them properly to the backend environment.
+
+At the end, provide a concise report containing:
+- whether road download succeeded
+- number of nodes
+- number of edges
+- CRS
+- output files created
+- any Overpass/API errors
+- tests passed
