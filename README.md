@@ -22,10 +22,17 @@ not fabricate rainfall, hydraulic measurements, or model outputs.
   model and raster outputs.
 - `backend/models/surface_water_model.py` — deterministic D8-style
   surface-water routing, accumulation, and interaction outputs.
+- `backend/models/drainage_model.py` — mapped nala interaction and
+  dimensionless prototype drainage-capacity index.
+- `backend/models/flood_depth_model.py` — prototype drainage removal,
+  equivalent-depth, risk-class, and road-risk aggregation.
 - `backend/runoff_coefficients.json` — configurable, explicitly assumed
   WorldCover runoff coefficients.
 - `backend/surface_water_assumptions.json` — configurable prototype routing
   and drainage-interaction assumptions.
+- `backend/drainage_assumptions.json` and
+  `backend/flood_depth_assumptions.json` — explicitly labeled Step 6
+  prototype assumptions.
 - `data/` — organized source-data categories; only user-provided datasets are
   placed here.
 - `outputs/preprocessed/` — clipped/model-ready rasters, GeoJSON layers,
@@ -60,11 +67,19 @@ without coupling the model to IMD-specific files.
   availability, grid information, and limitations.
 - `GET /api/surface-water-summary` returns real accumulated surface-water
   statistics only after a successful routing run.
+- `GET /api/drainage-status` and `GET /api/drainage-summary` return mapped
+  nala interaction and dimensionless capacity-index status/statistics.
+- `GET /api/flood-depth-status` and `GET /api/flood-depth-summary` return raw
+  equivalent depth, display depth, risk classes, drainage removal, and
+  conservation statistics only after successful execution.
+- `GET /api/road-flood-risk` returns the generated road-risk artifact summary
+  and output path.
 - GIS preprocessing uses EPSG:4326 for web/interchange GeoJSON and EPSG:32644
   for metre-based terrain and length calculations. Reprojection is documented
   in the preprocessing report.
-- Hydraulic calculation, 2D simulation, forecast model, risk score, and safe
-  routing remain unimplemented.
+- Full hydraulic calculation, 2D simulation, final forecast model, and safe
+  routing remain unimplemented. Step 6 provides only transparent prototype
+  drainage interaction, equivalent-depth screening, and road-risk summaries.
 
 ## Expected datasets
 
@@ -266,6 +281,120 @@ shallow-water hydrodynamic solver and does not implement safe routing,
 hydraulic pipe flow, backflow, or the final 0–3 hour forecast. Current
 rainfall remains the historical/scenario IMD input rather than radar
 nowcasting.
+
+## Step 6 — Prototype Drainage Network and Flood-Depth Screening
+
+This is a research/prototype screening model and is not an engineering
+hydraulic simulation or operational flood warning system.
+
+The mapped nala/drainage network is used as a spatial proxy for drainage
+interaction. Missing hydraulic attributes are represented using explicitly
+labeled prototype assumptions. No pipe diameter, channel depth, invert
+elevation, Manning roughness, measured flow, pump operation, manhole level,
+blockage observation, or real-time sewer condition is fabricated.
+
+### Drainage interaction
+
+`backend/models/drainage_model.py` rasterizes the existing processed nala
+GeoJSON to the exact DEM grid. Interaction values are:
+
+```text
+0     no mapped nala influence
+1     mapped nala intersects the cell
+2     within the configured prototype influence radius
+-9999 nodata
+```
+
+The drainage capacity index is dimensionless. It combines a proximity factor
+and a slope factor, then applies the configured prototype effectiveness:
+
+```text
+capacity_index =
+  prototype_effectiveness
+  × (proximity_weight × proximity_factor
+     + slope_weight × slope_factor)
+```
+
+This is not a hydraulic capacity.
+
+### Drainage removal and flood depth
+
+Step 6 consumes the Step 5 surface-water volume raster:
+
+```text
+prototype_drainage_removed_volume =
+  min(
+    surface_water_volume
+    × capacity_index
+    × surface_volume_removal_fraction
+    × prototype_drainage_effectiveness,
+    maximum_prototype_removal_m3_per_cell
+  )
+
+remaining_surface_water_volume =
+  surface_water_volume - prototype_drainage_removed_volume
+
+raw_equivalent_depth_cm =
+  remaining_surface_water_volume / cell_area_m2 × 100
+```
+
+Drainage removal can be disabled through
+`backend/drainage_assumptions.json`; the model still runs and reports zero
+removal. Water-body cells are excluded from prototype drainage removal.
+Conservation is checked as:
+
+```text
+input surface-water volume
+  ≈ prototype drainage removal
+  + remaining surface-water volume
+```
+
+The raw equivalent depth preserves the actual calculation, including extreme
+terrain-sink values. The display depth is a separate screening layer:
+
+```text
+display_depth_cm = min(raw_equivalent_depth_cm, display_depth_cap_cm)
+```
+
+The display cap is a visualization/screening decision and is **not** physical
+inundation capping.
+
+Prototype risk classes use display depth:
+
+```text
+0 = no/very low
+1 = low       (0–<5 cm)
+2 = moderate  (5–<15 cm)
+3 = high      (15–<30 cm)
+4 = severe    (≥30 cm)
+```
+
+These are prototype screening thresholds, not official emergency thresholds.
+
+### Step 6 outputs
+
+```text
+outputs/model/drainage/
+├── drainage_interaction.tif
+├── drainage_capacity_index.tif
+└── drainage_metadata.json
+
+outputs/model/flood_depth/
+├── raw_equivalent_depth_mm.tif
+├── raw_equivalent_depth_cm.tif
+├── display_depth_cm.tif
+├── flood_risk_class.tif
+├── drainage_removed_volume_m3.tif
+├── remaining_surface_water_volume_m3.tif
+├── road_flood_risk.geojson
+└── flood_depth_metadata.json
+```
+
+Road risk is sampled from the existing processed OSM road GeoJSON; roads are
+not downloaded again. Each road edge receives prototype maximum depth, mean
+depth, affected-sample percentage, and maximum risk class. These statistics
+are not measured street-level flood depths and are not safe-route
+recommendations.
 
 ## Run
 

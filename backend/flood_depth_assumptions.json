@@ -1,0 +1,23 @@
+{
+  "status": "prototype_assumption",
+  "source": "prototype_assumption",
+  "description": "Prototype flood-depth screening and visualization assumptions. These are not official emergency thresholds and do not cap physical inundation.",
+  "display_depth_cap_cm": 30.0,
+  "low_threshold_cm": 5.0,
+  "moderate_threshold_cm": 15.0,
+  "high_threshold_cm": 30.0,
+  "severe_threshold_cm": 30.0,
+  "road_sample_points": 5,
+  "risk_class_encoding": {
+    "0": "no_or_very_low",
+    "1": "low",
+    "2": "moderate",
+    "3": "high",
+    "4": "severe"
+  },
+  "notes": [
+    "Raw equivalent depth preserves the model calculation.",
+    "The display cap is a visualization and screening decision, not physical inundation capping.",
+    "Thresholds are prototype screening thresholds and are not official emergency thresholds."
+  ]
+}

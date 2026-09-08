@@ -209,3 +209,35 @@ export const GetSurfaceWaterSummaryResponse = zod.object({
 })
 
 
+/**
+ * Returns mapped-nala interaction and dimensionless capacity-index readiness.
+ * @summary Get prototype drainage interaction status
+ */
+export const GetDrainageStatusResponse = zod.record(zod.string(), zod.unknown())
+
+
+/**
+ * @summary Get prototype drainage interaction statistics
+ */
+export const GetDrainageSummaryResponse = zod.record(zod.string(), zod.unknown())
+
+
+/**
+ * @summary Get prototype flood-depth screening status
+ */
+export const GetFloodDepthStatusResponse = zod.record(zod.string(), zod.unknown())
+
+
+/**
+ * @summary Get prototype flood-depth screening statistics
+ */
+export const GetFloodDepthSummaryResponse = zod.record(zod.string(), zod.unknown())
+
+
+/**
+ * Returns metadata and the path for the generated road_flood_risk GeoJSON artifact.
+ * @summary Get processed road flood-risk artifact status
+ */
+export const GetRoadFloodRiskResponse = zod.record(zod.string(), zod.unknown())
+
+

@@ -218,3 +218,13 @@ export interface SurfaceWaterSummaryResponse {
   volume_conservation_check: boolean;
 }
 
+export interface DrainageStatusResponse { [key: string]: unknown }
+
+export interface DrainageSummaryResponse { [key: string]: unknown }
+
+export interface FloodDepthStatusResponse { [key: string]: unknown }
+
+export interface FloodDepthSummaryResponse { [key: string]: unknown }
+
+export interface RoadFloodRiskResponse { [key: string]: unknown }
+

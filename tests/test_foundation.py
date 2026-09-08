@@ -32,4 +32,9 @@ def test_expected_routes_are_registered() -> None:
         "/api/runoff-summary",
         "/api/surface-water-status",
         "/api/surface-water-summary",
+        "/api/drainage-status",
+        "/api/drainage-summary",
+        "/api/flood-depth-status",
+        "/api/flood-depth-summary",
+        "/api/road-flood-risk",
     }.issubset(paths)

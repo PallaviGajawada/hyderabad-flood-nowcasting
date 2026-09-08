@@ -17,9 +17,14 @@ import type {
 
 import type {
   DataStatusResponse,
+  DrainageStatusResponse,
+  DrainageSummaryResponse,
+  FloodDepthStatusResponse,
+  FloodDepthSummaryResponse,
   HealthStatus,
   ModelPlaceholder,
   PreprocessingStatusResponse,
+  RoadFloodRiskResponse,
   RoadsStatusResponse,
   RunoffStatusResponse,
   RunoffSummaryResponse,
@@ -1053,6 +1058,393 @@ export function useGetSurfaceWaterSummary<TData = Awaited<ReturnType<typeof getS
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetSurfaceWaterSummaryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetDrainageStatusUrl = () => {
+
+
+
+
+  return `/api/drainage-status`
+}
+
+/**
+ * Returns mapped-nala interaction and dimensionless capacity-index readiness.
+ * @summary Get prototype drainage interaction status
+ */
+export const getDrainageStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<DrainageStatusResponse> => {
+
+  return customFetch<DrainageStatusResponse>(getGetDrainageStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetDrainageStatusQueryKey = () => {
+    return [
+    `/api/drainage-status`
+    ] as const;
+    }
+
+
+export const getGetDrainageStatusQueryOptions = <TData = Awaited<ReturnType<typeof getDrainageStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDrainageStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDrainageStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDrainageStatus>>> = ({ signal }) => getDrainageStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDrainageStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetDrainageStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getDrainageStatus>>>
+export type GetDrainageStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get prototype drainage interaction status
+ */
+
+export function useGetDrainageStatus<TData = Awaited<ReturnType<typeof getDrainageStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDrainageStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetDrainageStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetDrainageSummaryUrl = () => {
+
+
+
+
+  return `/api/drainage-summary`
+}
+
+/**
+ * @summary Get prototype drainage interaction statistics
+ */
+export const getDrainageSummary = async ( options?: Parameters<typeof customFetch>[1]): Promise<DrainageSummaryResponse> => {
+
+  return customFetch<DrainageSummaryResponse>(getGetDrainageSummaryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetDrainageSummaryQueryKey = () => {
+    return [
+    `/api/drainage-summary`
+    ] as const;
+    }
+
+
+export const getGetDrainageSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getDrainageSummary>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDrainageSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetDrainageSummaryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDrainageSummary>>> = ({ signal }) => getDrainageSummary({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getDrainageSummary>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetDrainageSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getDrainageSummary>>>
+export type GetDrainageSummaryQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get prototype drainage interaction statistics
+ */
+
+export function useGetDrainageSummary<TData = Awaited<ReturnType<typeof getDrainageSummary>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDrainageSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetDrainageSummaryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetFloodDepthStatusUrl = () => {
+
+
+
+
+  return `/api/flood-depth-status`
+}
+
+/**
+ * @summary Get prototype flood-depth screening status
+ */
+export const getFloodDepthStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<FloodDepthStatusResponse> => {
+
+  return customFetch<FloodDepthStatusResponse>(getGetFloodDepthStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetFloodDepthStatusQueryKey = () => {
+    return [
+    `/api/flood-depth-status`
+    ] as const;
+    }
+
+
+export const getGetFloodDepthStatusQueryOptions = <TData = Awaited<ReturnType<typeof getFloodDepthStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFloodDepthStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFloodDepthStatus>>> = ({ signal }) => getFloodDepthStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetFloodDepthStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getFloodDepthStatus>>>
+export type GetFloodDepthStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get prototype flood-depth screening status
+ */
+
+export function useGetFloodDepthStatus<TData = Awaited<ReturnType<typeof getFloodDepthStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetFloodDepthStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetFloodDepthSummaryUrl = () => {
+
+
+
+
+  return `/api/flood-depth-summary`
+}
+
+/**
+ * @summary Get prototype flood-depth screening statistics
+ */
+export const getFloodDepthSummary = async ( options?: Parameters<typeof customFetch>[1]): Promise<FloodDepthSummaryResponse> => {
+
+  return customFetch<FloodDepthSummaryResponse>(getGetFloodDepthSummaryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetFloodDepthSummaryQueryKey = () => {
+    return [
+    `/api/flood-depth-summary`
+    ] as const;
+    }
+
+
+export const getGetFloodDepthSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getFloodDepthSummary>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFloodDepthSummaryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFloodDepthSummary>>> = ({ signal }) => getFloodDepthSummary({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthSummary>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetFloodDepthSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getFloodDepthSummary>>>
+export type GetFloodDepthSummaryQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get prototype flood-depth screening statistics
+ */
+
+export function useGetFloodDepthSummary<TData = Awaited<ReturnType<typeof getFloodDepthSummary>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getFloodDepthSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetFloodDepthSummaryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetRoadFloodRiskUrl = () => {
+
+
+
+
+  return `/api/road-flood-risk`
+}
+
+/**
+ * Returns metadata and the path for the generated road_flood_risk GeoJSON artifact.
+ * @summary Get processed road flood-risk artifact status
+ */
+export const getRoadFloodRisk = async ( options?: Parameters<typeof customFetch>[1]): Promise<RoadFloodRiskResponse> => {
+
+  return customFetch<RoadFloodRiskResponse>(getGetRoadFloodRiskUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRoadFloodRiskQueryKey = () => {
+    return [
+    `/api/road-flood-risk`
+    ] as const;
+    }
+
+
+export const getGetRoadFloodRiskQueryOptions = <TData = Awaited<ReturnType<typeof getRoadFloodRisk>>, TError = ErrorType<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoadFloodRisk>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRoadFloodRiskQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoadFloodRisk>>> = ({ signal }) => getRoadFloodRisk({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRoadFloodRisk>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetRoadFloodRiskQueryResult = NonNullable<Awaited<ReturnType<typeof getRoadFloodRisk>>>
+export type GetRoadFloodRiskQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get processed road flood-risk artifact status
+ */
+
+export function useGetRoadFloodRisk<TData = Awaited<ReturnType<typeof getRoadFloodRisk>>, TError = ErrorType<void>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getRoadFloodRisk>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetRoadFloodRiskQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

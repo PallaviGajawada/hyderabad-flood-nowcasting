@@ -42,10 +42,17 @@ nowcasting in Hyderabad, India.
 - `backend/models/runoff_model.py` — rainfall-to-runoff prototype raster model
 - `backend/models/surface_water_model.py` — deterministic terrain-based
   surface-water routing and accumulation
+- `backend/models/drainage_model.py` — mapped nala spatial interaction and
+  dimensionless drainage capacity index
+- `backend/models/flood_depth_model.py` — prototype drainage removal,
+  equivalent depth, screening risk, and road-risk aggregation
 - `backend/runoff_coefficients.json` — explicitly labeled prototype
   coefficient assumptions
 - `backend/surface_water_assumptions.json` — explicitly labeled prototype
   routing/drainage assumptions
+- `backend/drainage_assumptions.json` and
+  `backend/flood_depth_assumptions.json` — explicitly labeled Step 6
+  prototype assumptions
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 - `artifacts/hyderabad-flood-nowcasting/src/` — dashboard implementation
 - `README.md` — scope, limitations, datasets, and future stages
@@ -88,6 +95,10 @@ warning system.
 - Surface-water outputs must report volume conservation, keep tank/nala
   assumptions configurable, and label equivalent depth as prototype
   accumulated surface water rather than observed flood depth.
+- Step 6 must preserve separate raw and display depth layers. Display caps and
+  risk thresholds are visualization/screening assumptions, not physical
+  inundation limits or official emergency thresholds. Road risk is not safe
+  routing.
 - The large source roads GeoPackage is intentionally not required; the
   road-only processor obtains the real drive network from OSMnx/Overpass using
   the supplied GHMC boundary.

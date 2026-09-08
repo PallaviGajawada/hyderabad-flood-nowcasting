@@ -1,0 +1,18 @@
+{
+  "status": "prototype_assumption",
+  "source": "prototype_assumption",
+  "description": "Transparent drainage interaction and capacity-index assumptions for research screening only. These are not measured GHMC or HMWSSB hydraulic parameters.",
+  "drainage_influence_radius_m": 60.0,
+  "prototype_drainage_effectiveness": 0.5,
+  "surface_volume_removal_fraction": 0.25,
+  "maximum_prototype_removal_m3_per_cell": 250.0,
+  "slope_reference_percent": 5.0,
+  "slope_weight": 0.3,
+  "proximity_weight": 0.7,
+  "removal_enabled": true,
+  "notes": [
+    "The mapped nala network is a spatial proxy for drainage interaction.",
+    "The capacity index is dimensionless and is not a hydraulic capacity.",
+    "Missing pipe and channel attributes are not fabricated."
+  ]
+}

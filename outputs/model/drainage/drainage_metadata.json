@@ -1,0 +1,63 @@
+{
+  "status": "ready",
+  "model_description": "prototype mapped-nala drainage interaction and capacity index",
+  "source": "prototype_assumption",
+  "nala_source": "/home/runner/workspace/outputs/preprocessed/drainage/ghmc_nalas.geojson",
+  "dem_source": "/home/runner/workspace/outputs/preprocessed/dem/dem_ghmc.tif",
+  "slope_source": "/home/runner/workspace/outputs/preprocessed/dem/slope_percent_ghmc.tif",
+  "crs": "EPSG:32644",
+  "raster_dimensions": {
+    "height": 1018,
+    "width": 1333
+  },
+  "raster_resolution_m": [
+    29.9589649007848,
+    29.9589649007848
+  ],
+  "assumptions": {
+    "status": "prototype_assumption",
+    "source": "prototype_assumption",
+    "description": "Transparent drainage interaction and capacity-index assumptions for research screening only. These are not measured GHMC or HMWSSB hydraulic parameters.",
+    "drainage_influence_radius_m": 60.0,
+    "prototype_drainage_effectiveness": 0.5,
+    "surface_volume_removal_fraction": 0.25,
+    "maximum_prototype_removal_m3_per_cell": 250.0,
+    "slope_reference_percent": 5.0,
+    "slope_weight": 0.3,
+    "proximity_weight": 0.7,
+    "removal_enabled": true,
+    "notes": [
+      "The mapped nala network is a spatial proxy for drainage interaction.",
+      "The capacity index is dimensionless and is not a hydraulic capacity.",
+      "Missing pipe and channel attributes are not fabricated."
+    ]
+  },
+  "interaction_encoding": {
+    "0": "no mapped nala influence",
+    "1": "mapped nala intersects cell",
+    "2": "within prototype nala influence radius",
+    "-9999": "nodata"
+  },
+  "statistics": {
+    "valid_cell_count": 682707,
+    "mapped_nala_intersection_cell_count": 9178,
+    "drainage_influence_cell_count": 62004,
+    "maximum_capacity_index": 0.5,
+    "mean_influence_capacity_index": 0.02552950568497181
+  },
+  "output_availability": {
+    "drainage_interaction": "/home/runner/workspace/outputs/model/drainage/drainage_interaction.tif",
+    "drainage_capacity_index": "/home/runner/workspace/outputs/model/drainage/drainage_capacity_index.tif",
+    "metadata": "/home/runner/workspace/outputs/model/drainage/drainage_metadata.json"
+  },
+  "warnings": [
+    "The mapped nala/drainage network is a spatial proxy for drainage interaction.",
+    "The capacity index is dimensionless and is not measured hydraulic capacity.",
+    "Missing pipe, channel, pump, and invert attributes are not fabricated."
+  ],
+  "limitations": [
+    "The supplied mapped nala network may be incomplete.",
+    "No pipe hydraulics, channel hydraulics, backflow, or operational drainage state is represented."
+  ],
+  "processing_timestamp": "2026-09-08T05:35:54.964220+00:00"
+}

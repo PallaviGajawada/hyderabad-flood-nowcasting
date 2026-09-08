@@ -10,7 +10,20 @@ from fastapi import APIRouter, FastAPI, HTTPException
 
 from .config import (
     DATA_VALIDATION_REPORT,
+    DRAINAGE_ASSUMPTIONS_PATH,
+    DRAINAGE_CAPACITY_INDEX_RASTER,
+    DRAINAGE_INTERACTION_RASTER,
+    DRAINAGE_METADATA,
+    DRAINAGE_REMOVED_VOLUME_RASTER,
+    DISPLAY_DEPTH_CM,
+    FLOOD_DEPTH_ASSUMPTIONS_PATH,
+    FLOOD_DEPTH_METADATA,
+    FLOOD_RISK_CLASS_RASTER,
     PREPROCESSING_REPORT,
+    RAW_EQUIVALENT_DEPTH_CM,
+    RAW_EQUIVALENT_DEPTH_MM,
+    REMAINING_SURFACE_WATER_VOLUME_RASTER,
+    ROAD_FLOOD_RISK_GEOJSON,
     ROADS_GEOJSON,
     ROADS_GRAPHML,
     ROADS_METADATA,
@@ -258,6 +271,158 @@ def surface_water_summary() -> dict[str, object]:
     }
 
 
+def drainage_status() -> dict[str, object]:
+    output_paths = {
+        "drainage_interaction": str(DRAINAGE_INTERACTION_RASTER),
+        "drainage_capacity_index": str(DRAINAGE_CAPACITY_INDEX_RASTER),
+        "metadata": str(DRAINAGE_METADATA),
+        "assumptions": str(DRAINAGE_ASSUMPTIONS_PATH),
+    }
+    if not DRAINAGE_METADATA.exists():
+        return {
+            "status": "not_run",
+            "model_status": "not_ready",
+            "ready": False,
+            "output_availability": output_paths,
+            "assumption_status": (
+                "available" if DRAINAGE_ASSUMPTIONS_PATH.exists() else "missing"
+            ),
+            "warnings": ["Run the drainage model before requesting its summary."],
+            "limitations": [],
+        }
+    report = json.loads(DRAINAGE_METADATA.read_text(encoding="utf-8"))
+    files_ready = all(
+        path.exists()
+        for path in (
+            DRAINAGE_INTERACTION_RASTER,
+            DRAINAGE_CAPACITY_INDEX_RASTER,
+            DRAINAGE_METADATA,
+        )
+    )
+    ready = report.get("status") == "ready" and files_ready
+    return {
+        "status": "ready" if ready else report.get("status", "not_ready"),
+        "model_status": "ready" if ready else "not_ready",
+        "ready": ready,
+        "output_availability": report.get("output_availability", output_paths),
+        "assumption_status": (
+            "prototype_assumption"
+            if report.get("source") == "prototype_assumption"
+            else "unknown"
+        ),
+        "crs": report.get("crs"),
+        "raster_dimensions": report.get("raster_dimensions"),
+        "raster_resolution_m": report.get("raster_resolution_m"),
+        "statistics": report.get("statistics", {}),
+        "warnings": report.get("warnings", []),
+        "limitations": report.get("limitations", []),
+    }
+
+
+def drainage_summary() -> dict[str, object]:
+    status = drainage_status()
+    if status.get("model_status") != "ready":
+        raise HTTPException(
+            status_code=404,
+            detail="Drainage model has not successfully run; summary statistics are unavailable.",
+        )
+    report = json.loads(DRAINAGE_METADATA.read_text(encoding="utf-8"))
+    return {
+        "status": "ready",
+        **report["statistics"],
+        "warnings": report.get("warnings", []),
+        "limitations": report.get("limitations", []),
+    }
+
+
+def flood_depth_status() -> dict[str, object]:
+    output_paths = {
+        "raw_equivalent_depth_mm": str(RAW_EQUIVALENT_DEPTH_MM),
+        "raw_equivalent_depth_cm": str(RAW_EQUIVALENT_DEPTH_CM),
+        "display_depth_cm": str(DISPLAY_DEPTH_CM),
+        "flood_risk_class": str(FLOOD_RISK_CLASS_RASTER),
+        "drainage_removed_volume_m3": str(DRAINAGE_REMOVED_VOLUME_RASTER),
+        "remaining_surface_water_volume_m3": str(REMAINING_SURFACE_WATER_VOLUME_RASTER),
+        "road_flood_risk": str(ROAD_FLOOD_RISK_GEOJSON),
+        "metadata": str(FLOOD_DEPTH_METADATA),
+        "assumptions": str(FLOOD_DEPTH_ASSUMPTIONS_PATH),
+    }
+    if not FLOOD_DEPTH_METADATA.exists():
+        return {
+            "status": "not_run",
+            "model_status": "not_ready",
+            "ready": False,
+            "output_availability": output_paths,
+            "assumption_status": (
+                "available" if FLOOD_DEPTH_ASSUMPTIONS_PATH.exists() else "missing"
+            ),
+            "warnings": ["Run the flood-depth model before requesting its summary."],
+            "limitations": [],
+        }
+    report = json.loads(FLOOD_DEPTH_METADATA.read_text(encoding="utf-8"))
+    files_ready = all(
+        path.exists()
+        for path in (
+            RAW_EQUIVALENT_DEPTH_MM,
+            RAW_EQUIVALENT_DEPTH_CM,
+            DISPLAY_DEPTH_CM,
+            FLOOD_RISK_CLASS_RASTER,
+            DRAINAGE_REMOVED_VOLUME_RASTER,
+            REMAINING_SURFACE_WATER_VOLUME_RASTER,
+            ROAD_FLOOD_RISK_GEOJSON,
+            FLOOD_DEPTH_METADATA,
+        )
+    )
+    ready = report.get("status") == "ready" and files_ready
+    return {
+        "status": "ready" if ready else report.get("status", "not_ready"),
+        "model_status": "ready" if ready else "not_ready",
+        "ready": ready,
+        "output_availability": report.get("output_availability", output_paths),
+        "assumption_status": (
+            "prototype_assumption"
+            if report.get("source") == "prototype_assumption"
+            else "unknown"
+        ),
+        "grid": report.get("grid", {}),
+        "statistics": report.get("statistics", {}),
+        "warnings": report.get("warnings", []),
+        "limitations": report.get("limitations", []),
+    }
+
+
+def flood_depth_summary() -> dict[str, object]:
+    status = flood_depth_status()
+    if status.get("model_status") != "ready":
+        raise HTTPException(
+            status_code=404,
+            detail="Flood-depth model has not successfully run; summary statistics are unavailable.",
+        )
+    report = json.loads(FLOOD_DEPTH_METADATA.read_text(encoding="utf-8"))
+    return {
+        "status": "ready",
+        **report["statistics"],
+        "road_flood_risk": report.get("road_flood_risk", {}),
+        "warnings": report.get("warnings", []),
+        "limitations": report.get("limitations", []),
+    }
+
+
+def road_flood_risk() -> dict[str, object]:
+    status = flood_depth_status()
+    if status.get("model_status") != "ready":
+        raise HTTPException(
+            status_code=404,
+            detail="Flood-depth model has not successfully run; road flood-risk data are unavailable.",
+        )
+    report = json.loads(FLOOD_DEPTH_METADATA.read_text(encoding="utf-8"))
+    return {
+        "status": "ready",
+        "output": str(ROAD_FLOOD_RISK_GEOJSON),
+        **report.get("road_flood_risk", {}),
+    }
+
+
 def register_routes(router: APIRouter) -> None:
     @router.get("/")
     def get_system_status() -> dict[str, object]:
@@ -310,6 +475,26 @@ def register_routes(router: APIRouter) -> None:
     @router.get("/surface-water-summary")
     def get_surface_water_summary() -> dict[str, object]:
         return surface_water_summary()
+
+    @router.get("/drainage-status")
+    def get_drainage_status() -> dict[str, object]:
+        return drainage_status()
+
+    @router.get("/drainage-summary")
+    def get_drainage_summary() -> dict[str, object]:
+        return drainage_summary()
+
+    @router.get("/flood-depth-status")
+    def get_flood_depth_status() -> dict[str, object]:
+        return flood_depth_status()
+
+    @router.get("/flood-depth-summary")
+    def get_flood_depth_summary() -> dict[str, object]:
+        return flood_depth_summary()
+
+    @router.get("/road-flood-risk")
+    def get_road_flood_risk() -> dict[str, object]:
+        return road_flood_risk()
 
 
 # The unprefixed routes make the Python app easy to run directly. The /api

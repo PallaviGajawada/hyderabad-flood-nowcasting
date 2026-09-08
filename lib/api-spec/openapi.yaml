@@ -182,6 +182,74 @@ paths:
                 $ref: "#/components/schemas/SurfaceWaterSummaryResponse"
         "404":
           description: Surface-water model has not successfully run
+  /drainage-status:
+    get:
+      operationId: getDrainageStatus
+      tags: [nowcasting]
+      summary: Get prototype drainage interaction status
+      description: Returns mapped-nala interaction and dimensionless capacity-index readiness.
+      responses:
+        "200":
+          description: Drainage model status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DrainageStatusResponse"
+  /drainage-summary:
+    get:
+      operationId: getDrainageSummary
+      tags: [nowcasting]
+      summary: Get prototype drainage interaction statistics
+      responses:
+        "200":
+          description: Drainage model summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DrainageSummaryResponse"
+        "404":
+          description: Drainage model has not successfully run
+  /flood-depth-status:
+    get:
+      operationId: getFloodDepthStatus
+      tags: [nowcasting]
+      summary: Get prototype flood-depth screening status
+      responses:
+        "200":
+          description: Flood-depth model status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FloodDepthStatusResponse"
+  /flood-depth-summary:
+    get:
+      operationId: getFloodDepthSummary
+      tags: [nowcasting]
+      summary: Get prototype flood-depth screening statistics
+      responses:
+        "200":
+          description: Flood-depth summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FloodDepthSummaryResponse"
+        "404":
+          description: Flood-depth model has not successfully run
+  /road-flood-risk:
+    get:
+      operationId: getRoadFloodRisk
+      tags: [nowcasting]
+      summary: Get processed road flood-risk artifact status
+      description: Returns metadata and the path for the generated road_flood_risk GeoJSON artifact.
+      responses:
+        "200":
+          description: Road flood-risk summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoadFloodRiskResponse"
+        "404":
+          description: Flood-depth model has not successfully run
 components:
   schemas:
     SystemStatus:
@@ -570,4 +638,24 @@ components:
         - prototype_drainage_removed_volume_m3
         - volume_conservation_error_m3
         - volume_conservation_check
+    DrainageStatusResponse:
+      type: object
+      additionalProperties: true
+      required: [status, model_status, ready, output_availability, assumption_status, warnings, limitations]
+    DrainageSummaryResponse:
+      type: object
+      additionalProperties: true
+      required: [status]
+    FloodDepthStatusResponse:
+      type: object
+      additionalProperties: true
+      required: [status, model_status, ready, output_availability, assumption_status, warnings, limitations]
+    FloodDepthSummaryResponse:
+      type: object
+      additionalProperties: true
+      required: [status]
+    RoadFloodRiskResponse:
+      type: object
+      additionalProperties: true
+      required: [status, output]
 

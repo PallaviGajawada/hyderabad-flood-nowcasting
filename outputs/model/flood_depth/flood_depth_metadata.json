@@ -1,0 +1,142 @@
+{
+  "status": "ready",
+  "source": "prototype_assumption",
+  "model_description": "prototype drainage interaction and equivalent flood-depth screening",
+  "surface_water_source": "/home/runner/workspace/outputs/model/surface_water/surface_water_volume_m3.tif",
+  "drainage_interaction_source": "/home/runner/workspace/outputs/model/drainage/drainage_interaction.tif",
+  "drainage_capacity_source": "/home/runner/workspace/outputs/model/drainage/drainage_capacity_index.tif",
+  "water_body_source": "/home/runner/workspace/outputs/preprocessed/waterbodies/hyderabad_tanks.geojson",
+  "grid": {
+    "crs": "EPSG:32644",
+    "raster_dimensions": {
+      "height": 1018,
+      "width": 1333
+    },
+    "raster_resolution_m": [
+      29.9589649007848,
+      29.9589649007848
+    ],
+    "cell_area_m2": 897.5395779264555
+  },
+  "drainage_assumptions": {
+    "status": "prototype_assumption",
+    "source": "prototype_assumption",
+    "description": "Transparent drainage interaction and capacity-index assumptions for research screening only. These are not measured GHMC or HMWSSB hydraulic parameters.",
+    "drainage_influence_radius_m": 60.0,
+    "prototype_drainage_effectiveness": 0.5,
+    "surface_volume_removal_fraction": 0.25,
+    "maximum_prototype_removal_m3_per_cell": 250.0,
+    "slope_reference_percent": 5.0,
+    "slope_weight": 0.3,
+    "proximity_weight": 0.7,
+    "removal_enabled": true,
+    "notes": [
+      "The mapped nala network is a spatial proxy for drainage interaction.",
+      "The capacity index is dimensionless and is not a hydraulic capacity.",
+      "Missing pipe and channel attributes are not fabricated."
+    ]
+  },
+  "flood_depth_assumptions": {
+    "status": "prototype_assumption",
+    "source": "prototype_assumption",
+    "description": "Prototype flood-depth screening and visualization assumptions. These are not official emergency thresholds and do not cap physical inundation.",
+    "display_depth_cap_cm": 30.0,
+    "low_threshold_cm": 5.0,
+    "moderate_threshold_cm": 15.0,
+    "high_threshold_cm": 30.0,
+    "severe_threshold_cm": 30.0,
+    "road_sample_points": 5,
+    "risk_class_encoding": {
+      "0": "no_or_very_low",
+      "1": "low",
+      "2": "moderate",
+      "3": "high",
+      "4": "severe"
+    },
+    "notes": [
+      "Raw equivalent depth preserves the model calculation.",
+      "The display cap is a visualization and screening decision, not physical inundation capping.",
+      "Thresholds are prototype screening thresholds and are not official emergency thresholds."
+    ]
+  },
+  "equations": {
+    "drainage_removed_volume_m3": "min(surface_water_volume_m3 * capacity_index * surface_volume_removal_fraction * prototype_drainage_effectiveness, maximum_prototype_removal_m3_per_cell)",
+    "remaining_surface_water_volume_m3": "surface_water_volume_m3 - drainage_removed_volume_m3",
+    "raw_equivalent_depth_cm": "remaining_surface_water_volume_m3 / cell_area_m2 * 100",
+    "display_depth_cm": "min(raw_equivalent_depth_cm, display_depth_cap_cm)"
+  },
+  "statistics": {
+    "valid_cell_count": 505634,
+    "raw_maximum_depth_cm": 1885.8382346050626,
+    "raw_mean_depth_cm": 3.6928859599626436,
+    "raw_maximum_depth_mm": 18858.382346050625,
+    "display_maximum_depth_cm": 30.0,
+    "display_mean_depth_cm": 0.9459571264566481,
+    "threshold_cell_counts": {
+      "above_1_cm": 34068,
+      "above_5_cm": 21227,
+      "above_10_cm": 15328,
+      "above_20_cm": 12774,
+      "above_50_cm": 9721
+    },
+    "risk_class_counts": {
+      "0": 465604,
+      "1": 18803,
+      "2": 7505,
+      "3": 2138,
+      "4": 11584
+    },
+    "input_surface_water_volume_m3": 16831189.096553326,
+    "prototype_drainage_removed_volume_m3": 71893.00040553614,
+    "remaining_surface_water_volume_m3": 16759296.09614779,
+    "volume_conservation_error_m3": -1.862645149230957e-09,
+    "volume_conservation_check": true,
+    "water_body_cell_count": 33953,
+    "drainage_influence_cell_count": 62004
+  },
+  "road_flood_risk": {
+    "status": "ready",
+    "source": "/home/runner/workspace/outputs/preprocessed/roads/hyderabad_roads.geojson",
+    "output": "/home/runner/workspace/outputs/model/flood_depth/road_flood_risk.geojson",
+    "sample_points_per_road_edge": 5,
+    "road_edge_count": 360839,
+    "road_edges_with_positive_display_depth": 26815,
+    "road_edge_affected_percent_mean": 3.5248268618414307,
+    "maximum_prototype_road_depth_cm": 30.0,
+    "maximum_road_risk_class": 4,
+    "risk_class_counts": {
+      "0": 334024,
+      "1": 1157,
+      "2": 6271,
+      "3": 1796,
+      "4": 17591
+    },
+    "warnings": [
+      "Road values are sampled from prototype display depth and risk rasters.",
+      "They are not measured street flood depths or safe-route recommendations."
+    ]
+  },
+  "output_availability": {
+    "raw_equivalent_depth_mm": "/home/runner/workspace/outputs/model/flood_depth/raw_equivalent_depth_mm.tif",
+    "raw_equivalent_depth_cm": "/home/runner/workspace/outputs/model/flood_depth/raw_equivalent_depth_cm.tif",
+    "display_depth_cm": "/home/runner/workspace/outputs/model/flood_depth/display_depth_cm.tif",
+    "flood_risk_class": "/home/runner/workspace/outputs/model/flood_depth/flood_risk_class.tif",
+    "drainage_removed_volume_m3": "/home/runner/workspace/outputs/model/flood_depth/drainage_removed_volume_m3.tif",
+    "remaining_surface_water_volume_m3": "/home/runner/workspace/outputs/model/flood_depth/remaining_surface_water_volume_m3.tif",
+    "road_flood_risk": "/home/runner/workspace/outputs/model/flood_depth/road_flood_risk.geojson",
+    "metadata": "/home/runner/workspace/outputs/model/flood_depth/flood_depth_metadata.json"
+  },
+  "warnings": [
+    "This is a research/prototype screening model and is not an engineering hydraulic simulation or operational flood warning system.",
+    "Equivalent depths are not measured street-level flood depths.",
+    "The display cap is a visualization/screening decision, not physical inundation capping.",
+    "Risk thresholds are prototype screening thresholds and are not official emergency thresholds.",
+    "Mapped nalas are used as a spatial proxy; missing hydraulic attributes are represented by explicitly labeled prototype assumptions."
+  ],
+  "limitations": [
+    "No pipe diameter, channel depth, invert, Manning roughness, measured flow, pump operation, manhole level, blockage, or real-time sewer condition is represented.",
+    "Surface-water input is a static historical/scenario raster and not a time-stepped forecast.",
+    "Road statistics are sampled edge summaries and are not safe-route recommendations."
+  ],
+  "processing_timestamp": "2026-09-08T05:40:01.292447+00:00"
+}

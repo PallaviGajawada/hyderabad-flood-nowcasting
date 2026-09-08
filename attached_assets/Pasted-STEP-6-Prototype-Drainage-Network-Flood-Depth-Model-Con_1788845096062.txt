@@ -1,0 +1,411 @@
+STEP 6 — Prototype Drainage Network + Flood Depth Model
+
+Continue from the successfully completed Step 5.
+
+IMPORTANT:
+Do not rebuild or replace existing preprocessing, rainfall, runoff, terrain-routing, road-network, or frontend infrastructure.
+Reuse the existing outputs and APIs.
+
+Goal:
+Implement a transparent research-prototype drainage interaction and flood-depth/risk model for Hyderabad by combining:
+
+1. Surface-water runoff accumulation from Step 5
+2. GHMC nala/drainage network
+3. Hyderabad water bodies/tanks
+4. DEM terrain information
+5. GHMC boundary
+6. Existing prototype drainage assumptions
+
+IMPORTANT SCIENTIFIC RESTRICTIONS:
+
+This is NOT an engineering hydraulic model.
+
+We do NOT have reliable complete hydraulic attributes such as:
+- pipe diameter
+- pipe/channel depth
+- invert elevation
+- Manning roughness
+- measured hydraulic capacity
+- measured flow
+- pump operation
+- manhole water levels
+- blockage observations
+- real-time sewer conditions
+
+Therefore:
+
+DO NOT invent real GHMC/HMWSSB hydraulic measurements.
+
+Any missing drainage behavior must use clearly named configurable
+"prototype_assumption" parameters.
+
+Do not claim the resulting values are measured flood depths.
+
+==================================================
+PART A — DRAINAGE NETWORK REPRESENTATION
+==================================================
+
+Use the existing GHMC nala/drainage geometries.
+
+Create a raster/grid representation of drainage influence aligned exactly
+with the existing DEM/model grid:
+
+CRS:
+EPSG:32644
+
+Dimensions:
+1018 x 1333
+
+Resolution:
+approximately 29.96 m
+
+For every valid model cell determine whether it intersects or is close to
+a mapped nala/drainage feature.
+
+Create:
+
+outputs/model/drainage/
+    drainage_interaction.tif
+    drainage_capacity_index.tif
+    drainage_metadata.json
+
+The drainage interaction raster should identify cells influenced by the
+mapped nala network.
+
+Do not fabricate missing pipe geometries.
+
+If the existing nala data are incomplete, document this limitation.
+
+==================================================
+PART B — PROTOTYPE DRAINAGE CAPACITY
+==================================================
+
+Create a configuration file:
+
+backend/drainage_assumptions.json
+
+All assumed values must explicitly contain:
+
+"source": "prototype_assumption"
+
+Do not describe them as GHMC measurements.
+
+Use a simple configurable conceptual drainage capacity model.
+
+For example, drainage capacity can depend on:
+
+- whether a cell intersects a mapped nala
+- local slope
+- prototype drainage effectiveness
+- maximum prototype removal rate
+
+The exact formula may be simple and deterministic.
+
+The important requirement is:
+
+surface water near mapped drainage features should have an opportunity
+to be removed from the surface system.
+
+Do NOT create physically precise pipe hydraulics.
+
+Do NOT simulate actual sewer pipe pressure.
+
+Do NOT claim backflow unless explicitly represented as a prototype
+scenario.
+
+==================================================
+PART C — DRAINAGE REMOVAL
+==================================================
+
+Take the Step 5 surface-water volume.
+
+Apply the prototype drainage capacity to relevant cells.
+
+Calculate:
+
+surface_water_volume
+-
+prototype_drainage_removed_volume
+=
+remaining_surface_water_volume
+
+Make sure volume conservation is checked.
+
+Report:
+
+input surface-water volume
+prototype drainage removal
+remaining surface-water volume
+conservation error
+
+If drainage removal assumptions are disabled, the model should still run.
+
+==================================================
+PART D — FLOOD DEPTH ESTIMATION
+==================================================
+
+Create a clearly documented prototype flood-depth estimation layer.
+
+Inputs:
+
+- remaining surface-water volume
+- model cell area
+- DEM
+- drainage interaction
+- water-body interaction
+
+Calculate an "equivalent surface-water depth" from volume / cell area.
+
+Then create a separate screening/risk layer.
+
+DO NOT represent the raw terrain-sink maximum as a realistic street flood
+depth.
+
+Create configurable screening thresholds such as:
+
+LOW:
+< 5 cm
+
+MODERATE:
+5–15 cm
+
+HIGH:
+15–30 cm
+
+SEVERE:
+> 30 cm
+
+These are prototype screening thresholds and must be labeled accordingly.
+
+Do not claim these thresholds are official emergency thresholds unless
+they are explicitly sourced.
+
+==================================================
+PART E — AVOID MISLEADING EXTREME SINK VALUES
+==================================================
+
+The Step 5 model contains terrain-sink accumulation artifacts.
+
+Do NOT silently delete those values.
+
+Instead create two outputs:
+
+1. Raw equivalent depth
+2. Display/screening depth
+
+The raw layer preserves the actual model calculation.
+
+The screening/display layer may apply a documented configurable cap or
+classification rule to prevent extreme sink artifacts from dominating
+the visualization.
+
+Configuration example:
+
+backend/flood_depth_assumptions.json
+
+with:
+
+- display_depth_cap_cm
+- low_threshold_cm
+- moderate_threshold_cm
+- high_threshold_cm
+- severe_threshold_cm
+
+Every value must have:
+
+"source": "prototype_assumption"
+
+Metadata must clearly state that the display cap is a visualization/
+screening decision and is NOT physical inundation capping.
+
+==================================================
+PART F — FLOOD DEPTH OUTPUTS
+==================================================
+
+Create:
+
+outputs/model/flood_depth/
+
+    raw_equivalent_depth_mm.tif
+    raw_equivalent_depth_cm.tif
+    display_depth_cm.tif
+    flood_risk_class.tif
+    drainage_removed_volume_m3.tif
+    remaining_surface_water_volume_m3.tif
+    flood_depth_metadata.json
+
+Risk classes:
+
+0 = no/very low
+1 = low
+2 = moderate
+3 = high
+4 = severe
+
+Use integer raster values for risk classes.
+
+==================================================
+PART G — STREET/ROAD INTERACTION
+==================================================
+
+Use the already processed OSM road network.
+
+Do NOT download roads again.
+
+For each road edge/segment:
+
+sample/intersect the flood display-depth raster.
+
+Calculate:
+
+- maximum predicted prototype depth
+- mean predicted prototype depth
+- percentage of sampled road affected
+- maximum risk class
+
+Create a processed road-risk dataset such as:
+
+outputs/model/flood_depth/
+    road_flood_risk.geojson
+
+Preserve existing OSM attributes where practical.
+
+Do not modify the original road dataset.
+
+==================================================
+PART H — API ENDPOINTS
+==================================================
+
+Add:
+
+GET /api/drainage-status
+
+GET /api/drainage-summary
+
+GET /api/flood-depth-status
+
+GET /api/flood-depth-summary
+
+GET /api/road-flood-risk
+
+The APIs must return real calculated values only after successful model
+execution.
+
+Do not use fabricated fallback statistics.
+
+Flood-depth summary should include:
+
+- valid cells
+- raw maximum depth
+- raw mean depth
+- display maximum depth
+- display mean depth
+- cells above 1 cm
+- cells above 5 cm
+- cells above 10 cm
+- cells above 20 cm
+- cells above 50 cm
+- risk class counts
+- drainage removal volume
+- remaining surface-water volume
+- warnings/limitations
+
+==================================================
+PART I — MAP DATA SUPPORT
+==================================================
+
+Expose enough information for the frontend to later display:
+
+- flood depth raster
+- flood risk raster
+- drainage/nala layer
+- road flood-risk layer
+- water bodies
+
+Do NOT redesign the entire dashboard yet.
+
+Only add the backend/API support required for later dashboard integration.
+
+==================================================
+PART J — TESTING
+==================================================
+
+Add tests for:
+
+1. drainage raster alignment
+2. drainage interaction detection
+3. prototype drainage capacity calculation
+4. drainage removal calculation
+5. volume conservation
+6. flood depth = volume / cell area
+7. risk classification
+8. display depth cap
+9. nodata handling
+10. road flood-risk aggregation
+11. API status
+12. API summary
+13. no fabricated statistics before model execution
+
+Run the complete test suite.
+
+Also run:
+
+- backend typecheck
+- frontend typecheck
+- API client regeneration if required
+- frontend production build
+
+==================================================
+PART K — DOCUMENTATION
+==================================================
+
+Update README/model documentation with:
+
+- purpose
+- inputs
+- equations
+- drainage assumptions
+- flood-depth assumptions
+- risk thresholds
+- display cap
+- limitations
+- exact output files
+- exact API endpoints
+
+Explicitly state:
+
+"This is a research/prototype screening model and is not an engineering
+hydraulic simulation or operational flood warning system."
+
+Also state:
+
+"The mapped nala/drainage network is used as a spatial proxy for drainage
+interaction. Missing hydraulic attributes are represented using explicitly
+labeled prototype assumptions."
+
+Do not claim street-level measured flood depth.
+
+==================================================
+FINAL REPORT
+==================================================
+
+At the end report:
+
+1. files created
+2. drainage network statistics
+3. drainage interaction cell count
+4. input surface-water volume
+5. prototype drainage removal volume
+6. remaining volume
+7. volume conservation error
+8. raw equivalent depth statistics
+9. display depth statistics
+10. risk class counts
+11. road flood-risk statistics
+12. APIs added
+13. complete test count
+14. typecheck/build results
+15. limitations
+16. any warnings
+
+Do not proceed to safe routing or 0–3 hour forecasting in this step.
