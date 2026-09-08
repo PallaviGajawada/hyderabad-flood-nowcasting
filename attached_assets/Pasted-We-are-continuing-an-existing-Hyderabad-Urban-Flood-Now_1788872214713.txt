@@ -1,0 +1,324 @@
+We are continuing an existing Hyderabad Urban Flood Nowcasting prototype.
+
+IMPORTANT:
+Do NOT rebuild, delete, reset, or replace the existing Step 1–6 implementation.
+Do NOT modify existing scientific calculations unless absolutely required for integration.
+Preserve all existing data, outputs, APIs, tests, and frontend functionality.
+
+Current status:
+- Step 1–6 are implemented.
+- Step 6 is COMPLETE.
+- pytest currently reports 31 passed.
+- Git checkpoint has already been created.
+- Hyderabad road network:
+  138,851 nodes
+  360,839 directed road edges
+- Existing flood-depth output:
+  outputs/model/flood_depth/display_depth_cm.tif
+- Existing road flood-risk output:
+  outputs/model/flood_depth/road_flood_risk.geojson
+- Existing runoff, surface-water, drainage, flood-depth models and APIs must remain intact.
+
+First inspect the repository and understand:
+1. backend/config.py
+2. backend/main.py
+3. backend/models/
+4. existing tests/
+5. existing frontend/API client
+6. existing Step 1–6 outputs and metadata
+
+Then implement ONLY Step 7.
+
+STEP 7 GOAL:
+Implement a transparent prototype framework for:
+A. 0–3 hour flood forecasting
+B. flood-aware safe alternative routing
+
+==================================================
+A. 0–3 HOUR FLOOD FORECAST
+==================================================
+
+Create a forecast model that produces these forecast horizons:
+
+T+0
+T+30
+T+60
+T+90
+T+120
+T+150
+T+180 minutes
+
+The forecast must be deterministic and reproducible.
+
+IMPORTANT SCIENTIFIC TRANSPARENCY:
+The current rainfall source is historical 2024 IMD daily gridded rainfall (~0.25 degree), NOT real-time Doppler Weather Radar nowcasting.
+
+Do NOT claim that this is real-time radar nowcasting.
+
+Instead:
+- create a clean rainfall-nowcast provider interface
+- implement the existing IMD historical scenario as the current prototype provider
+- design the interface so a real radar nowcast can later replace it without changing the downstream flood model.
+
+The forecast pipeline should conceptually be:
+
+rainfall forecast
+    ↓
+rainfall → runoff
+    ↓
+surface routing / accumulation
+    ↓
+drainage interaction
+    ↓
+flood depth
+    ↓
+road flood risk
+
+For the current prototype, use the existing Step 6 flood-depth state as the T+0 baseline and create a clearly documented deterministic persistence/decay scenario for future horizons.
+
+Do NOT fabricate radar observations.
+
+Use a configurable forecast assumption such as:
+- rainfall persistence factor
+- surface-water persistence/decay factor
+- drainage recession factor
+
+Put these assumptions in a dedicated configuration file.
+
+The output should contain, for every forecast horizon:
+- timestamp/horizon
+- rainfall scenario information
+- flood depth raster
+- flood risk raster
+- summary statistics
+- maximum depth
+- mean depth
+- affected cell counts
+- risk class counts
+
+Use consistent naming such as:
+
+outputs/model/forecast/
+    forecast_metadata.json
+    tplus_000/
+        flood_depth_cm.tif
+        flood_risk_class.tif
+        forecast_summary.json
+    tplus_030/
+        ...
+    tplus_060/
+        ...
+    tplus_090/
+        ...
+    tplus_120/
+        ...
+    tplus_150/
+        ...
+    tplus_180/
+        ...
+
+Do not duplicate huge source datasets unnecessarily.
+
+Where possible, derive forecast rasters from the existing Step 6 outputs using transparent configurable transformations.
+
+==================================================
+B. FLOOD-AWARE SAFE ROUTING
+==================================================
+
+Use the existing Hyderabad OSM road graph:
+
+outputs/preprocessed/roads/hyderabad_drive.graphml
+
+and existing road flood-risk data:
+
+outputs/model/flood_depth/road_flood_risk.geojson
+
+Implement a flood-aware routing module.
+
+The routing algorithm should:
+1. Load the road graph.
+2. Associate flood depth/risk with road edges.
+3. Allow a source and destination.
+4. Calculate a normal shortest route.
+5. Calculate a flood-aware route.
+6. Penalize or exclude dangerous flooded roads.
+7. Return the safest practical route.
+
+Use configurable thresholds, for example:
+- safe: <= 5 cm
+- caution: >5 cm and <=15 cm
+- dangerous: >15 cm
+
+Do NOT hard-code these values in multiple files.
+
+The routing cost should combine:
+- normal travel length/time
+- flood-depth penalty
+- risk-class penalty
+
+Example conceptual cost:
+
+routing_cost =
+    travel_time
+    × flood_penalty
+
+where flood_penalty increases as predicted flood depth increases.
+
+Very dangerous roads may be excluded completely using a configurable maximum safe depth.
+
+The route result should contain:
+- source
+- destination
+- route node/edge sequence
+- estimated travel distance
+- estimated travel time
+- maximum predicted flood depth
+- average predicted flood depth
+- maximum flood risk class
+- route safety classification
+- whether flooded roads were avoided
+
+Create an API such as:
+
+GET /api/safe-route
+
+Parameters:
+source_lat
+source_lon
+destination_lat
+destination_lon
+forecast_minutes
+
+Example response:
+
+{
+  "status": "ready",
+  "source": {...},
+  "destination": {...},
+  "forecast_minutes": 60,
+  "route": [...],
+  "distance_m": ...,
+  "estimated_time_min": ...,
+  "max_flood_depth_cm": ...,
+  "mean_flood_depth_cm": ...,
+  "max_risk_class": ...,
+  "safety": "SAFE",
+  "flood_avoided": true
+}
+
+Also provide a normal route comparison so the dashboard can show:
+
+Normal route
+vs
+Flood-safe route
+
+==================================================
+TESTING
+==================================================
+
+Add focused Step 7 tests.
+
+Tests must verify:
+- all 7 forecast horizons are generated
+- forecast rasters have the correct CRS/grid/alignment
+- forecast values are finite where baseline values are valid
+- forecast metadata is valid
+- forecast is deterministic
+- routing module loads the existing road graph
+- routing returns a valid path for a known pair of Hyderabad coordinates
+- safe routing returns required fields
+- dangerous roads receive higher routing cost
+- API returns valid response
+- existing Step 1–6 tests continue to pass
+
+Do NOT remove or weaken any existing tests.
+
+==================================================
+API
+==================================================
+
+Add:
+GET /api/forecast-status
+GET /api/forecast-summary
+GET /api/safe-route
+
+Update OpenAPI/API typing if the project already generates or maintains API contracts.
+
+==================================================
+FRONTEND
+==================================================
+
+Do not redesign the entire dashboard.
+
+Integrate Step 7 into the existing dashboard.
+
+Add:
+- forecast time selector:
+  T+0, T+30, T+60, T+90, T+120, T+150, T+180
+- display current selected forecast horizon
+- display flood depth summary
+- safe-route controls:
+  source
+  destination
+  forecast horizon
+- show normal route vs flood-safe route comparison
+- show maximum flood depth on selected route
+- show safety classification
+
+Keep the existing UI intact.
+
+==================================================
+DOCUMENTATION
+==================================================
+
+Document clearly:
+
+1. This is a prototype flood nowcasting framework.
+2. Current rainfall input is historical IMD gridded rainfall, not real-time radar.
+3. Forecast horizons are deterministic scenario projections.
+4. Safe routing uses prototype flood-risk penalties.
+5. Missing real-world hydraulic measurements remain assumptions.
+6. Real deployment would replace the rainfall provider with Doppler Weather Radar nowcasts and replace assumed hydraulic parameters with validated drainage-network data.
+
+==================================================
+PERFORMANCE
+==================================================
+
+The Hyderabad road graph is large:
+138,851 nodes
+360,839 directed edges.
+
+Do NOT repeatedly reload the entire road GeoJSON or recompute the 360,839-edge flood aggregation for every API request.
+
+Precompute or cache where appropriate.
+
+Do NOT generate unnecessary duplicate large GeoJSON files.
+
+==================================================
+COMPLETION CRITERIA
+==================================================
+
+Step 7 is complete only when:
+
+1. Forecast outputs exist for all 7 horizons.
+2. Forecast status/summary APIs work.
+3. Safe-route API works.
+4. Frontend exposes forecast horizon selection.
+5. Frontend exposes flood-safe routing.
+6. Tests pass.
+7. Existing 31 Step 1–6 tests remain passing.
+8. No existing data/model outputs are deleted.
+9. Limitations are documented honestly.
+
+At the end, report:
+- files created/modified
+- forecast assumptions
+- forecast statistics
+- routing implementation
+- APIs added
+- frontend changes
+- test results
+- any warnings
+- any limitations
+
+Do NOT proceed to another major feature after Step 7.
