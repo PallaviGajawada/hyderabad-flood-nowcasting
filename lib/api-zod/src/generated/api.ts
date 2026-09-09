@@ -37,11 +37,66 @@ export const GetHealthResponse = zod.object({
 
 
 /**
- * @summary Get flood forecast placeholder
+ * @summary Get deterministic flood forecast summary
  */
 export const GetForecastResponse = zod.object({
-  "message": zod.string(),
-  "status": zod.string()
+  "status": zod.string(),
+  "generated_at": zod.string(),
+  "rainfall": zod.record(zod.string(), zod.unknown()),
+  "assumptions": zod.record(zod.string(), zod.unknown()),
+  "horizons": zod.array(zod.object({
+  "horizon_minutes": zod.number().int(),
+  "horizon_label": zod.string(),
+  "rainfall_scenario": zod.string().optional(),
+  "persistence_decay_factor": zod.number().optional(),
+  "statistics": zod.object({
+  "valid_cell_count": zod.number().int(),
+  "maximum_depth_cm": zod.number().nullable(),
+  "mean_depth_cm": zod.number().nullable(),
+  "affected_cell_count": zod.number().int(),
+  "risk_class_counts": zod.record(zod.string(), zod.number().int())
+})
+})),
+  "warnings": zod.array(zod.string())
+})
+
+
+/**
+ * @summary Get forecast readiness and assumptions
+ */
+export const GetForecastStatusResponse = zod.object({
+  "status": zod.string(),
+  "model_status": zod.string().optional(),
+  "forecast_horizons_minutes": zod.array(zod.number().int()),
+  "rainfall_provider": zod.string().optional(),
+  "rainfall_description": zod.string().optional(),
+  "scenario": zod.string().optional(),
+  "warnings": zod.array(zod.string()).optional()
+})
+
+
+/**
+ * @summary Get all forecast horizon summaries
+ */
+export const GetForecastSummaryResponse = zod.object({
+  "status": zod.string(),
+  "generated_at": zod.string(),
+  "rainfall": zod.record(zod.string(), zod.unknown()),
+  "assumptions": zod.record(zod.string(), zod.unknown()),
+  "horizons": zod.array(zod.object({
+  "horizon_minutes": zod.number().int(),
+  "horizon_label": zod.string(),
+  "rainfall_scenario": zod.string().optional(),
+  "persistence_decay_factor": zod.number().optional(),
+  "statistics": zod.object({
+  "valid_cell_count": zod.number().int(),
+  "maximum_depth_cm": zod.number().nullable(),
+  "mean_depth_cm": zod.number().nullable(),
+  "affected_cell_count": zod.number().int(),
+  "risk_class_counts": zod.record(zod.string(), zod.number().int())
+})
+})),
+  "warnings": zod.array(zod.string())
 })
 
 
@@ -55,11 +110,80 @@ export const GetFloodDepthResponse = zod.object({
 
 
 /**
- * @summary Get safe route placeholder
+ * @summary Compare normal and flood-aware routes
  */
+export const getSafeRouteQueryForecastMinutesDefault = 0;
+
+export const GetSafeRouteQueryParams = zod.object({
+  "source_lat": zod.coerce.number(),
+  "source_lon": zod.coerce.number(),
+  "destination_lat": zod.coerce.number(),
+  "destination_lon": zod.coerce.number(),
+  "forecast_minutes": zod.union([zod.literal(0),zod.literal(30),zod.literal(60),zod.literal(90),zod.literal(120),zod.literal(150),zod.literal(180)]).default(getSafeRouteQueryForecastMinutesDefault)
+})
+
 export const GetSafeRouteResponse = zod.object({
-  "message": zod.string(),
-  "status": zod.string()
+  "status": zod.string(),
+  "forecast_minutes": zod.number().int(),
+  "distance_m": zod.number().optional(),
+  "estimated_time_min": zod.number().optional(),
+  "max_flood_depth_cm": zod.number().optional(),
+  "mean_flood_depth_cm": zod.number().optional(),
+  "max_risk_class": zod.number().int().optional(),
+  "safety": zod.string(),
+  "flood_avoided": zod.boolean().optional(),
+  "route": zod.array(zod.object({
+  "lat": zod.number(),
+  "lon": zod.number()
+})),
+  "normal_route": zod.object({
+  "node_sequence": zod.array(zod.string()),
+  "route": zod.array(zod.object({
+  "lat": zod.number(),
+  "lon": zod.number()
+})),
+  "distance_m": zod.number(),
+  "estimated_time_min": zod.number(),
+  "max_flood_depth_cm": zod.number(),
+  "mean_flood_depth_cm": zod.number(),
+  "max_risk_class": zod.number().int(),
+  "safety": zod.string()
+}),
+  "flood_safe_route": zod.object({
+  "node_sequence": zod.array(zod.string()),
+  "route": zod.array(zod.object({
+  "lat": zod.number(),
+  "lon": zod.number()
+})),
+  "distance_m": zod.number(),
+  "estimated_time_min": zod.number(),
+  "max_flood_depth_cm": zod.number(),
+  "mean_flood_depth_cm": zod.number(),
+  "max_risk_class": zod.number().int(),
+  "safety": zod.string()
+}),
+  "warnings": zod.array(zod.string()).optional()
+})
+
+
+/**
+ * Returns cached lightweight GeoJSON layers and downsampled forecast cells; scientific rasters and the full road graph are not sent to the browser.
+ * @summary Get simplified web map layers
+ */
+export const getMapLayersQueryForecastMinutesDefault = 0;
+
+export const GetMapLayersQueryParams = zod.object({
+  "forecast_minutes": zod.union([zod.literal(0),zod.literal(30),zod.literal(60),zod.literal(90),zod.literal(120),zod.literal(150),zod.literal(180)]).default(getMapLayersQueryForecastMinutesDefault)
+})
+
+export const GetMapLayersResponse = zod.object({
+  "status": zod.string(),
+  "forecast_minutes": zod.number().int(),
+  "layers": zod.record(zod.string(), zod.object({
+  "type": zod.string(),
+  "features": zod.array(zod.record(zod.string(), zod.unknown()))
+})),
+  "limits": zod.record(zod.string(), zod.unknown())
 })
 
 

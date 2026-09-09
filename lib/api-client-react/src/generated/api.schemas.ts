@@ -20,6 +20,99 @@ export interface ModelPlaceholder {
   status: string;
 }
 
+export interface ForecastStatusResponse {
+  status: string;
+  model_status?: string;
+  forecast_horizons_minutes: number[];
+  rainfall_provider?: string;
+  rainfall_description?: string;
+  scenario?: string;
+  warnings?: string[];
+  [key: string]: unknown;
+ }
+
+export type ForecastHorizonSummaryStatisticsRiskClassCounts = {[key: string]: number};
+
+export type ForecastHorizonSummaryStatistics = {
+  valid_cell_count: number;
+  maximum_depth_cm: number | null;
+  mean_depth_cm: number | null;
+  affected_cell_count: number;
+  risk_class_counts: ForecastHorizonSummaryStatisticsRiskClassCounts;
+};
+
+export interface ForecastHorizonSummary {
+  horizon_minutes: number;
+  horizon_label: string;
+  rainfall_scenario?: string;
+  persistence_decay_factor?: number;
+  statistics: ForecastHorizonSummaryStatistics;
+}
+
+export type ForecastSummaryResponseRainfall = { [key: string]: unknown };
+
+export type ForecastSummaryResponseAssumptions = { [key: string]: unknown };
+
+export interface ForecastSummaryResponse {
+  status: string;
+  generated_at: string;
+  rainfall: ForecastSummaryResponseRainfall;
+  assumptions: ForecastSummaryResponseAssumptions;
+  horizons: ForecastHorizonSummary[];
+  warnings: string[];
+}
+
+export interface RoutePoint {
+  lat: number;
+  lon: number;
+}
+
+export interface RouteSummary {
+  node_sequence: string[];
+  route: RoutePoint[];
+  distance_m: number;
+  estimated_time_min: number;
+  max_flood_depth_cm: number;
+  mean_flood_depth_cm: number;
+  max_risk_class: number;
+  safety: string;
+}
+
+export interface SafeRouteResponse {
+  status: string;
+  forecast_minutes: number;
+  distance_m?: number;
+  estimated_time_min?: number;
+  max_flood_depth_cm?: number;
+  mean_flood_depth_cm?: number;
+  max_risk_class?: number;
+  safety: string;
+  flood_avoided?: boolean;
+  route: RoutePoint[];
+  normal_route: RouteSummary;
+  flood_safe_route: RouteSummary;
+  warnings?: string[];
+}
+
+export type GeoJsonFeatureCollectionFeaturesItem = { [key: string]: unknown };
+
+export interface GeoJsonFeatureCollection {
+  type: string;
+  features: GeoJsonFeatureCollectionFeaturesItem[];
+  [key: string]: unknown;
+ }
+
+export type MapLayersResponseLayers = {[key: string]: GeoJsonFeatureCollection};
+
+export type MapLayersResponseLimits = { [key: string]: unknown };
+
+export interface MapLayersResponse {
+  status: string;
+  forecast_minutes: number;
+  layers: MapLayersResponseLayers;
+  limits: MapLayersResponseLimits;
+}
+
 export type DatasetStatusDatasetType = typeof DatasetStatusDatasetType[keyof typeof DatasetStatusDatasetType];
 
 
@@ -227,4 +320,42 @@ export interface FloodDepthStatusResponse { [key: string]: unknown }
 export interface FloodDepthSummaryResponse { [key: string]: unknown }
 
 export interface RoadFloodRiskResponse { [key: string]: unknown }
+
+export type GetSafeRouteParams = {
+source_lat: number;
+source_lon: number;
+destination_lat: number;
+destination_lon: number;
+forecast_minutes?: GetSafeRouteForecastMinutes;
+};
+
+export type GetSafeRouteForecastMinutes = typeof GetSafeRouteForecastMinutes[keyof typeof GetSafeRouteForecastMinutes];
+
+
+export const GetSafeRouteForecastMinutes = {
+  NUMBER_0: 0,
+  NUMBER_30: 30,
+  NUMBER_60: 60,
+  NUMBER_90: 90,
+  NUMBER_120: 120,
+  NUMBER_150: 150,
+  NUMBER_180: 180,
+} as const;
+
+export type GetMapLayersParams = {
+forecast_minutes?: GetMapLayersForecastMinutes;
+};
+
+export type GetMapLayersForecastMinutes = typeof GetMapLayersForecastMinutes[keyof typeof GetMapLayersForecastMinutes];
+
+
+export const GetMapLayersForecastMinutes = {
+  NUMBER_0: 0,
+  NUMBER_30: 30,
+  NUMBER_60: 60,
+  NUMBER_90: 90,
+  NUMBER_120: 120,
+  NUMBER_150: 150,
+  NUMBER_180: 180,
+} as const;
 

@@ -8,12 +8,9 @@
 import type { ForecastHorizonSummaryStatistics } from './forecastHorizonSummaryStatistics';
 
 export interface ForecastHorizonSummary {
-  status: string;
   horizon_minutes: number;
   horizon_label: string;
-  rainfall_scenario: string;
-  persistence_decay_factor: number;
-  flood_depth_raster: string;
-  flood_risk_raster: string;
+  rainfall_scenario?: string;
+  persistence_decay_factor?: number;
   statistics: ForecastHorizonSummaryStatistics;
 }

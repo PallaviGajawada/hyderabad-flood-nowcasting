@@ -48,12 +48,17 @@ without coupling the model to IMD-specific files.
 
 - FastAPI app is available at `/` and `/api/`.
 - `/health` and `/api/health` return a simple health response.
-- `/forecast`, `/flood-depth`, and `/safe-route` return
-  `Model not implemented yet.`
-- Dashboard sections exist for Current Status, Rainfall, Data Status, Flood
-  Forecast, Flood Depth, Drainage Network, and Safe Route.
-- Hyderabad map foundation is present; it is a context map, not a flood-depth
-  layer.
+- `/forecast` and `/forecast-status` return the deterministic seven-horizon
+  forecast readiness and `/forecast-summary` returns the real generated
+  statistics.
+- `/safe-route` compares a normal shortest route with the existing
+  flood-penalized route for a selected horizon.
+- `/map-layers?forecast_minutes=<horizon>` returns cached lightweight GeoJSON
+  for the flood grid, roads, road flood risk, nalas, water bodies, and GHMC
+  boundary.
+- The Step 8 dashboard provides horizon controls, independently toggleable map
+  layers, a risk legend, clickable road details, model information, and route
+  comparison overlays.
 - `GET /api/data-status` checks every configured dataset and writes the
   read-only result to `outputs/data_validation_report.json`.
 - `GET /api/preprocessing-status` returns the latest GIS preprocessing report.
@@ -77,9 +82,41 @@ without coupling the model to IMD-specific files.
 - GIS preprocessing uses EPSG:4326 for web/interchange GeoJSON and EPSG:32644
   for metre-based terrain and length calculations. Reprojection is documented
   in the preprocessing report.
-- Full hydraulic calculation, 2D simulation, final forecast model, and safe
-  routing remain unimplemented. Step 6 provides only transparent prototype
-  drainage interaction, equivalent-depth screening, and road-risk summaries.
+- Step 7 and Step 8 are transparent prototype forecast, routing, and web GIS
+  layers. They do not provide real-time radar nowcasting, engineering-grade
+  hydraulic simulation, emergency navigation, or an operational warning.
+
+## Step 7 — Deterministic forecast and flood-aware routing
+
+Step 7 preserves all earlier model outputs. It uses
+`outputs/model/flood_depth/display_depth_cm.tif` as the T+0 baseline and writes
+seven aligned scenario rasters under `outputs/model/forecast/`:
+
+```text
+tplus_000 · tplus_030 · tplus_060 · tplus_090
+tplus_120 · tplus_150 · tplus_180
+```
+
+The scenario factors are configurable in `backend/forecast_assumptions.json`.
+The current rainfall provider is historical 2024 IMD daily gridded rainfall,
+not a live Doppler Weather Radar nowcast. Routing uses the existing processed
+OSM drive graph and cached road flood-risk attributes; its result is a
+screening comparison, not a guarantee of safe passage.
+
+## Step 8 — Demo-ready web GIS dashboard
+
+The dashboard at `/` is built on the existing React + Vite + Leaflet stack. Its
+demo flow is:
+
+1. Select T+0 through T+180 in the left control panel.
+2. Toggle flood depth/risk, roads, nalas, water bodies, and the GHMC boundary.
+3. Click a road to inspect horizon-scaled depth and risk details.
+4. Compare the selected horizon's depth, affected cells, and risk classes.
+5. Enter coordinates, choose a horizon, and draw normal and flood-aware routes.
+
+The browser receives a simplified 80×60 forecast grid and at most 3,000 road
+features from `/api/map-layers`. Original scientific GeoTIFFs, the full road
+GeoJSON, and the 138,851-node / 360,839-edge routing graph remain server-side.
 
 ## Expected datasets
 

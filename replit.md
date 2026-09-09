@@ -61,10 +61,10 @@ nowcasting in Hyderabad, India.
 
 - Rainfall is represented through a provider-neutral interface so live Doppler
   Weather Radar input can be added alongside IMD historical/scenario data.
-- Model endpoints return an explicit not-implemented response rather than
-  fabricated forecasts or depths.
-- The map is a spatial context surface only; it must not be presented as
-  street-level flood prediction.
+- Forecast and routing endpoints return deterministic prototype estimates based
+  on the existing Step 6/7 outputs; they do not fabricate radar observations.
+- The Step 8 map is a simplified spatial visualization surface and must not be
+  presented as street-level flood prediction.
 - Dataset validation reads user-supplied source files in memory and never
   rewrites or reprojects them.
 - ArcGIS FeatureSet JSON is accepted alongside conventional GeoJSON because
@@ -74,10 +74,10 @@ nowcasting in Hyderabad, India.
 
 ## Product
 
-Users can inspect the prototype system status, rainfall context, forecast
-placeholder, flood-depth placeholder, drainage placeholder, and safe-route
-placeholder from a Hyderabad dashboard. It is a foundation, not an operational
-warning system.
+Users can inspect the prototype system status, rainfall context, seven
+forecast horizons, interactive GIS layers, road details, and normal-versus-
+flood-aware route comparisons from a Hyderabad dashboard. It is a foundation,
+not an operational warning or navigation system.
 
 ## User preferences
 

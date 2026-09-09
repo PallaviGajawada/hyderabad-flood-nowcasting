@@ -5,5 +5,12 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
+import type { ForecastHorizonSummaryStatisticsRiskClassCounts } from './forecastHorizonSummaryStatisticsRiskClassCounts';
 
-export type ForecastHorizonSummaryStatistics = { [key: string]: unknown };
+export type ForecastHorizonSummaryStatistics = {
+  valid_cell_count: number;
+  maximum_depth_cm: number | null;
+  mean_depth_cm: number | null;
+  affected_cell_count: number;
+  risk_class_counts: ForecastHorizonSummaryStatisticsRiskClassCounts;
+};

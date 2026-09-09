@@ -5,18 +5,14 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
-import type { ForecastStatusResponseAssumptions } from './forecastStatusResponseAssumptions';
-import type { ForecastStatusResponseStatus } from './forecastStatusResponseStatus';
 
 export interface ForecastStatusResponse {
-  status: ForecastStatusResponseStatus;
-  model_status: string;
-  generated_at?: Date | null;
+  status: string;
+  model_status?: string;
   forecast_horizons_minutes: number[];
-  rainfall_provider: string;
+  rainfall_provider?: string;
   rainfall_description?: string;
   scenario?: string;
-  assumptions?: ForecastStatusResponseAssumptions;
-  message?: string;
-  warnings: string[];
-}
+  warnings?: string[];
+  [key: string]: unknown;
+ }

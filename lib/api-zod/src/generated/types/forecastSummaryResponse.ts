@@ -11,7 +11,7 @@ import type { ForecastSummaryResponseRainfall } from './forecastSummaryResponseR
 
 export interface ForecastSummaryResponse {
   status: string;
-  generated_at: Date;
+  generated_at: string;
   rainfall: ForecastSummaryResponseRainfall;
   assumptions: ForecastSummaryResponseAssumptions;
   horizons: ForecastHorizonSummary[];

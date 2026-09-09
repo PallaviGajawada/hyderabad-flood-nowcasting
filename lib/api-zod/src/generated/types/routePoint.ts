@@ -6,4 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ForecastStatusResponseAssumptions = { [key: string]: unknown };
+export interface RoutePoint {
+  lat: number;
+  lon: number;
+}

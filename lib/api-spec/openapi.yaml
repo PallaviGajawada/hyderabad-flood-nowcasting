@@ -55,14 +55,38 @@ paths:
     get:
       operationId: getForecast
       tags: [nowcasting]
-      summary: Get flood forecast placeholder
+      summary: Get deterministic flood forecast summary
       responses:
         "200":
-          description: Forecast model placeholder
+          description: Forecast summary
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ModelPlaceholder"
+                $ref: "#/components/schemas/ForecastSummaryResponse"
+  /forecast-status:
+    get:
+      operationId: getForecastStatus
+      tags: [nowcasting]
+      summary: Get forecast readiness and assumptions
+      responses:
+        "200":
+          description: Forecast status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForecastStatusResponse"
+  /forecast-summary:
+    get:
+      operationId: getForecastSummary
+      tags: [nowcasting]
+      summary: Get all forecast horizon summaries
+      responses:
+        "200":
+          description: Forecast horizon summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForecastSummaryResponse"
   /flood-depth:
     get:
       operationId: getFloodDepth
@@ -79,14 +103,37 @@ paths:
     get:
       operationId: getSafeRoute
       tags: [nowcasting]
-      summary: Get safe route placeholder
+      summary: Compare normal and flood-aware routes
+      parameters:
+        - {name: source_lat, in: query, required: true, schema: {type: number}}
+        - {name: source_lon, in: query, required: true, schema: {type: number}}
+        - {name: destination_lat, in: query, required: true, schema: {type: number}}
+        - {name: destination_lon, in: query, required: true, schema: {type: number}}
+        - {name: forecast_minutes, in: query, required: false, schema: {type: integer, enum: [0, 30, 60, 90, 120, 150, 180], default: 0}}
       responses:
         "200":
-          description: Safe route model placeholder
+          description: Normal and flood-aware route comparison
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ModelPlaceholder"
+                $ref: "#/components/schemas/SafeRouteResponse"
+        "400":
+          description: Invalid coordinates or unavailable route
+  /map-layers:
+    get:
+      operationId: getMapLayers
+      tags: [nowcasting]
+      summary: Get simplified web map layers
+      description: Returns cached lightweight GeoJSON layers and downsampled forecast cells; scientific rasters and the full road graph are not sent to the browser.
+      parameters:
+        - {name: forecast_minutes, in: query, required: false, schema: {type: integer, enum: [0, 30, 60, 90, 120, 150, 180], default: 0}}
+      responses:
+        "200":
+          description: Simplified map layers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MapLayersResponse"
   /data-status:
     get:
       operationId: getDataStatus
@@ -282,6 +329,126 @@ components:
       required:
         - message
         - status
+    ForecastStatusResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        status: {type: string}
+        model_status: {type: string}
+        forecast_horizons_minutes:
+          type: array
+          items: {type: integer}
+        rainfall_provider: {type: string}
+        rainfall_description: {type: string}
+        scenario: {type: string}
+        warnings:
+          type: array
+          items: {type: string}
+      required: [status, forecast_horizons_minutes]
+    ForecastHorizonSummary:
+      type: object
+      properties:
+        horizon_minutes: {type: integer}
+        horizon_label: {type: string}
+        rainfall_scenario: {type: string}
+        persistence_decay_factor: {type: number}
+        statistics:
+          type: object
+          properties:
+            valid_cell_count: {type: integer}
+            maximum_depth_cm: {type: number, nullable: true}
+            mean_depth_cm: {type: number, nullable: true}
+            affected_cell_count: {type: integer}
+            risk_class_counts:
+              type: object
+              additionalProperties: {type: integer}
+          required: [valid_cell_count, maximum_depth_cm, mean_depth_cm, affected_cell_count, risk_class_counts]
+      required: [horizon_minutes, horizon_label, statistics]
+    ForecastSummaryResponse:
+      type: object
+      properties:
+        status: {type: string}
+        generated_at: {type: string}
+        rainfall:
+          type: object
+          additionalProperties: true
+        assumptions:
+          type: object
+          additionalProperties: true
+        horizons:
+          type: array
+          items: {$ref: "#/components/schemas/ForecastHorizonSummary"}
+        warnings:
+          type: array
+          items: {type: string}
+      required: [status, generated_at, rainfall, assumptions, horizons, warnings]
+    RoutePoint:
+      type: object
+      properties:
+        lat: {type: number}
+        lon: {type: number}
+      required: [lat, lon]
+    RouteSummary:
+      type: object
+      properties:
+        node_sequence:
+          type: array
+          items: {type: string}
+        route:
+          type: array
+          items: {$ref: "#/components/schemas/RoutePoint"}
+        distance_m: {type: number}
+        estimated_time_min: {type: number}
+        max_flood_depth_cm: {type: number}
+        mean_flood_depth_cm: {type: number}
+        max_risk_class: {type: integer}
+        safety: {type: string}
+      required: [node_sequence, route, distance_m, estimated_time_min, max_flood_depth_cm, mean_flood_depth_cm, max_risk_class, safety]
+    SafeRouteResponse:
+      type: object
+      properties:
+        status: {type: string}
+        forecast_minutes: {type: integer}
+        distance_m: {type: number}
+        estimated_time_min: {type: number}
+        max_flood_depth_cm: {type: number}
+        mean_flood_depth_cm: {type: number}
+        max_risk_class: {type: integer}
+        safety: {type: string}
+        flood_avoided: {type: boolean}
+        route:
+          type: array
+          items: {$ref: "#/components/schemas/RoutePoint"}
+        normal_route: {$ref: "#/components/schemas/RouteSummary"}
+        flood_safe_route: {$ref: "#/components/schemas/RouteSummary"}
+        warnings:
+          type: array
+          items: {type: string}
+      required: [status, forecast_minutes, route, normal_route, flood_safe_route, safety]
+    GeoJsonFeatureCollection:
+      type: object
+      additionalProperties: true
+      properties:
+        type: {type: string}
+        features:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      required: [type, features]
+    MapLayersResponse:
+      type: object
+      properties:
+        status: {type: string}
+        forecast_minutes: {type: integer}
+        layers:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/GeoJsonFeatureCollection"
+        limits:
+          type: object
+          additionalProperties: true
+      required: [status, forecast_minutes, layers, limits]
     DatasetStatus:
       type: object
       properties:

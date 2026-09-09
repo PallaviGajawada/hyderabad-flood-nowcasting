@@ -6,7 +6,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type SafeRouteResponseRouteItem = {
-  lat: number;
-  lon: number;
-};
+export type GeoJsonFeatureCollectionFeaturesItem = { [key: string]: unknown };

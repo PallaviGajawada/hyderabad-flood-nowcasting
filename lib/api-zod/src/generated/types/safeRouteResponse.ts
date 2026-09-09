@@ -5,28 +5,21 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
+import type { RoutePoint } from './routePoint';
 import type { RouteSummary } from './routeSummary';
-import type { SafeRouteResponseAssumptions } from './safeRouteResponseAssumptions';
-import type { SafeRouteResponseDestination } from './safeRouteResponseDestination';
-import type { SafeRouteResponseRouteItem } from './safeRouteResponseRouteItem';
-import type { SafeRouteResponseSafety } from './safeRouteResponseSafety';
-import type { SafeRouteResponseSource } from './safeRouteResponseSource';
 
 export interface SafeRouteResponse {
   status: string;
-  source: SafeRouteResponseSource;
-  destination: SafeRouteResponseDestination;
   forecast_minutes: number;
-  route: SafeRouteResponseRouteItem[];
-  distance_m: number;
-  estimated_time_min: number;
-  max_flood_depth_cm: number;
-  mean_flood_depth_cm: number;
-  max_risk_class: number;
-  safety: SafeRouteResponseSafety;
-  flood_avoided: boolean;
+  distance_m?: number;
+  estimated_time_min?: number;
+  max_flood_depth_cm?: number;
+  mean_flood_depth_cm?: number;
+  max_risk_class?: number;
+  safety: string;
+  flood_avoided?: boolean;
+  route: RoutePoint[];
   normal_route: RouteSummary;
   flood_safe_route: RouteSummary;
-  assumptions?: SafeRouteResponseAssumptions;
-  warnings: string[];
+  warnings?: string[];
 }

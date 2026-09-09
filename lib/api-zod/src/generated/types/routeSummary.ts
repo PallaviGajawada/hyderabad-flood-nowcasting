@@ -5,16 +5,15 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
-import type { RouteSummaryRouteItem } from './routeSummaryRouteItem';
-import type { RouteSummarySafety } from './routeSummarySafety';
+import type { RoutePoint } from './routePoint';
 
 export interface RouteSummary {
   node_sequence: string[];
-  route: RouteSummaryRouteItem[];
+  route: RoutePoint[];
   distance_m: number;
   estimated_time_min: number;
   max_flood_depth_cm: number;
   mean_flood_depth_cm: number;
   max_risk_class: number;
-  safety: RouteSummarySafety;
+  safety: string;
 }

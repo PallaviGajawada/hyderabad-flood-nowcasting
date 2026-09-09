@@ -42,6 +42,7 @@ from .config import (
 )
 from .preprocessing.data_validator import validate_all_datasets
 from .models.forecast_model import forecast_status, forecast_summary
+from .map_layers import get_map_layers
 from .routing.safe_route import calculate_safe_route
 
 SYSTEM_NAME = "Hyderabad Urban Flood Nowcasting System"
@@ -475,6 +476,17 @@ def register_routes(router: APIRouter) -> None:
             )
         except ValueError as error:
             raise HTTPException(status_code=400, detail=str(error)) from error
+
+    @router.get("/map-layers")
+    def get_map_layers_endpoint(forecast_minutes: int = 0) -> dict[str, object]:
+        try:
+            if forecast_minutes not in (0, 30, 60, 90, 120, 150, 180):
+                raise ValueError(
+                    "forecast_minutes must be one of 0, 30, 60, 90, 120, 150, or 180."
+                )
+            return get_map_layers(forecast_minutes)
+        except (FileNotFoundError, ValueError) as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
 
     @router.get("/data-status")
     def get_data_status() -> dict[str, object]:

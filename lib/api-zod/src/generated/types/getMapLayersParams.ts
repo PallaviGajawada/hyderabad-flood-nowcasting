@@ -5,8 +5,8 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
+import type { GetMapLayersForecastMinutes } from './getMapLayersForecastMinutes';
 
-export type RouteSummaryRouteItem = {
-  lat: number;
-  lon: number;
+export type GetMapLayersParams = {
+forecast_minutes?: GetMapLayersForecastMinutes;
 };

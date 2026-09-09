@@ -5,5 +5,6 @@
  * Hyderabad Urban Flood Nowcasting System foundation API
  * OpenAPI spec version: 0.1.0
  */
+import type { GeoJsonFeatureCollection } from './geoJsonFeatureCollection';
 
-export type SafeRouteResponseDestination = { [key: string]: unknown };
+export type MapLayersResponseLayers = {[key: string]: GeoJsonFeatureCollection};

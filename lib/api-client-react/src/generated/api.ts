@@ -21,13 +21,19 @@ import type {
   DrainageSummaryResponse,
   FloodDepthStatusResponse,
   FloodDepthSummaryResponse,
+  ForecastStatusResponse,
+  ForecastSummaryResponse,
+  GetMapLayersParams,
+  GetSafeRouteParams,
   HealthStatus,
+  MapLayersResponse,
   ModelPlaceholder,
   PreprocessingStatusResponse,
   RoadFloodRiskResponse,
   RoadsStatusResponse,
   RunoffStatusResponse,
   RunoffSummaryResponse,
+  SafeRouteResponse,
   SurfaceWaterStatusResponse,
   SurfaceWaterSummaryResponse,
   SystemStatus
@@ -302,11 +308,11 @@ export const getGetForecastUrl = () => {
 }
 
 /**
- * @summary Get flood forecast placeholder
+ * @summary Get deterministic flood forecast summary
  */
-export const getForecast = async ( options?: Parameters<typeof customFetch>[1]): Promise<ModelPlaceholder> => {
+export const getForecast = async ( options?: Parameters<typeof customFetch>[1]): Promise<ForecastSummaryResponse> => {
 
-  return customFetch<ModelPlaceholder>(getGetForecastUrl(),
+  return customFetch<ForecastSummaryResponse>(getGetForecastUrl(),
   {
     ...options,
     method: 'GET'
@@ -349,7 +355,7 @@ export type GetForecastQueryError = ErrorType<unknown>
 
 
 /**
- * @summary Get flood forecast placeholder
+ * @summary Get deterministic flood forecast summary
  */
 
 export function useGetForecast<TData = Awaited<ReturnType<typeof getForecast>>, TError = ErrorType<unknown>>(
@@ -358,6 +364,160 @@ export function useGetForecast<TData = Awaited<ReturnType<typeof getForecast>>, 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetForecastQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetForecastStatusUrl = () => {
+
+
+
+
+  return `/api/forecast-status`
+}
+
+/**
+ * @summary Get forecast readiness and assumptions
+ */
+export const getForecastStatus = async ( options?: Parameters<typeof customFetch>[1]): Promise<ForecastStatusResponse> => {
+
+  return customFetch<ForecastStatusResponse>(getGetForecastStatusUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetForecastStatusQueryKey = () => {
+    return [
+    `/api/forecast-status`
+    ] as const;
+    }
+
+
+export const getGetForecastStatusQueryOptions = <TData = Awaited<ReturnType<typeof getForecastStatus>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getForecastStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetForecastStatusQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getForecastStatus>>> = ({ signal }) => getForecastStatus({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getForecastStatus>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetForecastStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getForecastStatus>>>
+export type GetForecastStatusQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get forecast readiness and assumptions
+ */
+
+export function useGetForecastStatus<TData = Awaited<ReturnType<typeof getForecastStatus>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getForecastStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetForecastStatusQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetForecastSummaryUrl = () => {
+
+
+
+
+  return `/api/forecast-summary`
+}
+
+/**
+ * @summary Get all forecast horizon summaries
+ */
+export const getForecastSummary = async ( options?: Parameters<typeof customFetch>[1]): Promise<ForecastSummaryResponse> => {
+
+  return customFetch<ForecastSummaryResponse>(getGetForecastSummaryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetForecastSummaryQueryKey = () => {
+    return [
+    `/api/forecast-summary`
+    ] as const;
+    }
+
+
+export const getGetForecastSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getForecastSummary>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getForecastSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetForecastSummaryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getForecastSummary>>> = ({ signal }) => getForecastSummary({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getForecastSummary>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetForecastSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getForecastSummary>>>
+export type GetForecastSummaryQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get all forecast horizon summaries
+ */
+
+export function useGetForecastSummary<TData = Awaited<ReturnType<typeof getForecastSummary>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getForecastSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetForecastSummaryQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -447,20 +607,27 @@ export function useGetFloodDepth<TData = Awaited<ReturnType<typeof getFloodDepth
 
 
 
-export const getGetSafeRouteUrl = () => {
+export const getGetSafeRouteUrl = (params: GetSafeRouteParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/safe-route`
+  return stringifiedParams.length > 0 ? `/api/safe-route?${stringifiedParams}` : `/api/safe-route`
 }
 
 /**
- * @summary Get safe route placeholder
+ * @summary Compare normal and flood-aware routes
  */
-export const getSafeRoute = async ( options?: Parameters<typeof customFetch>[1]): Promise<ModelPlaceholder> => {
+export const getSafeRoute = async (params: GetSafeRouteParams, options?: Parameters<typeof customFetch>[1]): Promise<SafeRouteResponse> => {
 
-  return customFetch<ModelPlaceholder>(getGetSafeRouteUrl(),
+  return customFetch<SafeRouteResponse>(getGetSafeRouteUrl(params),
   {
     ...options,
     method: 'GET'
@@ -473,23 +640,23 @@ export const getSafeRoute = async ( options?: Parameters<typeof customFetch>[1])
 
 
 
-export const getGetSafeRouteQueryKey = () => {
+export const getGetSafeRouteQueryKey = (params?: GetSafeRouteParams,) => {
     return [
-    `/api/safe-route`
+    `/api/safe-route`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetSafeRouteQueryOptions = <TData = Awaited<ReturnType<typeof getSafeRoute>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSafeRoute>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetSafeRouteQueryOptions = <TData = Awaited<ReturnType<typeof getSafeRoute>>, TError = ErrorType<void>>(params: GetSafeRouteParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSafeRoute>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetSafeRouteQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetSafeRouteQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSafeRoute>>> = ({ signal }) => getSafeRoute({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSafeRoute>>> = ({ signal }) => getSafeRoute(params, { signal, ...requestOptions });
 
 
 
@@ -499,19 +666,104 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetSafeRouteQueryResult = NonNullable<Awaited<ReturnType<typeof getSafeRoute>>>
-export type GetSafeRouteQueryError = ErrorType<unknown>
+export type GetSafeRouteQueryError = ErrorType<void>
 
 
 /**
- * @summary Get safe route placeholder
+ * @summary Compare normal and flood-aware routes
  */
 
-export function useGetSafeRoute<TData = Awaited<ReturnType<typeof getSafeRoute>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSafeRoute>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useGetSafeRoute<TData = Awaited<ReturnType<typeof getSafeRoute>>, TError = ErrorType<void>>(
+ params: GetSafeRouteParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSafeRoute>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getGetSafeRouteQueryOptions(options)
+  const queryOptions = getGetSafeRouteQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetMapLayersUrl = (params?: GetMapLayersParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/map-layers?${stringifiedParams}` : `/api/map-layers`
+}
+
+/**
+ * Returns cached lightweight GeoJSON layers and downsampled forecast cells; scientific rasters and the full road graph are not sent to the browser.
+ * @summary Get simplified web map layers
+ */
+export const getMapLayers = async (params?: GetMapLayersParams, options?: Parameters<typeof customFetch>[1]): Promise<MapLayersResponse> => {
+
+  return customFetch<MapLayersResponse>(getGetMapLayersUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMapLayersQueryKey = (params?: GetMapLayersParams,) => {
+    return [
+    `/api/map-layers`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetMapLayersQueryOptions = <TData = Awaited<ReturnType<typeof getMapLayers>>, TError = ErrorType<unknown>>(params?: GetMapLayersParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMapLayers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMapLayersQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMapLayers>>> = ({ signal }) => getMapLayers(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMapLayers>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMapLayersQueryResult = NonNullable<Awaited<ReturnType<typeof getMapLayers>>>
+export type GetMapLayersQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get simplified web map layers
+ */
+
+export function useGetMapLayers<TData = Awaited<ReturnType<typeof getMapLayers>>, TError = ErrorType<unknown>>(
+ params?: GetMapLayersParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMapLayers>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetMapLayersQueryOptions(params,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
