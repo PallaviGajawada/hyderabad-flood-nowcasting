@@ -1,0 +1,549 @@
+We are continuing the existing Hyderabad Flood Nowcasting project.
+
+IMPORTANT:
+The backend, scientific models, datasets, APIs, Step 6, Step 7, and Step 8 functionality already exist and are working.
+
+Baseline verification:
+
+* Python tests: 39 passed, 0 failed
+* Frontend TypeScript typecheck: passed
+* Frontend production build: passed
+* Large road and flood-risk LFS artifacts are already restored
+
+YOUR JOB NOW IS FRONTEND ONLY.
+
+I want the existing Step 8 dashboard transformed into a polished, professional, modern flood-monitoring / emergency-response dashboard suitable for a college project demonstration, hackathon presentation, and final project review.
+
+DO NOT rebuild the scientific model.
+DO NOT regenerate datasets.
+DO NOT modify the rainfall/runoff/surface-water/drainage algorithms.
+DO NOT regenerate the large road GeoJSON, GraphML, or road flood-risk files.
+DO NOT redownload data.
+DO NOT change backend APIs unless a tiny compatibility fix is absolutely required.
+DO NOT add unnecessary dependencies.
+
+Reuse the existing APIs and data.
+
+==================================================
+DESIGN DIRECTION
+================
+
+Create a premium "Urban Flood Intelligence / Command Center" interface.
+
+Visual inspiration:
+
+* modern GIS command center
+* emergency operations dashboard
+* professional weather intelligence platform
+* clean SaaS analytics dashboard
+
+Avoid:
+
+* generic student-project appearance
+* excessive gradients
+* cartoonish graphics
+* huge decorative cards
+* excessive animations
+* clutter
+* fake live-data indicators
+
+The interface should feel like a serious technical prototype.
+
+Use a dark, professional visual language with excellent contrast and restrained accent colors.
+
+Suggested visual hierarchy:
+
+* dark navy/charcoal application shell
+* cool blue/cyan for neutral data
+* amber for warning
+* red for severe flood risk
+* green for safe/low risk
+* subtle borders
+* soft shadows
+* compact cards
+* rounded corners
+* clean typography
+
+Use the project's existing UI component system where possible.
+
+==================================================
+
+1. TOP NAVIGATION
+   ==================================================
+
+Create a polished top navigation/header.
+
+Left:
+
+"HYDERABAD FLOOD INTELLIGENCE"
+
+with a small water/flood/terrain icon.
+
+Subtitle:
+
+"Urban Flood Nowcasting • Research Prototype"
+
+Right side:
+
+* System status indicator
+* "Prototype Mode" badge
+* forecast timestamp/scenario
+* compact settings/info control if already supported
+
+Do NOT falsely label the system as live radar.
+
+==================================================
+2. HERO / STATUS AREA
+=====================
+
+Create a compact dashboard header below the navigation.
+
+Show:
+
+"Hyderabad Urban Flood Outlook"
+
+and a concise description such as:
+
+"0–3 hour prototype flood-depth and road-risk forecast"
+
+Include a prominent status indicator such as:
+
+"FLOOD RISK: MONITOR"
+
+but derive it from existing model data rather than inventing a status.
+
+Include the currently selected forecast horizon.
+
+==================================================
+3. KPI CARDS
+============
+
+Create a clean row of high-quality KPI cards.
+
+Cards should show available real values from the existing APIs:
+
+* Rainfall
+* Maximum Flood Depth
+* Affected Road Segments
+* High-Risk Areas / Risk indicator
+* Forecast Horizon
+
+Use large numbers with small units.
+
+Examples:
+
+RAIN
+42.5 mm
+
+MAX DEPTH
+30 cm
+
+ROAD SEGMENTS
+26,815
+
+FORECAST
+T+180 min
+
+Do NOT hardcode fake values.
+
+If an API does not provide a value, gracefully display:
+
+"N/A"
+
+rather than inventing one.
+
+==================================================
+4. FORECAST TIMELINE
+====================
+
+Create a visually excellent horizontal forecast timeline.
+
+Show:
+
+T+0
+T+30
+T+60
+T+90
+T+120
+T+150
+T+180
+
+Make the currently selected horizon visually obvious.
+
+When the user selects a horizon:
+
+* update the relevant map layer/data
+* update the KPI values
+* update selected-road information where supported
+* update forecast labels
+
+The timeline should feel like a professional weather/flood forecast control.
+
+Use subtle animation only for state transitions.
+
+==================================================
+5. MAIN GIS MAP — MOST IMPORTANT AREA
+=====================================
+
+The map should be the visual centerpiece.
+
+Give it the largest area of the dashboard.
+
+It should show the existing Hyderabad map and available flood layers.
+
+Support the existing layers where already implemented:
+
+* flood depth
+* flood risk
+* roads
+* GHMC boundary
+* drainage/nalas
+* water bodies/tanks
+* other existing Step 8 map layers
+
+Add a professional map control area.
+
+Include a layer toggle/control allowing the user to turn layers on/off.
+
+Flood-depth visualization should be intuitive.
+
+Include a clear legend:
+
+LOW
+0–5 cm
+
+MODERATE
+5–10 cm
+
+HIGH
+10–20 cm
+
+SEVERE
+
+> 20 cm
+
+If the existing risk classification uses different thresholds, use the actual project's classification rather than overriding the backend.
+
+Do not fabricate thresholds if the backend already exposes them.
+
+==================================================
+6. MAP TOOLBAR
+==============
+
+Add polished controls for:
+
+* Reset / Home
+* Zoom
+* Layer visibility
+* Flood depth / risk toggle
+* Legend
+* Fullscreen if practical
+
+Keep controls compact and unobtrusive.
+
+==================================================
+7. SELECTED ROAD / LOCATION PANEL
+=================================
+
+When the user clicks/selects a road or map feature, show a professional detail panel.
+
+Display available information such as:
+
+ROAD / LOCATION
+
+Flood depth:
+XX cm
+
+Risk:
+LOW / MODERATE / HIGH / SEVERE
+
+Affected percentage:
+XX%
+
+Forecast:
+T+XXX
+
+Road status:
+SAFE / CAUTION / HIGH RISK
+
+Only display fields that are actually available from the API.
+
+Do not invent values.
+
+==================================================
+8. SAFE ROUTE EXPERIENCE
+========================
+
+Make the existing safe-route functionality highly visible but professional.
+
+Include a button:
+
+"FIND SAFE ROUTE"
+
+When clicked, use the existing Step 7 safe-route API/functionality.
+
+Show:
+
+* recommended route
+* estimated travel time
+* maximum flood depth
+* risk level
+
+Present it in a clean route-result card/modal/drawer.
+
+Clearly distinguish:
+
+NORMAL ROUTE
+
+from
+
+FLOOD-AWARE SAFE ROUTE
+
+Do not create a fake route.
+
+Use the existing backend result.
+
+==================================================
+9. FLOOD RISK SUMMARY
+=====================
+
+Add a compact analytics panel beside or below the map.
+
+Show available risk distribution information.
+
+For example:
+
+LOW
+████████
+
+MODERATE
+████
+
+HIGH
+██
+
+SEVERE
+█
+
+Use actual API/model values wherever available.
+
+Keep this visualization simple and readable.
+
+==================================================
+10. RAINFALL / FLOOD TREND
+==========================
+
+If the existing API provides temporal forecast values, create a small professional chart showing:
+
+Forecast Time → Rainfall / Flood Depth
+
+T+0 → ...
+T+30 → ...
+...
+T+180 → ...
+
+Use the existing charting library if already installed.
+
+DO NOT install a large new charting library just for this.
+
+If temporal data is not available from the API, do not fabricate a trend.
+
+Instead show the available scenario information cleanly.
+
+==================================================
+11. DATA / MODEL TRANSPARENCY
+=============================
+
+Include a small but polished "Model & Data" information area.
+
+Clearly state:
+
+DATA SOURCES
+
+* IMD gridded rainfall
+* SRTM DEM
+* ESA WorldCover
+* GHMC / Telangana GIS
+* OpenStreetMap
+
+MODEL
+
+* rainfall → runoff
+* terrain-based surface-water routing
+* drainage interaction
+* road flood-risk aggregation
+* flood-aware routing
+
+IMPORTANT:
+This is a research prototype using historical/scenario rainfall.
+
+Do not claim:
+
+* live Doppler radar
+* live water-level observations
+* real-time sewer capacity
+* engineering-certified flood depths
+
+Use a subtle "Research Prototype" label rather than making the disclaimer dominate the dashboard.
+
+==================================================
+12. RESPONSIVE DESIGN
+=====================
+
+Desktop is the primary target because this is a project demonstration.
+
+However, make the dashboard reasonably responsive.
+
+At smaller widths:
+
+* stack side panels
+* preserve map usability
+* keep KPI cards readable
+* prevent horizontal overflow
+
+==================================================
+13. MICRO-INTERACTIONS
+======================
+
+Add restrained professional interactions:
+
+* hover states
+* selected timeline state
+* selected map feature state
+* loading skeletons
+* smooth panel transitions
+* subtle button feedback
+
+Do NOT add excessive animation.
+
+Performance is more important than visual effects.
+
+==================================================
+14. LOADING / ERROR STATES
+==========================
+
+Every API-backed section should have sensible states:
+
+Loading:
+show a compact skeleton/spinner.
+
+Error:
+show a clean message such as:
+
+"Unable to load flood forecast."
+
+Do not expose raw stack traces to the user.
+
+==================================================
+15. IMPORTANT — PRESERVE EXISTING FUNCTIONALITY
+===============================================
+
+Before changing components, understand the current implementation.
+
+Preserve:
+
+* existing API client
+* generated API types
+* existing map implementation
+* existing endpoints
+* existing forecast logic
+* existing flood-depth logic
+* existing safe-route functionality
+
+Improve presentation and integration, not the underlying science.
+
+==================================================
+16. CREDIT-SAVING RULES
+=======================
+
+This is extremely important.
+
+Do NOT:
+
+* regenerate datasets
+* rerun expensive GIS preprocessing
+* regenerate roads
+* regenerate flood maps
+* rerun the scientific simulation
+* redownload anything
+* modify LFS artifacts
+* install unnecessary packages
+* refactor the backend
+* rewrite working APIs
+
+Work only inside the frontend whenever possible.
+
+Inspect existing files first.
+
+Make the minimum number of files/changes necessary.
+
+==================================================
+17. FINAL QUALITY CHECK
+=======================
+
+After implementation:
+
+1. Start the frontend with:
+
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/hyderabad-flood-nowcasting run dev
+
+2. Visually inspect the dashboard.
+
+3. Fix only genuine frontend issues.
+
+4. Run:
+
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/hyderabad-flood-nowcasting run typecheck
+
+5. Run:
+
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/hyderabad-flood-nowcasting run build
+
+6. If backend code was not modified, do NOT unnecessarily rerun the full Python test suite.
+
+If backend code was modified, run:
+
+PYTHONPATH=. uv run pytest -q
+
+The expected baseline is:
+
+39 passed, 0 failed.
+
+==================================================
+18. STOP CONDITION
+==================
+
+STOP once the dashboard looks professional and:
+
+* loads successfully
+* map works
+* flood layers work
+* forecast timeline works
+* KPI cards use real API data
+* selected feature details work
+* safe-route interaction works
+* loading/error states work
+* no frontend runtime errors remain
+* typecheck passes
+* build passes
+
+Do NOT keep improving indefinitely.
+
+Do NOT add unrelated features.
+
+Do NOT redesign the backend.
+
+Do NOT commit or push automatically.
+
+At the end, report:
+
+* exact frontend files changed
+* what visual improvements were made
+* any functional fixes
+* typecheck result
+* build result
+* whether backend was untouched
+* whether Python tests were required
+* any remaining warnings
+
+The goal is a beautiful, professional, demo-ready frontend built on the EXISTING Step 8 implementation, with minimal changes and minimal Replit credit usage.

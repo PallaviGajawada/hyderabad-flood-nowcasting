@@ -151,7 +151,7 @@ export function LeafletMap({
   }, [data, visibility, routes, onRoadSelect]);
 
   return (
-    <div data-testid="map-hyderabad" className="relative h-full min-h-[510px] overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[#d9e7e2]">
+    <div data-testid="map-hyderabad" aria-label="Hyderabad interactive flood intelligence map" className="relative h-full min-h-[510px] overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[#12232d]">
       <div ref={mapRef} className={`leaflet-map absolute inset-0 ${mapReady ? 'block' : 'hidden'}`} />
       {!mapReady && (
         <div className="map-fallback absolute inset-0">
@@ -161,7 +161,7 @@ export function LeafletMap({
             <path d="M160 220 L270 180 L360 220 L450 170 L570 230 L520 330 L380 350 L260 310 Z" fill="#65aaa0" fillOpacity=".16" stroke="#197e82" strokeWidth="3" strokeDasharray="8 7" />
           </svg>
           <div className="absolute inset-x-4 bottom-4 rounded-lg border border-[#b8d0ca] bg-[#eff7f3]/90 px-3 py-2 text-[10px] font-semibold text-[#315c5c] backdrop-blur-sm">
-            Loading Hyderabad base map and cached web layers…
+             Loading Hyderabad base map and cached web layers…
           </div>
         </div>
       )}

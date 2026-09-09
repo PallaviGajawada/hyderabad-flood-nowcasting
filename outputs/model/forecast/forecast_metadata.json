@@ -1,7 +1,7 @@
 {
   "status": "ready",
   "source": "deterministic_step6_persistence_decay",
-  "generated_at": "2026-09-08T13:39:23.471304+00:00",
+  "generated_at": "2026-09-09T02:40:03.379487+00:00",
   "baseline": "/home/runner/workspace/outputs/model/flood_depth/display_depth_cm.tif",
   "grid": {
     "crs": "EPSG:32644",

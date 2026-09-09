@@ -1,0 +1,694 @@
+We need to make the EXISTING Step 8 frontend genuinely user-friendly and demo-ready.
+
+IMPORTANT:
+This is NOT a request to rebuild the application.
+
+The existing Steps 1–7 backend, scientific models, APIs, datasets, routing logic, and Step 8 integration must remain intact.
+
+Current verified baseline:
+- Python tests: 39 passed, 0 failed
+- Frontend typecheck: passed
+- Frontend build: passed
+
+ONLY improve the existing frontend/user experience.
+
+==================================================
+MAIN UX PROBLEM
+==================================================
+
+The current dashboard exposes too much internal implementation information.
+
+The user-facing dashboard currently contains sections such as:
+
+"03 · SOURCE VALIDATION"
+"Data status"
+"04 · PREPARATION"
+"Model-ready inputs"
+
+with information such as:
+
+- datasets found
+- datasets readable
+- datasets valid
+- missing datasets
+- generated outputs
+- warnings
+- DEM
+- land cover
+- rainfall
+- nalas
+- streams
+- tanks
+
+These are INTERNAL / DEVELOPER / PIPELINE STATUS details.
+
+A normal user does NOT need to see these on the main dashboard.
+
+DO NOT delete the backend functionality.
+
+DO NOT delete the APIs.
+
+DO NOT delete the underlying validation/model code.
+
+Simply REMOVE THESE INTERNAL STATUS SECTIONS FROM THE PRIMARY USER-FACING DASHBOARD.
+
+If useful, they may remain accessible through a small "System details" / "Technical information" area, but they must not dominate the main dashboard.
+
+==================================================
+NEW USER EXPERIENCE
+==================================================
+
+The dashboard should feel like a real:
+
+"Hyderabad Flood Intelligence"
+
+or
+
+"Hyderabad Flood Safety"
+
+application.
+
+The user should immediately understand:
+
+1. What is happening?
+2. How much rainfall is expected/scenario rainfall?
+3. Which areas are at risk?
+4. Which roads may be affected?
+5. What should I do?
+6. Can I find a safer route?
+
+==================================================
+1. MAIN DASHBOARD STRUCTURE
+==================================================
+
+Use this approximate structure:
+
+--------------------------------------------------
+HEADER
+--------------------------------------------------
+
+HYDERABAD FLOOD INTELLIGENCE
+
+"Urban flood awareness & route screening"
+
+Badge:
+
+RESEARCH PROTOTYPE
+
+--------------------------------------------------
+CURRENT FLOOD OUTLOOK
+--------------------------------------------------
+
+Show a prominent status card.
+
+Examples of the type of messaging:
+
+"LOW FLOOD RISK"
+"MONITOR CONDITIONS"
+"ELEVATED FLOOD RISK"
+"HIGH FLOOD RISK"
+
+The status MUST be derived from the existing model/API data.
+
+Do not hardcode a fake status.
+
+Under it show a short explanation.
+
+For example:
+
+"Predicted surface-water accumulation is elevated in parts of Hyderabad."
+
+Again, use the actual available model information.
+
+--------------------------------------------------
+2. RAINFALL + SAFETY ADVICE
+--------------------------------------------------
+
+Create a prominent rainfall/safety card.
+
+Show the available rainfall value from the existing API.
+
+Example:
+
+RAINFALL SCENARIO
+42 mm
+
+Then dynamically provide simple user guidance based on the existing rainfall/flood-risk information.
+
+Examples:
+
+"Conditions appear manageable. Normal travel is generally suitable, but monitor flood-prone roads."
+
+"Rainfall is elevated. Avoid low-lying roads and check the flood map before travelling."
+
+"Heavy rainfall conditions. Consider delaying non-essential travel and use flood-aware routing."
+
+"Very heavy rainfall / high flood risk. Avoid visibly affected roads and use safer alternatives where available."
+
+IMPORTANT:
+
+These are USER GUIDANCE / PROTOTYPE ADVISORIES.
+
+Do not present them as official emergency warnings.
+
+Do not invent live rainfall data.
+
+Do not claim the system is receiving live Doppler radar data.
+
+Clearly indicate when the rainfall is historical/scenario-based.
+
+==================================================
+3. FORECAST TIMELINE
+==================================================
+
+Keep the existing forecast horizon:
+
+T+0
+T+30
+T+60
+T+90
+T+120
+T+150
+T+180
+
+Make it visually attractive and easy to understand.
+
+When a user selects a horizon, update the available map/forecast information using the existing API.
+
+Do not rebuild the forecast model.
+
+==================================================
+4. MAP
+==================================================
+
+The map should become the MAIN visual element.
+
+It should occupy substantially more visual space than the technical information panels.
+
+Show the existing:
+
+- Hyderabad boundary
+- flood depth
+- flood risk
+- roads
+- drainage/nalas
+- water bodies
+- other existing Step 8 layers
+
+Preserve the existing map implementation.
+
+Do not replace the map library unless absolutely necessary.
+
+Add a clean legend.
+
+Example:
+
+LOW
+MODERATE
+HIGH
+SEVERE
+
+Use the EXISTING backend risk classification.
+
+Do not invent a new scientific classification.
+
+==================================================
+5. FLOOD-SAFE ROUTE — MAJOR UX IMPROVEMENT
+==================================================
+
+The current interface requires:
+
+SOURCE LATITUDE
+SOURCE LONGITUDE
+DESTINATION LATITUDE
+DESTINATION LONGITUDE
+
+This is NOT user friendly.
+
+Change the UI so normal users can enter PLACES instead.
+
+Use:
+
+FROM
+
+[ Search starting location... ]
+
+TO
+
+[ Search destination... ]
+
+Examples:
+
+"Secunderabad"
+
+"Hitech City"
+
+"Charminar"
+
+"Gachibowli"
+
+"LB Nagar"
+
+The user should NOT have to manually enter latitude/longitude.
+
+==================================================
+6. PLACE SEARCH / GEOCODING
+==================================================
+
+Implement place search in the frontend.
+
+When the user types a location:
+
+- search for matching places
+- show a small dropdown of results
+- allow the user to select one
+- resolve the selected place to latitude/longitude
+- internally pass those coordinates to the EXISTING safe-route API
+
+The user should never need to see the coordinates.
+
+If using an external geocoding service such as OpenStreetMap Nominatim:
+
+- use it only for geocoding
+- respect its usage requirements
+- do not build a new backend routing system around it
+- do not replace the existing flood-aware routing API
+
+If the project already contains a geocoding utility, reuse it.
+
+Do not install a large dependency just for this.
+
+==================================================
+7. IMPORTANT — HYDERABAD CONTEXT
+==================================================
+
+Since this application is specifically for Hyderabad, prioritize Hyderabad results.
+
+For example, if the user enters:
+
+"Gachibowli"
+
+prefer:
+
+"Gachibowli, Hyderabad, Telangana"
+
+rather than an unrelated location elsewhere.
+
+Likewise for:
+
+"Secunderabad"
+"Charminar"
+"Hitech City"
+"Kukatpally"
+"LB Nagar"
+"Madhapur"
+
+Allow the user to select the exact result.
+
+Do not silently choose an ambiguous location if multiple results exist.
+
+==================================================
+8. FIND SAFE ROUTE BUTTON
+==================================================
+
+Make this a major call-to-action:
+
+[FIND SAFER ROUTE]
+
+After the user selects From and To:
+
+- use the existing Step 7 routing API
+- calculate the normal route
+- calculate the existing flood-penalized route
+- display the comparison
+
+Do NOT create fake route results.
+
+==================================================
+9. ROUTE RESULT UI
+==================================================
+
+Present results clearly.
+
+Example:
+
+NORMAL ROUTE
+12.4 km
+24 min
+
+FLOOD-AWARE ROUTE
+13.1 km
+27 min
+
+MAX PREDICTED FLOOD DEPTH
+6 cm
+
+RISK
+LOW
+
+Then explain:
+
+"Flood-aware routing selected a slightly longer route to reduce predicted flood exposure."
+
+Only display values actually returned by the existing API.
+
+If the flood-aware route is the same as the normal route, explain:
+
+"No significant flood-related detour was required."
+
+==================================================
+10. ROUTE SAFETY ADVICE
+==================================================
+
+After calculating the route, show a concise recommendation.
+
+Examples:
+
+"Recommended: Flood-aware route"
+
+"Both routes have low predicted flood exposure."
+
+"Consider the flood-aware route because the normal route crosses higher-risk segments."
+
+"High flood exposure detected. Consider delaying non-essential travel."
+
+These recommendations should be derived from the existing route/flood data.
+
+Clearly label them as prototype guidance.
+
+==================================================
+11. REMOVE LAT/LONG FROM NORMAL USER VIEW
+==================================================
+
+Do NOT show:
+
+SOURCE LATITUDE
+SOURCE LONGITUDE
+DESTINATION LATITUDE
+DESTINATION LONGITUDE
+
+in the main interface.
+
+The coordinates may exist internally for the API.
+
+The user should interact with place names.
+
+If there is a "Technical details" section, coordinates can be shown there only if genuinely useful.
+
+==================================================
+12. REMOVE INTERNAL PIPELINE PANELS
+==================================================
+
+Remove the following from the primary dashboard UI:
+
+"03 · SOURCE VALIDATION"
+
+"Data status"
+
+"FOUND"
+
+"READABLE"
+
+"VALID"
+
+"MISSING"
+
+"04 · PREPARATION"
+
+"Model-ready inputs"
+
+"generated outputs"
+
+"warnings"
+
+and similar internal implementation diagnostics.
+
+Do NOT remove their underlying backend/API functionality.
+
+The normal user does not need to know how many datasets are valid.
+
+==================================================
+13. OPTIONAL TECHNICAL DETAILS
+==================================================
+
+If there is enough space, create a small collapsed section at the bottom:
+
+"About this prototype"
+
+Inside it explain:
+
+Data sources:
+- IMD gridded rainfall
+- SRTM DEM
+- ESA WorldCover
+- GHMC / Telangana GIS
+- OpenStreetMap
+
+Model:
+- rainfall → runoff
+- terrain-based surface-water routing
+- drainage interaction
+- road flood-risk aggregation
+- flood-aware routing
+
+Important:
+
+"This is a research prototype using historical/scenario rainfall and prototype assumptions. It is not an official emergency warning system."
+
+Keep this subtle.
+
+==================================================
+14. HEADER SHOULD BE USER-ORIENTED
+==================================================
+
+Instead of technical wording such as:
+
+"Model-ready inputs"
+
+use:
+
+"Flood outlook"
+
+"Travel safety"
+
+"Road conditions"
+
+"Find a safer route"
+
+"Rainfall outlook"
+
+"Flood map"
+
+The user should understand the dashboard without knowing GIS or hydrology.
+
+==================================================
+15. SUGGESTED FINAL PAGE STRUCTURE
+==================================================
+
+Aim for something approximately like:
+
+------------------------------------------------------------
+HYDERABAD FLOOD INTELLIGENCE       RESEARCH PROTOTYPE
+------------------------------------------------------------
+
+Urban Flood Outlook
+
+[ FLOOD RISK STATUS ]
+
+Rainfall      Max Flood Depth      Affected Roads
+XX mm         XX cm                XXXX
+
+------------------------------------------------------------
+
+Forecast
+[T+0] [T+30] [T+60] [T+90] [T+120] [T+150] [T+180]
+
+------------------------------------------------------------
+                         |
+                         |
+        LARGE FLOOD MAP  |  TRAVEL SAFETY
+                         |
+                         |
+                         |
+------------------------------------------------------------
+
+Rainfall Advice
+
+"Elevated rainfall conditions. Check the flood map
+before travelling through low-lying areas."
+
+------------------------------------------------------------
+
+FIND A SAFER ROUTE
+
+FROM
+[ Search starting location... ]
+
+TO
+[ Search destination... ]
+
+[ FIND SAFER ROUTE ]
+
+------------------------------------------------------------
+
+Normal Route       Flood-aware Route
+XX min             XX min
+XX km              XX km
+
+Max flood depth: XX cm
+Risk: LOW / MODERATE / HIGH / SEVERE
+
+[ ROUTE ON MAP ]
+
+------------------------------------------------------------
+
+ABOUT THIS PROTOTYPE
+------------------------------------------------------------
+
+==================================================
+16. DESIGN QUALITY
+==================================================
+
+Keep the existing dark professional style.
+
+Improve:
+
+- spacing
+- typography
+- hierarchy
+- cards
+- buttons
+- map prominence
+- route presentation
+- icons
+- hover states
+- loading states
+- error states
+
+Avoid:
+
+- excessive gradients
+- excessive animations
+- giant decorative elements
+- unnecessary charts
+- clutter
+- generic AI-dashboard styling
+
+The result should look like a serious GIS/emergency-management prototype.
+
+==================================================
+17. DO NOT BREAK EXISTING FUNCTIONALITY
+==================================================
+
+Preserve:
+
+- existing API client
+- existing generated API types
+- existing map
+- existing map layers
+- existing forecast functionality
+- existing flood-depth functionality
+- existing road-risk functionality
+- existing Step 7 routing API
+- existing Step 8 integration
+
+Do not replace working APIs with mock data.
+
+==================================================
+18. CREDIT PROTECTION
+==================================================
+
+CRITICAL:
+
+Do NOT:
+
+- regenerate GIS data
+- rerun flood simulations
+- regenerate road GeoJSON
+- regenerate GraphML
+- regenerate road flood-risk GeoJSON
+- redownload datasets
+- modify TIFF files
+- modify rainfall NetCDF
+- modify DEM
+- modify land cover
+- rewrite scientific models
+- rewrite routing algorithms
+- install unnecessary packages
+
+Work primarily inside:
+
+artifacts/hyderabad-flood-nowcasting/
+
+Make the minimum necessary frontend changes.
+
+==================================================
+19. VALIDATION
+==================================================
+
+After changes:
+
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/hyderabad-flood-nowcasting run typecheck
+
+Then:
+
+PORT=5000 BASE_PATH=/ pnpm --filter @workspace/hyderabad-flood-nowcasting run build
+
+If ONLY frontend files changed, do not run expensive backend/model processing.
+
+If backend files are changed, stop and report why.
+
+==================================================
+20. STOP CONDITION
+==================================================
+
+STOP once:
+
+- internal Data Status / Model Ready panels are removed from the main user experience
+- the dashboard looks professional
+- rainfall information is understandable
+- user receives useful prototype travel/flood guidance
+- forecast timeline works
+- map works
+- flood layers work
+- user can search for places instead of entering coordinates
+- From and To locations can be selected
+- existing safe-route API receives the resolved coordinates
+- route comparison is clearly displayed
+- no frontend runtime errors remain
+- typecheck passes
+- build passes
+
+DO NOT keep redesigning after this.
+
+DO NOT create a new frontend.
+
+DO NOT modify the scientific backend.
+
+DO NOT commit or push.
+
+FINAL RESPONSE:
+
+Report:
+
+1. Existing frontend preserved: YES/NO
+2. Frontend files changed
+3. Internal panels removed/hidden
+4. Place-search/geocoding implemented: YES/NO
+5. Existing safe-route API preserved: YES/NO
+6. Rainfall guidance implemented: YES/NO
+7. Backend modified: YES/NO
+8. Typecheck result
+9. Build result
+10. Any remaining issues
+
+MOST IMPORTANT:
+
+This is a POLISH + USER EXPERIENCE improvement of the EXISTING Step 8 dashboard.
+
+DO NOT rebuild the application.
+DO NOT rebuild the backend.
+DO NOT regenerate data.
+DO NOT replace the existing routing system.
+
+Make the application feel like something a normal Hyderabad resident, commuter, emergency worker, or project evaluator could actually understand and use.
